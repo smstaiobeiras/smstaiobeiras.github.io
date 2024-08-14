@@ -82,8 +82,8 @@
       <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
       <script>
 
-const supabaseUrl = 'https://medrelgkjsfpzpoqdhfk.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lZHJlbGdranNmcHpwb3FkaGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjMyMjMxODIsImV4cCI6MjAzODc5OTE4Mn0.UsWaKZcBN5sk_9zg05zE4WlypkV5mDiXL3u4A_Ptw-M';
+const supabaseUrl = 'https://oazebfnnkatgydzbnkuh.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hemViZm5ua2F0Z3lkemJua3VoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM2NjA3NDUsImV4cCI6MjAzOTIzNjc0NX0.hFSIwnSvRRCkhAhZo0ZGCu-ZNa31s5Ct12NolNw19bA';
 
 window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
@@ -495,7 +495,7 @@ async function listResumos(token) {
 async function signin() {
   document.getElementById('btnLogin').classList = "oculto";
   const loginData = {
-    email: `${parseInt(document.getElementById("cpf").value.replaceAll(".","").replaceAll("-","")).toString()}@email.com`,
+    email: `${document.getElementById("cpf").value.replaceAll(".","").replaceAll("-","")}@email.com`,
     password: `${document.getElementById("senha").value}`,
     mode: 'no-cors',
   }
