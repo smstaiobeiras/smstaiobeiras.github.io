@@ -1,0 +1,529 @@
+<!DOCTYPE html><html lang="pt_BR"><head><meta charset="utf8"/><title>Perfil do profissional</title><style>        /* Estilo da barra de navegação */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #333; /* Cor de fundo da barra de navegação */
+            color: #fff; /* Cor do texto da barra de navegação */
+            padding: 10px 0;
+        }
+        
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 15px;
+        }
+        
+        /* Adicione margem ao corpo para evitar que o conteúdo fique oculto sob a barra de navegação */
+        body {
+            margin-top: 60px; /* Ajuste conforme necessário com base na altura da sua barra de navegação */
+        }
+        td {
+            /*border: 1px solid #dfe2e5;*/
+            background-color: transparent !important;
+            border: 0 !important;
+        }
+
+        tr {
+          border: 1px solid #dfe2e5 !important;
+          background: transparent!important;
+        }
+
+        .tr:hover {
+            background: #DFE2E5!important;
+            cursor: pointer!important;
+        }
+
+        .tr:pressed {
+            background: #9FA1A3!important;
+        }
+
+        .header {
+            background-color: #F6F8FA !important;
+        }
+
+        .no-border {
+            border: 0px solid #dfe2e5 !important;
+        }
+
+        ::backdrop {
+          background-image: linear-gradient(
+            45deg,
+            rgb(0, 0, 0),
+            rgb(0, 0, 0)
+            );
+          opacity: 0.75;
+        }
+
+        .oculto {
+          display: none !important;
+        }
+
+        .tbody{
+          width: 100%;
+          display: table;
+        }
+
+          /* CSS for image column */
+  .xr img {
+    min-width: 48px; /* Ensure image does not exceed column width */
+    height: auto; /* Maintain aspect ratio */
+  }
+
+  /* CSS for text column */
+.xr td:last-child {
+    width: 100%; /* Make text column stretch to fill remaining space */
+    padding-left: 10px; /* Add padding to separate image and text */
+  }
+
+
+      </style><meta content="lua-wpp" name="generator"/><meta content="width=device-width,initial-scale=1.0" name="viewport"/><link href="assets/css/style.css" rel="stylesheet"/>
+      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+      <script>
+
+const supabaseUrl = 'https://medrelgkjsfpzpoqdhfk.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lZHJlbGdranNmcHpwb3FkaGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjMyMjMxODIsImV4cCI6MjAzODc5OTE4Mn0.UsWaKZcBN5sk_9zg05zE4WlypkV5mDiXL3u4A_Ptw-M';
+
+window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+      </script>
+      </head>
+      <body class="px-3 my-5 markdown-body"><div class="navbar"><a href="#" onclick="volta()"><span>Página inicial</span><span></span></a> | <a href="#" onclick="signOut()"><span>Logout</span><span></span></a></div>
+      
+      <h3><br></h3>
+
+
+      <table  id="opcoes-resumo" >
+        <tr onclick="document.getElementById('cadastrarConta').showModal();" class="tr xr">
+          <td class="width:0 !important;"><img src="assets/img/inserir.png" width="48" /></td>
+          <td>
+            <b>Cadastar Recurso</b><br/>Permite cadastrar um novo recurso
+          </td>
+        </tr>
+      </table>
+
+      <table id="opcoes-operacoes" class="oculto">
+        <tr onclick="document.getElementById('cadastrarOperacaoConta').showModal();" class="tr xr">
+          <td class="width:0 !important;"><img src="assets/img/inserir.png" width="48" /></td>
+          <td>
+            <b>Lançar operação</b><br/>Permite lançar uma operação
+          </td>
+        </tr>
+      </table>
+      
+
+      <table  id="resumo" >
+        <tr class="header">
+          <th>Conta</th>
+          <th>Banco</th>
+          <th>Nome do recurso</th>
+          <th>Saldo da conta</th>
+        </tr>
+      </table>
+
+      <table  id="conta" class="oculto">
+        <tr>
+          <th colspan="1" class="tr" style="color: #3498db" onclick="volta()">Voltar</th>
+          <th colspan="6" class="header" id="nome_recurso" name="nome_conta">nome_recurso</th>
+        </tr>
+        <tr class="header">
+          <th>Data</th>
+          <th>Esp. DOC</th>
+          <th>Num. DOC</th>
+          <th>Valor empenhado (-)</th>
+          <th>Valor pago (-)</th>
+          <th>Credito (+)</th>
+          <th>Salto (=)</th>
+        </tr>
+      </table>
+
+      <dialog id="cadastrarConta" style="border: 0; padding: 2rem;">
+        <form>
+          <table style="border: 0;">
+
+            <tr class="no-border"  style="padding: 1rem;">
+              <td>Nome do Recurso: </td>
+              <td><input type="text" id="nomeRecurso" style="padding-left: 6;" required></td>
+            </tr>
+          
+            <tr class="no-border"  style="padding: 1rem;">
+              <td>Número da conta: </td>
+              <td><input type="number" id="numeroConta" style="padding-left: 6;" required></td>
+            </tr>
+  
+            <tr class="no-border"  style="padding: 1rem;">
+              <td>Banco: </td>
+              <td>
+                <select id="bancoConta">
+                  <option value="BR">Banco do Brasil</option>
+                  <option value="CEF">Caixa Econômica Federal</option>
+                </select>
+              </td>
+            </tr>
+            <tr class="no-border"  style="padding: 1rem;">
+              <td><input type="reset" value="Cancelar" id="cancelaCriarConta" onclick="document.getElementById('cadastrarConta').close();"></td>
+              <td align="right"><button onclick="insertResumo();" id="cadastrarContaBtn">Cadastrar</button></td>
+            </tr>
+  
+            <tr class="no-border">
+              <td colspan="2" style="color: red;" class="oculto" id="criarContaFalha" align="right">Falha ao cadastrar conta</td>
+            </tr>
+          </table>
+        </form>
+
+      </dialog>
+      
+      <dialog id="cadastrarOperacaoConta" style="border: 0; padding: 2rem;">
+        <form onsubmit="event.preventDefault();">
+          <table style="border: 0;">
+
+            <tr class="no-border"  style="padding: 1rem;">
+              <td>Data: </td>
+              <td><input type="date" id="dataOperacao" style="padding-left: 6;" required></td>
+            </tr>
+
+            <tr class="no-border"  style="padding: 1rem;">
+              <td>Esp. doc: </td>
+              <td>
+                <select id="espDOC">
+                  <option value="-">-</option>
+                  <option value="Tranf">Transferencia</option>
+                  <option value="DOC">DOC</option>
+                </select>
+              </td>
+            </tr>
+
+            <tr class="no-border"  style="padding: 1rem;">
+              <td>Número DOC:</td>
+              <td><input type="text" id="numDOC" style="padding-left: 6;" step=".01" required onchange="atualizaSaldo()"></td>
+            </tr>
+
+            <tr class="no-border"  style="padding: 1rem;">
+              <td>Observação:</td>
+              <td><input type="text" id="observacao" style="padding-left: 6;" required></td>
+            </tr>
+
+            <tr class="no-border"  style="padding: 1rem;">
+              <td>Valor pago (-):</td>
+              <td><input type="number" id="valorPago" style="padding-left: 6;" step=".01" required  onchange="atualizaSaldo()"></td>
+            </tr>
+
+            <tr class="no-border"  style="padding: 1rem;">
+              <td>Credito (+): </td>
+              <td><input type="number" id="creditoConta" style="padding-left: 6;" step=".01" required onchange="atualizaSaldo()"></td>
+            </tr>
+  
+            <tr class="no-border"  style="padding: 1rem;">
+              <td>Saldo: </td>
+              <td><input type="number" id="saldoRO" style="padding-left: 6;" step=".01" required readonly ></td>
+            </tr>
+
+            <tr class="no-border"  style="padding: 1rem;">
+              <td><input type="reset" value="Cancelar" id="cancelaCadastrarOperacaoConta" onclick="document.getElementById('cadastrarOperacaoConta').close();"></td>
+              <td align="right"><button onclick="insertOperacaoConta();" id="cadastrarContaBtn">Cadastrar</button></td>
+            </tr>
+  
+            <tr class="no-border">
+              <td colspan="2" style="color: red;" class="oculto" id="cadastrarOperacaoContaFalha" align="right">Falha ao cadastrar conta</td>
+            </tr>
+          </table>
+        </form>
+
+      </dialog>
+
+      <dialog id="login" style="border: 0; padding: 2rem;">
+        <table style="border: 0;">
+          
+          <tr class="no-border">
+            <td colspan="2" style="text-align: center; vertical-align: middle;"><img src="assets/img/cidade-logo.png" width="96"></td>
+          </tr>
+          <tr class="no-border"  style="padding: 1rem;">
+            <td>CPF: </td>
+            <td><input type="text" id="cpf" oninput="applyCPFFormat(this)" style="padding-left: 6;"></td>
+          </tr>
+          <tr class="no-border">
+            <td>Senha: </td>
+            <td><input id="senha" type="password"></td>
+          </tr>
+          <tr class="no-border">
+            <td></td>
+            <td align="right"> <button onclick="signin();" id="btnLogin">Login</button></td>
+          </tr>
+          <tr class="no-border">
+            <td colspan="2" style="color: red;" class="oculto" id="loginFalha">Falha no login</td>
+          </tr>
+        </table>
+      </dialog>
+
+
+      <script>
+
+async function sumSaldo(conta) {
+
+  const { data, error } = await supabase
+    .from('operacoesConta')
+    .select('saldo')
+    .eq('operacoesConta', 'teste 123')
+
+  if (error) {
+    console.error('Error fetching data:', error)
+    return
+  }
+
+  // Calculate the sum of the saldo column
+  const totalSaldo = data.reduce((sum, item) => sum + (item.saldo || 0), 0)
+
+  console.log('Total Saldo:', totalSaldo)
+}
+
+async function signOut() {
+  const { error } = await supabase.auth.signOut();
+
+  localStorage.removeItem("tokenFinanceiro");
+  document.getElementById('login').showModal();
+  location.reload();
+}
+
+function volta() {
+  document.getElementById("opcoes-resumo").classList = "";
+  document.getElementById("resumo").classList = "";
+  document.getElementById("conta").classList = "oculto";
+  document.getElementById("opcoes-operacoes").classList = "oculto";
+
+  listResumos();
+}
+
+function atualizaSaldo() {
+  let credito = parseFloat(document.getElementById("creditoConta").value.replaceAll(",","."));
+  let debito = parseFloat(document.getElementById("valorPago").value.replaceAll(",","."));
+
+  credito = Number.isNaN(credito) ? 0.0 : credito;
+  debito  = Number.isNaN(debito) ? 0.0 : debito;
+
+  let total = Number(credito)-Number(debito);
+
+
+  document.getElementById("saldoRO").value = credito-debito;
+}
+
+async function insertOperacaoConta() {
+  if (document.getElementById("dataOperacao").value == "") return;
+  if (document.getElementById("espDOC").value == "") return;
+  if (document.getElementById("numDOC").value == "") return;
+  if (document.getElementById("observacao").value == "") return;
+  if (document.getElementById("valorPago").value == "") return;
+  if (document.getElementById("creditoConta").value == "") return;
+
+  let nomeConta = document.getElementById("nome_recurso").attributes['name'].value;
+  let nomeRecurso = document.getElementById("nome_recurso").innerText;
+  let total = document.getElementById("total_conta").innerText.replaceAll("R$ ","");
+
+  let conta = {
+        nome_conta: nomeConta,
+        data: (document.getElementById("dataOperacao").value).split("-").reverse().join("/") ,
+        esp_doc: document.getElementById("espDOC").value,
+        num_doc: document.getElementById("numDOC").value,
+        observacao: document.getElementById("observacao").value,
+        valor_pago: parseFloat(document.getElementById("valorPago").value),
+        credito: parseFloat(document.getElementById("creditoConta").value),
+        saldo: parseFloat(document.getElementById("saldoRO").value)
+  };
+
+  const { data, error } = await supabase
+    .from('operacoesConta')
+    .insert([
+      conta
+    ]);
+
+  if (error) {
+    document.getElementById('cadastrarOperacaoContaFalha').classList = "";
+    alert()
+    console.error('Error inserting conta:', error);
+    return null;
+  }
+
+  document.getElementById('cadastrarOperacaoContaFalha').classList = "oculto";
+  document.getElementById("cancelaCadastrarOperacaoConta").click();
+
+  console.log('Inserted conta:', data);
+
+  total = parseFloat(total)+parseFloat(conta.saldo);
+
+  fetchOperacaoConta(nomeConta,nomeRecurso,total);
+
+  return data;
+}
+
+
+
+async function fetchOperacaoConta(nome_conta,nome_recurso,saldo) {
+  const { data: data, error } = await supabase
+    .from('operacoesConta')
+    .select('*')
+    .eq('nome_conta', nome_conta);
+
+  document.getElementById("opcoes-resumo").classList = "oculto";
+  document.getElementById("resumo").classList = "oculto";
+  document.getElementById("conta").classList = "";
+  document.getElementById("opcoes-operacoes").classList = "";
+
+  document.getElementById("nome_recurso").innerText = nome_recurso;
+  document.getElementById("nome_recurso").name = nome_conta;
+
+  if (error) {
+    console.error('Error fetching conta:', error);
+    return null;
+  }
+
+  document.getElementById("conta").children[0].classList = "tbody"
+  document.getElementById("conta").children[0].innerHTML = "";
+
+  let total = 0;
+  for (let operacao of data) {
+    document.getElementById("conta").children[0].innerHTML += `
+      <tr>
+        <td class="border">${operacao.data}</td>
+        <td class="border">${operacao.esp_doc}</td>
+        <td class="border">${operacao.num_doc}</td>
+        <td class="border">${operacao.observacao}</td>
+        <td class="border" style="text-align:right;">R$ ${parseFloat(operacao.valor_pago).toFixed(2).replaceAll(".",",")}</td>
+        <td class="border" style="text-align:right;">R$ ${parseFloat(operacao.credito).toFixed(2).replaceAll(".",",")}</td>
+        <td class="border" style="text-align:right;">R$ ${parseFloat(operacao.saldo).toFixed(2).replaceAll(".",",")}</td>
+      </tr>
+    `;
+
+    total = total+operacao.saldo;
+  }
+
+  document.getElementById("conta").children[0].innerHTML = `
+        <tr>
+          <th colspan="1" class="tr" style="color: #3498db" onclick="volta()">Voltar</th>
+          <th colspan="5" class="header" id="nome_recurso" name="${nome_conta}">${nome_conta} - ${nome_recurso}</th>
+          <th colspan="1" class="header" id="total_conta" name="${nome_conta}" style="text-align:right;">R$ ${parseFloat(total).toFixed(2).replaceAll(".",",")}</th>
+        </tr>
+        <tr class="header">
+          <th>Data</th>
+          <th>Esp. DOC</th>
+          <th>Num. DOC</th>
+          <th>Observação</th>
+          <th>Valor pago (-)</th>
+          <th>Credito (+)</th>
+          <th>Saldo (=)</th>
+        </tr>
+        ${document.getElementById("conta").children[0].innerHTML}
+  `;
+
+  console.log(data)
+
+  return data;
+}
+
+// Function to insert a new record into the 'resumo' table
+async function insertResumo() {
+  const conta = {
+        id_conta: document.getElementById("bancoConta").value+"-"+document.getElementById("numeroConta").value,
+        nome_banco: document.getElementById("bancoConta").value,
+        nome_recurso: document.getElementById("nomeRecurso").value,
+        saldo_conta: '0.00'
+      }
+
+  const { data, error } = await supabase
+    .from('resumo')
+    .insert([
+      conta,
+    ]).select();
+
+  if (error) {
+    document.getElementById('criarContaFalha').classList = "";
+    alert()
+
+    return null;
+  }
+
+  document.getElementById('criarContaFalha').classList = "oculto";
+  document.getElementById("cancelaCriarConta").click();
+
+  listResumos();
+  return data;
+}
+
+// Function to list all records from the 'resumo' table
+async function listResumos(token) {
+  const { data, error } = await supabase
+    .from('resumo')
+    .select('*');
+
+  if (error) {
+    console.error('Error listing resumos:', error);
+    return [];
+  }
+
+  document.getElementById("resumo").children[0].innerHTML = `
+        <tr class="header">
+          <th>Conta</th>
+          <th>Banco</th>
+          <th>Nome do recurso</th>
+          <th>Saldo da conta</th>
+        </tr>
+  `;
+
+  for (let conta of data) {
+    const { data: dadosConta, error2 } = await supabase
+      .from('operacoesConta')
+      .select('*')
+      .eq('nome_conta', conta.id_conta);
+
+    let total = 0;
+
+    for (let operacao of dadosConta) {
+      total = total+operacao.saldo;
+    }
+
+    document.getElementById("resumo").children[0].innerHTML += `
+      <tr class="tr" onclick="fetchOperacaoConta('${conta.id_conta}','${conta.nome_recurso}','${conta.saldo_conta}')">
+        <td class="border">${conta.id_conta}</td>
+        <td class="border">${conta.nome_banco}</td>
+        <td class="border">${conta.nome_recurso}</td>
+        <td class="border" style="text-align:right;">R$ ${parseFloat(total).toFixed(2).replaceAll(".",",")}</td>
+      </tr>
+    `;
+  }
+  return data;
+}
+
+async function signin() {
+  document.getElementById('btnLogin').classList = "oculto";
+  const loginData = {
+    email: `${parseInt(document.getElementById("cpf").value.replaceAll(".","").replaceAll("-","")).toString()}@email.com`,
+    password: `${document.getElementById("senha").value}`,
+    mode: 'no-cors',
+  }
+
+  console.log(loginData);
+
+  const { data, error } = await supabase.auth.signInWithPassword(loginData)
+
+  if (error) {
+    document.getElementById('btnLogin').classList = "";
+    document.getElementById('loginFalha').classList = "";
+    return;
+  }
+
+  localStorage.setItem("tokenFinanceiro", data.session.access_token);
+
+  document.getElementById('login').close();
+  listResumos();
+}
+
+if (!localStorage.getItem("tokenFinanceiro")) {
+  document.getElementById('login').showModal();
+} else {
+  listResumos();
+}
+
+
+
+
+      </script>
+      </body></html>
