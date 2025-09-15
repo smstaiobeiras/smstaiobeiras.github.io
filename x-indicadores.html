@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  </head>
+  <body>
+    <dialog id="outrosACS">
+      <h3>Micro área problemática</h3>
+      <fieldset>
+        <legend>Problema</legend>
+        Essa micro área possui mais de um cadastro de ACS responsável isso significa que<br>
+        existem pacientes pacientes duplicados que impactam no indicador:
+        <br>
+        <br>
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>CNS</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="listagemACSDuplicados">
+          </tbody>
+        </table>
+      </fieldset>
+      <br>
+      <right-box>
+        <button onclick="outrosACS.close();">Fechar</button>
+      </right-box>
+    </dialog>
+    <header style="min-height: 48px; background: #000000; color: #ffffff;">
+      <div></div>
+      <middle-center-box>nome</middle-center-box>
+      <middle-right-box style="padding-right:9px;">Sair...</middle-right-box>
+    </header>
+    <main>
+      <div style="padding: 26px;">
+        <br><br>
+        <label style="display: flex; gap: 9px;align-items: center;">
+          <b>Equipe:</b>
+          <select style="width: 100%;" id="listaEquipes">
+            <option>Escolha</option>
+          </select>
+        </label>
+        <br>
+        <hr>
+        <br>
+        <card-book id="bookIndicador"></card-book>
+        <br>
+        <h2 id="cabecalhoMicro" style="display: none;"></h2>
+        <card-book id="bookMicroArea"></card-book>
+      </div>
+    </main>
+    <footer>
+      <div>Esquerda rodapé</div>
+      <div>Centro rodapé</div>
+      <div>Direita rodapé</div>
+    </footer>
+    <script src="indicadores/acs.js"></script>
+    <script src="indicadores/equipes.js"></script>
+    <script src="indicadores/aps.js"></script>
+    <script src="indicadores/algorimos.js"></script>
+    <script>
+      ['card-book','card-box','card-label','list-item'].forEach((t) => customElements.define(t, class extends HTMLElement {}));
+    </script>
+  </body>
+</html>

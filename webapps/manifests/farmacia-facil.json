@@ -1,0 +1,17 @@
+{
+    "name": "Farmacia Fácil",
+    "short_name": "Farmacia Fácil",
+    "description": "Acesse fácil aos medicamentos da rede pública de Taiobeiras.",
+    "start_url": "/webapps/farmacia-publica.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#333333",
+    "icons": [
+      {
+        "src": "/webapps/assets/img/drugs.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+}
+  

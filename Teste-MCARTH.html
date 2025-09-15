@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste de triagem M-CHAT-R™</title>
+  <style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f4faff; /* fundo azul clarinho */
+  color: #333;
+}
+
+header {
+  background: #6993ec; /* azul forte */
+  padding: 12px 8px;
+  text-align: center;
+  color: #ffffff;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+header p {
+  margin-top: 6px;
+  font-size: 1.1em;
+  color: #333;
+  background: rgba(255,255,255,0.7);
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 10px;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0px auto;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.card h2, .card h3 {
+  margin-top: 0;
+  color: #2563eb; /* azul escuro */
+}
+
+.info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.info div {
+  background: #e0f2fe; /* azul bem claro */
+  padding: 15px;
+  border-radius: 10px;
+}
+
+/* Barra de progresso com efeito multicolorido */
+.progress {
+  background: #e5e7eb;
+  border-radius: 20px;
+  overflow: hidden;
+  height: 20px;
+  margin: 10px 0;
+}
+
+.progress-bar {
+  background: linear-gradient(90deg, #f87171, #facc15, #34d399, #60a5fa, #a78bfa);
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+table th {
+  background: #3b82f6; /* azul */
+  color: white;
+}
+
+footer {
+  text-align: center;
+  padding: 0px;
+  font-size: 0.9em;
+  color: #555;
+  background: #f0f9ff;
+}
+
+ul {
+  padding-left: 20px;
+}
+
+select {
+  padding: 10px;
+}
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 5mm !important;
+    margin-bottom: 0mm !important;
+    background: #f4faff; /* fundo azul clarinho */
+  }
+  footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 12px;
+  }
+  * {
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: inline;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <p>M-CHAT-R™</p>
+  </header>
+
+  <div class="container">
+    <div class="card no-print">
+      <h2>Instruções aos profissionais de saúde</h2>
+      <p>
+        Trata-se de um <b>instrumento de rastreio</b> de sinais de risco para o Transtorno do Espectro Autista
+        (TEA), baseado no relato dos pais, em <b>crianças de 16 a 30 meses</b> e existe a possibilidade de 
+        apresentar um <b>resultado falso-positivo</b>. Portanto, o resultado desse teste não confirma diagnóstico
+        de TEA. o M-CHAT-R™ deve ser aplicado e pontuado como parte da consulta de puericultura e também por
+        especialistas  ou outros profissionais que desejam avaliar o risco de TEA.
+      </p>
+    </div>
+    <div class="card">
+      <div style="display: flex;">
+        <h2 style="flex: 1;">Informações da Criança</h2>
+        <h3 class="print-only">Nota: <span id="printNote" style="color: #000000;">22</span></h3>
+        <h3 class="print-only" style="margin-left: 16px;">Classificação: <span id="printClassification" style="color: #000000;">Risco Alto</span></h3>
+      </div>
+      <div class="info">
+        <div style="display: flex;">
+          <strong>Nome:&nbsp;</strong>
+          <span name="nome" style="flex: 1;">
+            <input style="width: 100%;border: 0px; background-color: transparent;">
+          </span>
+        </div>
+        <div style="display: flex;">
+          <strong>Idade:&nbsp;</strong>
+          <span name="idade" style="flex: 1;">
+            <input style="width: 100%;border: 0px; background-color: transparent;">
+          </span>
+          </div>
+        <div style="display: flex;">
+          <strong>Data de realização:&nbsp;</strong>
+          <span name="data" style="flex: 1;">
+            <input style="width: 100%;border: 0px; background-color: transparent;">
+          </span>
+        </div>
+        <div style="display: flex;">
+          <strong>Prontuário:&nbsp;</strong>
+          <span name="prontuario" style="flex: 1;">
+            <input style="width: 100%;border: 0px; background-color: transparent;">
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Questionário</h2>
+      <p>
+        Por favor, responda as questões abaixo sobre o seu filho. Pense em como ele geralmente se comporta.
+        Se você viu o seu filho apresentar o comportamento descrito poucas vezes, ou seja, se não for um 
+        comportamento frequente, então responda não. Por favor, marque sim ou não para todas as questões.
+        Obrigado.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th style="max-width: 64px !important;">No</th>
+            <th colspan="2">Item</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="max-width: 64px !important;">
+              01
+            </td>
+            <td style="text-align: left;">
+              Se você apontar para algum objeto no quarto, o seu filho olha para este objeto?
+              <br><b>Exemplo:</b> se você apontar para um brinquedo ou animal, o seu filho olha para
+              o brinquedo ou para o animal? 
+            </td>
+            <td>
+              <select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select>
+            </td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              02
+            </td>
+            <td style="text-align: left;">
+              Alguma vez você se perguntou se o seu filho pode ser surdo? 
+            </td>
+            <td><select><option value="-">Responda</option><option value="1">Sim</option><option value="0">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              03
+            </td>
+            <td style="text-align: left;">
+              O seu filho brinca de faz de contas? <br><b>Exemplo:</b> faz de conta que bebe em um
+              copo vazio, faz de conta que fala ao telefone, faz de conta que dá comida a uma
+              boneca ou a um bichinho de pelúcia?
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              04
+            </td>
+            <td style="text-align: left;">
+              O seu filho gosta de subir nas coisas? <br><b>Exemplo:</b> móveis, brinquedos em
+              parques ou escadas
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              05
+            </td>
+            <td style="text-align: left;">
+              O seu filho faz movimentos estranhos com os dedos perto dos olhos?
+              <br><b>Exemplo:</b> mexe os dedos em frente aos olhos e fica olhando para os
+              mesmos?               
+            </td>
+            <td><select><option value="-">Responda</option><option value="1">Sim</option><option value="0">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              06
+            </td>
+            <td style="text-align: left;">
+              O seu filho aponta com o dedo para pedir algo ou para conseguir ajuda? <br><b>Exemplo:</b> aponta para um biscoito ou brinquedo fora do alcance dele?               
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              07
+            </td>
+            <td style="text-align: left;">
+              O seu filho aponta com o dedo para mostrar algo interessante para você? <br><b>Exemplo:</b> aponta para um avião no céu ou um caminhão grande na rua
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              08
+            </td>
+            <td style="text-align: left;">
+              O seu filho se interessa por outras crianças? <br><b>Exemplo:</b> seu filho olha para
+              outras crianças, sorri para elas ou se aproxima delas?               
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              09
+            </td>
+            <td style="text-align: left;">
+              O seu filho traz coisas para mostrar para você ou as segura para que você as veja - não
+              para conseguir ajuda, mas apenas para compartilhar? <br><b>Exemplo:</b> para mostrar
+              uma flor, um bichinho de pelúcia ou um caminhão de brinquedo
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              10
+            </td>
+            <td style="text-align: left;">
+              O seu filho responde quando você o chama pelo nome? <br><b>Exemplo:</b> ele olha
+              para você, fala ou emite algum som, ou para o que está fazendo quando você o chama
+              pelo nome?
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              11
+            </td>
+            <td style="text-align: left;">
+              Quando você sorri para o seu filho, ele sorri de volta para você?
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              12
+            </td>
+            <td style="text-align: left;">
+              O seu filho fica muito incomodado com barulhos do dia a dia? <br><b>Exemplo:</b> seu
+              filho grita ou chora ao ouvir barulhos como os de liquidificador ou de música alta?
+            </td>
+            <td><select><option value="-">Responda</option><option value="1">Sim</option><option value="0">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              13
+            </td>
+            <td style="text-align: left;">
+              O seu filho anda? 
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              14
+            </td>
+            <td style="text-align: left;">
+              O seu filho olha nos seus olhos quando você está falando ou brincando com ele/ela, ou
+              vestindo a roupa dele/dela?
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              15
+            </td>
+            <td style="text-align: left;">
+              O seu filho tenta imitar o que você faz? <br><b>Exemplo:</b> quando você dá tchau, ou
+              bate palmas, ou joga um beijo, ele repete o que você faz?              
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              16
+            </td>
+            <td style="text-align: left;">
+              Quando você vira a cabeça para olhar para alguma coisa, o seu filho olha ao redor
+              para ver o que você está olhando?
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              17
+            </td>
+            <td style="text-align: left;">
+              O seu filho tenta fazer você olhar para ele/ela? <br><b>Exemplo:</b> o seu filho
+              olha olha para você para ser elogiado/aplaudido, ou diz: “olha mãe!” ou “óh mãe!”
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              18
+            </td>
+            <td style="text-align: left;">
+              O seu filho compreende quando você pede para ele/ela fazer alguma coisa?
+              <br><b>Exemplo:</b> se você não apontar, o seu filho entende quando você pede: “coloca o
+              copo na mesa” ou “liga a televisão”?
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              19
+            </td>
+            <td style="text-align: left;">
+              Quando acontece algo novo, o seu filho olha para o seu rosto para ver como você se
+              sente sobre o que aconteceu? <br><b>Exemplo:</b> se ele/ela ouve um barulho estranho
+              ou vê algo engraçado, ou vê um brinquedo novo, será que ele/ela olharia para seu
+              rosto?
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+          <tr>
+            <td style="max-width: 64px !important;">
+              20
+            </td>
+            <td style="text-align: left;">
+              O seu filho gosta de atividades de movimento? <br><b>Exemplo:</b> ser balançado ou
+              pular em seus joelhos.
+            </td>
+            <td><select><option value="-">Responda</option><option value="0">Sim</option><option value="1">Não</option></select></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card no-print">
+      <h2>Pontuação e classificação</h2>
+      <div class="info">
+        <div><strong>Pontuação:</strong> <span id="resultNote">A pontuação só é exibida se todas as perguntas forem respondidas</span></div>
+        <div><strong>Classificação:</strong> <span id="resultClassification">A classificação só é exibida se todas as perguntas forem respondidas</span></div>
+      </div>
+      <br>
+      <div class="info">
+        <div>
+          <strong>Interpretação do resultado:</strong>
+          <span id="resultExplain">
+            A Interpretação só é exibida se todas as perguntas forem respondidas
+          </span>
+        </div>
+        <div style="text-align: center;background-color: transparent;">
+          <button style="display: none;" onclick="window.print();" id="btnPrint">🖨️ Imprimir</button>
+        </div>
+      </div>
+      <div class="progress" style="display: none;">
+        <div class="progress-bar" id="bar" style="max-width: 0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2009 Robins, Fein, & Barton. Tradução: Losapio, Siquara, Lampreia, Lázaro, & Pondé</p>
+  </footer>
+  <script>
+    for (let select of document.getElementsByTagName("select")) {
+      select.onchange = () => {
+        let note = 0;
+        let progress = 0;
+        bar.style = `max-width: 0%`;
+        for (let item of document.getElementsByTagName("select")) {
+          resultNote.innerHTML = `${note}`;
+          note += parseInt(item.value);
+        }
+        if (isNaN(note)) {
+          resultNote.innerHTML = `A pontuação só é exibida se todas as perguntas forem respondidas`;
+          resultClassification.innerHTML = `A classificação só é exibida se todas as perguntas forem respondidas`;
+          resultExplain.innerHTML = `A Interpretação só é exibida se todas as perguntas forem respondidas`;
+          btnPrint.style = "display:none;";
+          return;
+        }
+        
+        btnPrint.style = "padding: 12px;padding-left: 18px;padding-right: 18px;";
+        printNote.innerHTML = `${note}`;
+        resultNote.innerHTML = `${note}`;
+        resultExplain.innerHTML = ``;
+        bar.style = `max-width: ${Math.floor(note*100/20)}%`;
+
+        if (note < 3) {
+          resultClassification.innerHTML = `Baixo Risco`;
+          printClassification.innerHTML = `Baixo Risco`;
+          resultExplain.innerHTML = `
+            Reavaliar após osegundo aniversário. Nenhuma outra avaliação será requerida
+            a menos que a evolução clínica indique risco de TEA
+          `;
+          return;
+        }
+
+        if (note < 8) {
+          resultClassification.innerHTML = `Risco médio`;
+          printClassification.innerHTML = `Risco médio`;
+          resultExplain.innerHTML = `
+            Aplicar a consulta de seguimento (segunda etapa do MCHAT-R/F) para obter informações
+            adicionais sobre as respostas de risco. Se o escore permanecer maior ou igual a 2, a
+            triagem da criança foi positiva. Deve-se encaminhar a criança para avaliação diagnóstica
+            e de intervenção precoce. Se o escore da consulta de seguimento for de 0-1, a triagem da
+            criança foi negativa. Nenhuma outra avaliação será necessária, exceto se a evolução clínica indicar risco
+            de TEA. A criança deve ser triada novamente em futuras visitas médicas
+          `;
+          return;
+        }
+
+        resultClassification.innerHTML = `Risco alto`;
+        printClassification.innerHTML = `Risco alto`;
+        resultExplain.innerHTML = `
+          Não é necessário fazer a consulta de seguimento, a criança deve ser encaminhada
+          imediatamente para avaliação diagnóstica e intervenção precoce
+        `;
+      }
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    params.forEach((value, key) => {
+      const field = document.querySelector(`[name="${key}"]`);
+      if (field) field.innerText = value;
+    });
+  </script>
+</body>
+</html>

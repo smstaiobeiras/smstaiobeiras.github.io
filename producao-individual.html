@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2" prefech></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+      if(localStorage.getItem("sb-gnbbejevwbixsubblnua-auth-token") == null) {location.href='login.html';}
+    </script>
+    <style>
+
+/* App base  Layout*/
+
+*,*::before,*::after {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, p,  figure, blockquote, dl, dd {
+  margin: 0;
+  padding: 0;
+}
+
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button, input, select, textarea,dialog {
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  outline: none;
+  box-shadow: none;
+}
+
+dialog{
+    margin:auto;
+    padding: 28px;
+    box-shadow: 0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+dialog > * {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+dialog > :first-child {
+  margin-top: 0;
+}
+
+dialog > :last-child {
+  margin-bottom: 0;
+}
+
+fieldset,legend {
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 9px;
+}
+
+fieldset {
+  padding: 18px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+body > header, body > footer, body > main {
+  display: flex;
+  flex-direction: row;
+}
+
+body > main {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0;
+  flex: 1;
+}
+
+body > header > *, body > footer > *, body > main > * {
+  flex: 1;
+}
+
+/* Quickly Layouts*/
+
+left-box {
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+center-box {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+right-box {
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+justify-box {
+  display: flex;
+  justify-content: space-between;
+  text-align: justify;
+}
+
+top-box {
+  display: flex;
+  align-items: flex-start;
+}
+
+middle-box {
+  display: flex;
+  align-items: center;
+}
+
+bottom-box {
+  display: flex;
+  align-items: flex-end;
+}
+
+top-left-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+top-center-box {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: center;
+}
+
+top-right-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  text-align: right;
+}
+
+middle-left-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: left;
+}
+
+middle-center-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+middle-right-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: right;
+}
+
+bottom-left-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  text-align: left;
+}
+
+bottom-center-box {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  text-align: center;
+}
+
+bottom-right-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  text-align: right;
+}
+
+justify-middle-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: justify;
+}
+
+/* Standard tags (WIP)*/
+
+hr{
+    box-sizing:content-box;
+    height:.25em;
+    padding:0;
+    margin:12px 0;
+    border:0;
+}
+
+h1,h2,h3,h4,h5,h6{
+    margin:24px 0 16px;
+    font-weight:600;
+    line-height:1.25;
+    padding-bottom: 9px;
+}
+h1{
+    font-size:2em
+}
+h2{
+    font-size:1.5em
+}
+h3{
+    font-size:1.25em
+}
+h4{
+    font-size:1em
+}
+h5{
+    font-size:.875em
+}
+h6{
+    font-size:.85em
+}
+
+h1,h2{
+    border-bottom: 1px solid;
+}
+
+blockquote{
+    padding:1em 1em;
+    margin:24px 0 24px;
+    border-left: 0.25em solid;
+}
+
+p {
+margin:16px 0 16px;
+}
+
+
+/*Forms controls (WIP)*/
+
+input[type=date-local],
+input[type=date],
+input[type=datetime-local],
+input[type=email],
+input[type=month],
+input[type=password],
+input[type=tel],
+input[type=range],
+input[type=text],
+input[type=time-local],
+input[type=time],
+input[type=url],
+input[type=week],
+select,
+textarea {
+    width:100%;
+    border: 1px solid;
+    padding: 9px;
+    padding-left: 18px;
+    padding-right: 18px;
+    border-radius: 4px;
+}
+
+textarea {
+  padding: 18px;
+  overflow-y: scroll;
+  height:100%;
+  resize: none;
+}
+
+button,
+input[type=submit],
+input[type=button],
+input[type=reset] {
+    padding:9px;
+    border-radius:3px;
+    border: 1px solid;
+    cursor: pointer;
+}
+
+button:active,
+input[type=submit]:active,
+input[type=button]:active,
+input[type=reset]:active {
+    border-top: 1px solid transparent;
+}
+
+input[type="checkbox"] {
+  width: 26px;
+  height: 26px;
+  border: 2px solid;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 6px;
+  margin-left: 0px;
+}
+
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  width: 7px;
+  height: 12px;
+  border: 2px solid;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+input[type="radio"] {
+  width: 26px;
+  height: 26px;
+  border: 2px solid;
+  border-radius: 50%; /* Círculo */
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 6px;
+  margin-left: 0px;
+  appearance: none; /* Remove o estilo padrão */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: black; /* Cor do ponto interno */
+}
+
+
+/*Custom controls*/
+
+card-book {
+  padding: 0px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+card-box {
+  padding: 0px;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1;
+  flex-direction: column;
+  border-radius:3px;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+card-box > :first-child {
+  flex: 1;
+}
+
+card-box > * {
+  padding: 9px;
+}
+
+card-box > card-label {
+  padding:9px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+card-box:active {
+    border-top: 1px solid transparent;
+}
+
+list-box {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+list-item {
+  display: flex;
+  padding: 8px;
+  border-bottom: 1px solid;
+  align-items: center;
+  flex: unset;
+  cursor: pointer;
+}
+
+list-item:last-child {
+  border-bottom: none;
+}
+
+list-item > * {
+  padding: 4px;
+}
+
+vertical-scroll,horizontal-scroll {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+horizontal-scroll {
+  flex-direction: row;
+  overflow-x: auto;
+}
+
+
+/*Tabelas*/
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-size: 1em;
+}
+
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 600;
+  padding: 8px;
+  color: #333;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  font-weight: 600;
+}
+
+/* Suporte para tabelas com rolagem */
+table[scroll] {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+
+/*Cores*/
+
+html,dialog {
+  background-color: #ffffff;
+}
+
+fieldset,
+legend,
+input[type=date-local],
+input[type=date],
+input[type=datetime-local],
+input[type=email],
+input[type=month],
+input[type=password],
+input[type=tel],
+input[type=range],
+input[type=text],
+input[type=time-local],
+input[type=time],
+input[type=url],
+input[type=week],
+input[type="checkbox"],
+input[type="radio"],
+input[type=submit],
+input[type=button],
+input[type=reset],
+button,
+select,
+textarea,
+blockquote,list-box,
+list-item,
+card-box{
+    border-color: #dfe2e5;
+}
+
+input[type="checkbox"]:checked::after {
+  border-color: #333;
+}
+
+
+input[type="radio"]:checked::after {
+  background-color: #333; /* Cor do ponto interno */
+}
+
+
+button,
+input[type=submit],
+input[type=button],
+input[type=reset],
+card-box > card-label {
+    background-color: #eaecef;
+}
+button:focus,
+input[type=submit]:focus,
+input[type=button]:focus,
+input[type=reset]:focus,
+list-item:focus,
+card-box:focus {
+    background-color: #dfe2e5;
+}
+
+button:active,
+input[type=submit]:active,
+input[type=button]:active,
+input[type=reset]:active,
+list-item:active,
+card-box:active {
+    background-color: #dfe2e5 !important;
+}
+
+legend,
+button:hover,
+input[type=submit]:hover,
+input[type=button]:hover,
+input[type=reset]:hover,
+list-item:hover,
+card-box:hover {
+    background-color: #f6f8fa;
+}
+
+hr{
+    background-color: #e1e4e8;
+}
+
+h1,h2{
+    border-color: #eaecef;
+}
+
+blockquote{
+    color: #6a737d;
+}
+
+thead {
+  background-color: #f6f8fa;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #dfe2e5;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  font-weight: 600;
+  background-color: #f6f8fa;
+}
+
+tr:nth-child(even) {
+  background-color: #fafbfc;
+}
+
+
+
+    </style>
+  </head>
+  <body>
+    <header style="min-height: 48px; background: #000000; color: #ffffff;">
+      <middle-left-box style="padding-left: 16px;"><a href="profissional.html">Início</a></middle-left-box>
+      <middle-center-box>Produção individual</middle-center-box>
+      <middle-right-box style="padding-right:9px;" onclick="(async () => {await sb.auth.signOut();location.href='login.html'})()">Sair...</middle-right-box>
+    </header>
+    <main>
+      <div style="padding: 26px;">
+        <br>
+        <h1>Produção diária</h1>
+        <p>
+          Essa seção apresenta sua produção agrupada entre fichas que especificam turno e fichas que não especificam, dentro desses 2 grupos
+          há separação por mês e o detalhamento por tipo de ficha
+        </p>
+        <h2>Fichas que não especificam turno</h2>
+        <div id="producaoDiariaSemTurno">
+        </div>
+        <hr>
+        <h2>Fichas que especificam turno</h2>
+        <div id="producaoDiariaComTurno">
+        </div>
+      </div>
+    </main>
+    <footer>
+      <div>Esquerda rodapé</div>
+      <div>Centro rodapé</div>
+      <div>Direita rodapé</div>
+    </footer>
+    <script>
+      ['card-book','card-box','card-label','list-item'].forEach((t) => customElements.define(t, class extends HTMLElement {}));
+    </script>
+    <script>
+      const supabaseUrl = 'https://gnbbejevwbixsubblnua.supabase.co';
+      const supabaseKey = 'sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA';
+      let sb = supabase.createClient(supabaseUrl, supabaseKey);
+
+      const meses = {
+         1: 'Janeiro',
+         2: 'Fevereiro',
+         3: 'Março',
+         4: 'Abril',
+         5: 'Maio',
+         6: 'Junho',
+         7: 'Julho',
+         8: 'Agosto',
+         9: 'Setembro',
+        10: 'Outubro',
+        11: 'Novembro',
+        12: 'Dezembro'
+      };
+
+      function coloreProducao(producao,ano,mes) {
+        let resultado = "";
+
+        for (let dia = 0; dia < 31; dia++) {
+          if ((dia+1) > new Date(ano/100, mes-ano, 0).getDate()) {
+            resultado += `<td>---</td>`;
+            continue;
+          }
+
+          let a = ano/100;
+          let m = mes-ano;
+          let d = dia+1;
+
+          if (new Date(a,m-1,d).getDay() == 6 || new Date(a,m-1,d).getDay() == 0) {
+            resultado += `<td>---</td>`;
+            continue;
+          }
+
+          resultado += `
+            <td style="text-align: right; background-color:${producao[dia] == '0' ? '#EB989A' : '#B2D9AB'} !important;">
+            ${producao[dia]}
+            </td>
+          `;
+        }
+        return resultado;
+      }
+
+      (async () => {
+        const {data,error} = await sb
+          .from('producao_diaria')
+          .select('cpf,ficha,atendimentos,mes')
+          .order('mes,ficha', { ascending: true })
+          .eq('cpf',localStorage.getItem("profissional_cpf"));
+
+        console.log(data);
+        
+        var ultimoMes = undefined;
+        var anoBase = new Date().getFullYear()*100;
+        var ultimaTabela = undefined;
+
+        for (let producao of data) {
+          let atendimentos = producao.atendimentos.split("!");
+          let mes = meses[producao.mes-anoBase];
+          let ficha = producao.ficha;
+
+          if (isNaN(parseInt(atendimentos[0]))) continue;
+
+          if (mes != ultimoMes) {
+            
+            ultimoMes = mes;
+            ultimaTabela = document.createElement('table');
+            producaoDiariaSemTurno.innerHTML += `<h3>${mes}</h3>`;
+            producaoDiariaSemTurno.appendChild(ultimaTabela);
+          }
+
+          ultimaTabela.innerHTML += `
+            <tr>
+              <td colspan=33><b>${ficha}</b></td>
+            </tr>
+          `;
+
+          ultimaTabela.innerHTML += `
+            <tr>
+              ${(() => {
+                let dias = "";
+                for (let index = 1; index <= 31; index++) {
+                  dias += `<td style="text-align: right;"><b>${index}</b></td>`;
+                }
+                return dias
+              })()}
+              <td><b>Total<b></td>
+              <td><b>Média<b></td>
+            </tr>
+          `;
+
+          atendimentos = atendimentos.map((i) => parseInt(i,10));
+
+          for (let index = 1; index < 31; index++) {
+            if (!atendimentos[index]) {
+              atendimentos[index] = 0;
+            }
+          }
+
+          ultimaTabela.innerHTML += `
+            <tr>
+              ${coloreProducao(atendimentos,anoBase,producao.mes)}
+              <td style="text-align: right;">${atendimentos.reduce((a, t) => a + t, 0)}</td>
+              <td style="text-align: right;">${Math.floor(
+                atendimentos.reduce((a, t) => a + t, 0)
+                /
+                atendimentos.filter(n => n != 0).length
+              )}</td>
+            </tr>
+          `;
+
+          ultimaTabela.innerHTML += `
+            <tr>
+              <td colspan=33 style="border: 0px !important">&emsp;</td>
+            </tr>
+          `;
+        }
+
+        var ultimoMes = undefined;
+        var anoBase = new Date().getFullYear()*100;
+        var ultimaTabela = undefined;
+
+        for (let producao of data) {
+          let atendimentos = producao.atendimentos.split("!");
+          let mes = meses[producao.mes-anoBase];
+          let ficha = producao.ficha;
+
+          if (!isNaN(parseInt(atendimentos[0]))) continue;
+
+          let turnos = {};
+          let turnosBase = producao.atendimentos.split("$");
+          let total = ["Total"];
+
+          for (let turno of turnosBase) {
+            atendimentos = turno.split("!");
+            atendimentos = atendimentos.map((i) => parseInt(i,10));
+            for (let index = 1; index < 32; index++) {
+              if (!atendimentos[index]) atendimentos[index] = 0;
+              if (!total[index]) total[index] = 0;
+
+              total[index] += atendimentos[index];
+            }
+
+            atendimentos[0] = turno.split("!")[0];
+            turnos[total[0]] = total;
+            turnos[atendimentos[0]] = atendimentos;
+          }
+
+          if (mes != ultimoMes) {
+            ultimoMes = mes;
+            ultimaTabela = document.createElement('table');
+            producaoDiariaComTurno.innerHTML += `<h3>${mes}</h3>`;
+            producaoDiariaComTurno.appendChild(ultimaTabela);
+          }
+
+          ultimaTabela.innerHTML += `
+            <tr>
+              <td colspan=34><b>${ficha}</b></td>
+            </tr>
+          `;
+          
+          ultimaTabela.innerHTML += `
+            <tr>
+              <td><b>Turno<b></td>
+              ${(() => {
+                let dias = "";
+                for (let index = 1; index <= 31; index++) {
+                  dias += `<td style="text-align: right;"><b>${index}</b></td>`;
+                }
+                return dias
+              })()}
+              <td><b>Total<b></td>
+              <td><b>Média<b></td>
+            </tr>
+          `;
+
+          for (let turno of ['Manhã','Tarde','Noite','Total']) {
+            let atendimentos = turnos[turno];
+            if (atendimentos == undefined) {
+              atendimentos = [turno];
+              for (let index = 1; index <= 31; index++) {
+                atendimentos[index] = 0;
+              }
+            }
+
+            atendimentos.shift();
+
+            ultimaTabela.innerHTML += `
+            <tr>
+              <td><b>${turno}</b></td>
+              ${coloreProducao(atendimentos,anoBase,producao.mes)}
+              <td style="text-align: right;">${atendimentos.reduce((a, t) => a + t, 0)}</td>
+              <td style="text-align: right;">${Math.floor(
+                atendimentos.reduce((a, t) => a + t, 0)
+                /
+                atendimentos.filter(n => n != 0).length
+              ) || 0}</td>
+            </tr>
+          `;
+          }
+
+          ultimaTabela.innerHTML += `
+            <tr>
+              <td colspan=34 style="border: 0px !important">&emsp;</td>
+            </tr>
+          `;
+          console.log('----------------------------------------------------------------------------------');
+        }
+      })();
+    </script>
+  </body>
+</html>

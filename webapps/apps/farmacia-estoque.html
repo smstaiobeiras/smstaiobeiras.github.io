@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="pt_BR">
+  <head>
+    <meta charset="utf8" />
+    <meta name="theme-color" content="#333333" />
+    <title>Estoque das farmácias</title>
+    <meta content="lua-wpp" name="generator" />
+    <meta content="width=device-width,initial-scale=1.0" name="viewport" />
+    <link href="/webapps/assets/css/style.css" rel="stylesheet" />
+    <link href="/webapps/assets/css/home.css" rel="stylesheet" />
+    <style>
+      * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      #listaMedicamentosUnidades * {
+        -webkit-touch-callout: default;
+        -webkit-user-select: default;
+        -khtml-user-select: default;
+        -moz-user-select: default;
+        -ms-user-select: default;
+        user-select: default;
+      }
+    </style>
+  </head>
+  <body class="container-lg px-3 my-5 markdown-body">
+
+    <nav>
+      <a href="/webapps/farmacia.html">Início</a>
+      <a>Estoque das farmácias</a>
+      <a href="#" > </a>
+    </nav>
+    
+    <h3>&nbsp;</h3>
+    Estoque atualizado em <span id="dataAtualizacao"></span>
+    <hr>
+
+    <div id="montarReceituario">
+      <table id="listaFarmacias">
+        <tbody>
+        </tbody>
+      </table>
+      <br>
+      <br>
+      <fieldset style="display: none;">
+        <table>
+          <tbody id="receituario"></tbody >
+        </table>
+      </fieldset>
+    </div>
+
+    <div id="resultadoBusca" style="display: none;">
+      <button onclick="resultadoBusca.style.display = 'none';montarReceituario.style.display = '';">Voltar para a lista de farmácias</button>
+      <br><br>
+      <table>
+        <tbody id="listaMedicamentosUnidades"></tbody >
+      </table>
+    </div>
+
+    <h3><br /></h3>
+    <script src="/webapps/js/farmacia-publica.js"></script>
+    <script>
+      let seletorUnidades = ``;
+      for (let unidade of Object.keys(unidades)) {
+        if (parseInt(unidade)) continue;
+        let icone = "uaps.jpg";
+        let endereco = "";
+
+        if (unidade.includes("de Minas")) {
+          endereco = `Avenida São João, nº 59, Centro.`;
+          icone = `farmacia-minas.jpg`
+        } else if (unidade.includes("Mary")) {
+          endereco = `Rua Santa Rita de Cássia, 1555, Bom Jardim.`;
+        } else if (unidade.includes("Milton")) {
+          endereco = `Avenida JK, 150, Santos Cruzeiro.`;
+        } else if (unidade.includes("Dona")) {
+          endereco = `Rua Guaicurus, 1625, Sagrada Família.`;
+        } else if (unidade.includes("Sena")) {
+          endereco = `Rua Bom Fim, 136, Centro.`;
+        } else if (unidade.includes("Manoel")) {
+          endereco = `Rua paraíba, 170, Planalto.`;
+        }
+
+        seletorUnidades += `
+          <tr class="border tr" data-page="/webapps/apps/farmacia-facil.html" tabindex="0" role="button" aria-label="Abrir ${unidade}" onclick="pesquisarFarmacia('${unidade}')">
+            <td>
+              <img src="/webapps/assets/img/${icone}" width="72" alt="Ícone Farmácia">
+            </td>
+            <td>
+              <b>${unidade}</b><br>
+              ${endereco}
+            </td>
+          </tr>`;
+      }
+      listaFarmacias.innerHTML = seletorUnidades;
+
+      for (let medicamento of Object.keys(medicamentos)) {
+        receituario.innerHTML += `
+        <tr class="border"name="${medicamento}">
+          <td class="medicamento" style="width:100%;">${medicamento}</td>
+        </tr>`;
+      }
+
+      function pesquisarFarmacia(farmacia) {
+        montarReceituario.style.display = 'none';
+
+        let unidadesComMedicamento = [];
+        for (let medicamento of document.getElementsByClassName("medicamento")) {
+          for (let codUnidade of Object.keys(medicamentos[medicamento.innerText])){
+            unidadesComMedicamento[unidades[codUnidade]] = unidadesComMedicamento[unidades[codUnidade]] || [];
+            unidadesComMedicamento[unidades[codUnidade]][medicamento.innerText] = medicamentos[medicamento.innerText][codUnidade];
+          }
+        }
+        listaMedicamentosUnidades.innerHTML = "";
+
+        for (let unidade of Object.keys(unidades)) {
+          if (unidade!=farmacia) continue;
+          if (!unidadesComMedicamento[unidade]) continue;
+          if (unidade.includes("de Minas")) {
+            listaMedicamentosUnidades.innerHTML += `<tr class="header border">
+              <td colspan=2>
+                <b>${unidade}</b><br>Avenida São João, nº 59, Centro.
+              </td>
+            </tr>`;
+          } else if (unidade.includes("Mary")) {
+            listaMedicamentosUnidades.innerHTML += `<tr class="header border">
+              <td colspan=2>
+                <b>${unidade}</b><br>Rua Santa Rita de Cássia, 1555, Bom Jardim.
+              </td>
+            </tr>`;
+          } else if (unidade.includes("Milton")) {
+            listaMedicamentosUnidades.innerHTML += `<tr class="header border">
+              <td colspan=2>
+                <b>${unidade}</b><br>Avenida JK, 150, Santos Cruzeiro.
+              </td>
+            </tr>`;
+          } else if (unidade.includes("Dona")) {
+            listaMedicamentosUnidades.innerHTML += `<tr class="header border">
+              <td colspan=2>
+                <b>${unidade}</b><br>Rua Guaicurus, 1625, Sagrada Família.
+              </td>
+            </tr>`;
+          } else if (unidade.includes("Sena")) {
+            listaMedicamentosUnidades.innerHTML += `<tr class="header border">
+              <td colspan=2>
+                <b>${unidade}</b><br>Rua Bom Fim, 136, Centro.
+              </td>
+            </tr>`;
+          } else if (unidade.includes("Manoel")) {
+            listaMedicamentosUnidades.innerHTML += `<tr class="header border">
+              <td colspan=2>
+                <b>${unidade}</b><br>Rua paraíba, 170, Planalto.
+              </td>
+            </tr>`;
+          }
+
+          listaMedicamentosUnidades.innerHTML += `
+            <tr>
+              <td class="border"><b>Medicamento</b></td>
+              <td class="border" style="text-align:center;white-space:nowrap;"><b>Em estoque</b></td>
+            </tr>`;
+          for (let medicamento of Object.keys(unidadesComMedicamento[unidade])) {
+            listaMedicamentosUnidades.innerHTML += `
+            <tr>
+              <td class="border">${medicamento}</td>
+              <td class="border" style="text-align:right;">${unidadesComMedicamento[unidade][medicamento]}</td>
+            </tr>`;
+          }
+          listaMedicamentosUnidades.innerHTML += `<tr><td><br></td></tr>`;
+        }
+
+        resultadoBusca.style.display = "";
+        montarReceituario.style.display = "none";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    </script>
+    </script>
+  </body>
+</html>

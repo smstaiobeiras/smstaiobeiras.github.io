@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="preload" href="https://unpkg.com/@supabase/supabase-js@2" as="script">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+      if(localStorage.getItem("sb-gnbbejevwbixsubblnua-auth-token") == null) {location.href='login.html';}
+    </script>
+    <style>
+
+/* App base  Layout*/
+
+*,*::before,*::after {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, p,  figure, blockquote, dl, dd {
+  margin: 0;
+  padding: 0;
+}
+
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button, input, select, textarea,dialog {
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  outline: none;
+  box-shadow: none;
+}
+
+dialog{
+    margin:auto;
+    padding: 28px;
+    box-shadow: 0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+dialog > * {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+dialog > :first-child {
+  margin-top: 0;
+}
+
+dialog > :last-child {
+  margin-bottom: 0;
+}
+
+fieldset,legend {
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 9px;
+}
+
+fieldset {
+  padding: 18px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+body > header, body > footer, body > main {
+  display: flex;
+  flex-direction: row;
+}
+
+body > main {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0;
+  flex: 1;
+}
+
+body > header > *, body > footer > *, body > main > * {
+  flex: 1;
+}
+
+/* Quickly Layouts*/
+
+left-box {
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+center-box {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+right-box {
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+justify-box {
+  display: flex;
+  justify-content: space-between;
+  text-align: justify;
+}
+
+top-box {
+  display: flex;
+  align-items: flex-start;
+}
+
+middle-box {
+  display: flex;
+  align-items: center;
+}
+
+bottom-box {
+  display: flex;
+  align-items: flex-end;
+}
+
+top-left-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+top-center-box {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: center;
+}
+
+top-right-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  text-align: right;
+}
+
+middle-left-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: left;
+}
+
+middle-center-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+middle-right-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: right;
+}
+
+bottom-left-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  text-align: left;
+}
+
+bottom-center-box {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  text-align: center;
+}
+
+bottom-right-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  text-align: right;
+}
+
+justify-middle-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: justify;
+}
+
+/* Standard tags (WIP)*/
+
+hr{
+    box-sizing:content-box;
+    height:.25em;
+    padding:0;
+    margin:12px 0;
+    border:0;
+}
+
+h1,h2,h3,h4,h5,h6{
+    margin:24px 0 16px;
+    font-weight:600;
+    line-height:1.25;
+    padding-bottom: 9px;
+}
+h1{
+    font-size:2em
+}
+h2{
+    font-size:1.5em
+}
+h3{
+    font-size:1.25em
+}
+h4{
+    font-size:1em
+}
+h5{
+    font-size:.875em
+}
+h6{
+    font-size:.85em
+}
+
+h1,h2{
+    border-bottom: 1px solid;
+}
+
+blockquote{
+    padding:1em 1em;
+    margin:24px 0 24px;
+    border-left: 0.25em solid;
+}
+
+p {
+margin:16px 0 16px;
+}
+
+
+/*Forms controls (WIP)*/
+
+input[type=date-local],
+input[type=date],
+input[type=datetime-local],
+input[type=email],
+input[type=month],
+input[type=password],
+input[type=tel],
+input[type=range],
+input[type=text],
+input[type=time-local],
+input[type=time],
+input[type=url],
+input[type=week],
+select,
+textarea {
+    width:100%;
+    border: 1px solid;
+    padding: 9px;
+    padding-left: 18px;
+    padding-right: 18px;
+    border-radius: 4px;
+}
+
+textarea {
+  padding: 18px;
+  overflow-y: scroll;
+  height:100%;
+  resize: none;
+}
+
+button,
+input[type=submit],
+input[type=button],
+input[type=reset] {
+    padding:9px;
+    border-radius:3px;
+    border: 1px solid;
+    cursor: pointer;
+}
+
+button:active,
+input[type=submit]:active,
+input[type=button]:active,
+input[type=reset]:active {
+    border-top: 1px solid transparent;
+}
+
+input[type="checkbox"] {
+  width: 26px;
+  height: 26px;
+  border: 2px solid;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 6px;
+  margin-left: 0px;
+}
+
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  width: 7px;
+  height: 12px;
+  border: 2px solid;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+input[type="radio"] {
+  width: 26px;
+  height: 26px;
+  border: 2px solid;
+  border-radius: 50%; /* Círculo */
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 6px;
+  margin-left: 0px;
+  appearance: none; /* Remove o estilo padrão */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: black; /* Cor do ponto interno */
+}
+
+
+/*Custom controls*/
+
+card-book {
+  padding: 0px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+card-box {
+  padding: 0px;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1;
+  flex-direction: column;
+  border-radius:3px;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+card-box > :first-child {
+  flex: 1;
+}
+
+card-box > * {
+  padding: 9px;
+}
+
+card-box > card-label {
+  padding:9px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+card-box:active {
+    border-top: 1px solid transparent;
+}
+
+list-box {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+list-item {
+  display: flex;
+  padding: 8px;
+  border-bottom: 1px solid;
+  align-items: center;
+  flex: unset;
+  cursor: pointer;
+}
+
+list-item:last-child {
+  border-bottom: none;
+}
+
+list-item > * {
+  padding: 4px;
+}
+
+vertical-scroll,horizontal-scroll {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+horizontal-scroll {
+  flex-direction: row;
+  overflow-x: auto;
+}
+
+
+/*Tabelas*/
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-size: 1em;
+}
+
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 600;
+  padding: 8px;
+  color: #333;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  font-weight: 600;
+}
+
+/* Suporte para tabelas com rolagem */
+table[scroll] {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+
+/*Cores*/
+
+html,dialog {
+  background-color: #ffffff;
+}
+
+fieldset,
+legend,
+input[type=date-local],
+input[type=date],
+input[type=datetime-local],
+input[type=email],
+input[type=month],
+input[type=password],
+input[type=tel],
+input[type=range],
+input[type=text],
+input[type=time-local],
+input[type=time],
+input[type=url],
+input[type=week],
+input[type="checkbox"],
+input[type="radio"],
+input[type=submit],
+input[type=button],
+input[type=reset],
+button,
+select,
+textarea,
+blockquote,list-box,
+list-item,
+card-box{
+    border-color: #dfe2e5;
+}
+
+input[type="checkbox"]:checked::after {
+  border-color: #333;
+}
+
+
+input[type="radio"]:checked::after {
+  background-color: #333; /* Cor do ponto interno */
+}
+
+
+button,
+input[type=submit],
+input[type=button],
+input[type=reset],
+card-box > card-label {
+    background-color: #eaecef;
+}
+button:focus,
+input[type=submit]:focus,
+input[type=button]:focus,
+input[type=reset]:focus,
+list-item:focus,
+card-box:focus {
+    background-color: #dfe2e5;
+}
+
+button:active,
+input[type=submit]:active,
+input[type=button]:active,
+input[type=reset]:active,
+list-item:active,
+card-box:active {
+    background-color: #dfe2e5 !important;
+}
+
+legend,
+button:hover,
+input[type=submit]:hover,
+input[type=button]:hover,
+input[type=reset]:hover,
+list-item:hover,
+card-box:hover {
+    background-color: #f6f8fa;
+}
+
+hr{
+    background-color: #e1e4e8;
+}
+
+h1,h2{
+    border-color: #eaecef;
+}
+
+blockquote{
+    color: #6a737d;
+}
+
+thead {
+  background-color: #f6f8fa;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #dfe2e5;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  font-weight: 600;
+  background-color: #f6f8fa;
+}
+
+tr:nth-child(even) {
+  background-color: #fafbfc;
+}
+
+
+
+    </style>
+  </head>
+  <body>
+    <dialog id="desfecho">
+      <h2>Informe como foi feito o contato com o paciente:</h2>
+      <list-box>
+        <list-item onclick="aplicarDesfecho('Avisado via Whatsapp');desfecho.close();">
+          <img src="i-whatsapp.png" width=64>
+          <span style="flex: 1;">
+            Avisado via <b>WhatsApp</b><br>
+          </span>
+        </list-item>
+        <list-item onclick="aplicarDesfecho('Avisado via telefone fixo');desfecho.close();">
+          <img src="i-telephone.png" width=64>
+          <span style="flex: 1;">
+            Avisado via <b>Telefone fixo</b> da unidade<br>
+          </span>
+        </list-item>
+        <list-item onclick="aplicarDesfecho('Avisado através de terceiros');desfecho.close();">
+          <img src="i-marketing-agent.png" width=64>
+          <span style="flex: 1;">
+            <b>Avisadado</b> por <b>terceiros</b> (vizinho, amigo, colega...)<br>
+          </span>
+        </list-item>
+        <list-item onclick="aplicarDesfecho('Não foi possível contatar');desfecho.close();">
+          <img src="i-missed-call.png" width=64>
+          <span style="flex: 1;">
+            <b>Não</b> foi  <b>possível contatar</b> o paciente<br>
+            <small>Messa opção apenas quando realmente não conseguir<br>contato com o paciente</small> 
+          </span>
+        </list-item>
+      </list-box>
+      <br>
+      <right-box><button onclick="desfecho.close();">Fechar</button></right-box>
+    </dialog>
+    <header style="min-height: 48px; background: #000000; color: #ffffff;">
+      <middle-left-box style="padding-left: 16px;"><a href="profissional.html">Início</a></middle-left-box>
+      <middle-center-box>Solicitações agendadas</middle-center-box>
+      <middle-right-box style="padding-right:9px;" onclick="(async () => {await sb.auth.signOut();location.href='login.html'})()">Sair...</middle-right-box>
+    </header>
+    <main>
+      <div style="padding: 26px;">
+        <h2>Informativo</h2>
+        Esse módulo permite listar os pacientes que tem consultas agendadas
+        <p>
+          <ul>
+            <li>O filtro padrão é para solicitações os próximos 30 dias, esse intervalo pode ser ajustado nos filtros abaixo</li>
+            <li>O sistema rastreia quem e quando foi feita a alteração do status</li>
+            <li>O registro é definitivo lembre-se de prestar atenção na realização da atualização</li>
+          </ul>
+          
+        </p>
+        <hr>
+        <br>
+        <fieldset>
+          <legend>Filtrar os registros</legend>
+          <label style="display: flex;align-items: center;">
+            <span style="text-wrap: nowrap;margin-right: 8px;">
+              Agendadas entre
+              <input id="data_inicial" max="2026-12-31" min="2024-01-01" type="date" value="2023-01-01" style="width: unset;" onchange="carregarTabela();">
+              e
+              <input id="data_final" max="2099-12-31" min="2023-01-01" type="date" value="2023-12-31" style="width: unset;" onchange="carregarTabela();">
+            </span>
+          </label>
+          <br>
+          <label style="display: flex;align-items: center;">
+            <span style="text-wrap: nowrap;margin-right: 8px;">
+              Cadastrado na unidade:
+            </span>
+            <select style="width: unset;" id="listaUnidadesCadastro" onchange="carregarTabela();">
+            </select>
+          </label>
+          <br>
+          <label style="display: flex;align-items: center;">
+            <span style="text-wrap: nowrap;margin-right: 8px;">
+              Agendadas com o profissional:
+            </span>
+            <select style="width: unset;" id="listaProfissional" onchange="carregarTabela();">
+            </select>
+          </label>
+          <br>
+          <label style="display: flex;align-items: center;">
+            <span style="text-wrap: nowrap;margin-right: 8px;">
+              Para a especialidade:
+            </span>
+            <select style="width: unset;" id="listaEspecialidades" onchange="carregarTabela();">
+            </select>
+          </label>
+          <br>
+          <label style="display: flex;align-items: center;">
+            <span style="text-wrap: nowrap;margin-right: 8px;">
+              Realizado na Unidade:
+            </span>
+            <select style="width: unset;" id="listaUnidadesConsulta" onchange="carregarTabela();">
+            </select>
+          </label>
+          <br>
+        </fieldset>
+        <table id="listagem">
+          <thead>
+            <th>Data</th>
+            <th>Hora</th>
+            <th style="text-wrap: nowrap;">Nº Solititação</th>
+            <th>Paciente</th>
+            <th>Contato</th>
+            <th>Local da consulta</th>
+            <th>Procedimento</th>
+            <th>Status</th>
+          </thead>
+          <tbody id="componentesIndicador">
+          </tbody>
+        </table>
+      </div>
+    </main>
+    <footer>
+      <div>Esquerda rodapé</div>
+      <div>Centro rodapé</div>
+      <div>Direita rodapé</div>
+    </footer>
+    <script>
+      ['card-book','card-box','card-label','list-item'].forEach((t) => customElements.define(t, class extends HTMLElement {}));
+    </script>
+    <script>
+      const supabaseUrl = 'https://gnbbejevwbixsubblnua.supabase.co';
+      const supabaseKey = 'sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA';
+      let sb = supabase.createClient(supabaseUrl, supabaseKey);
+
+      data_inicial.value = new Date().toISOString().split('T')[0];
+      data_final.value = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      async function aplicarDesfecho(status){
+        const { data, error } = await sb.from('solicitacoes_agendadas_status').insert([
+          { amb_solicitacao_procedimento_servico_id: window.numero_solicitacao, status: status },
+        ]).select();
+
+        for (let solicitacao of window.solicitacoes) {
+          if (solicitacao.id == window.id) {
+            solicitacao.status = status;
+            carregarTabela();
+            break;
+          }
+        }
+      }
+
+      function definirStatus(numero_solicitacao,id) {
+        window.id = id;
+        window.numero_solicitacao = numero_solicitacao;
+        desfecho.showModal();
+      }
+
+      function carregarTabela() {
+        let resultado = "";
+        //listagem.style = "display:none;";
+        for (let solicitacao of window.solicitacoes) {
+          if (listaProfissional.value != "-"){
+            if (listaProfissional.value != solicitacao.nome_profissional_agenda) continue;
+          }
+          if (listaUnidadesCadastro.value != "-"){
+            if (listaUnidadesCadastro.value != solicitacao.nome_unidade_referencia) continue;
+          }
+          if (listaEspecialidades.value != "-"){
+            if (listaEspecialidades.value != solicitacao.nome_especialidade_agenda) continue;
+          }
+          if (listaUnidadesConsulta.value != "-"){
+            if (listaUnidadesConsulta.value != solicitacao.nome_unidade_agenda) continue;
+          }
+          resultado += `
+            <tr>
+              <td style="text-align: right;">${solicitacao.data_agenda}</td>
+              <td style="text-align: right;">${solicitacao.hora_agenda}</td>
+              <td style="text-align: right;">
+                
+                <a href="https://www.taiobeiras-mg.vivver.com/amb/solicitacao/solicitacao_procedimento_servico/${solicitacao.amb_solicitacao_procedimento_servico_id}?workMode=wmEdit&oldWorkMode=wmSearchResult"
+                   style="color:blue;" target="_blank">
+                  ${solicitacao.amb_solicitacao_procedimento_servico_id}
+                </a>
+              </td>
+              <td>${solicitacao.nome_paciente}</td>
+              <td style="text-align: right;text-wrap: nowrap;font-family: mono;">${solicitacao.telefone.replaceAll(",","<br>").replaceAll("\)",") ")}</td>
+              <td>${solicitacao.nome_unidade_agenda}</td>
+              <td>${solicitacao.nome_procedimento}</td>
+              <td>${solicitacao.status}</td>
+            </tr>
+          `;
+        }
+        componentesIndicador.innerHTML = resultado;
+        listagem.style = "";
+      }
+
+      (async () => {
+        let { data: solicitacoes, error } = await sb.from('vw_solicitacoes_agendadas').select('*');
+        window.solicitacoes = solicitacoes;
+        carregarTabela();
+      })();
+
+      (async () => {
+        let { data: profissionais, error } = await sb.from('vw_profissionais_agenda').select('*');
+        let opcoes = `<option value="-">Selecionar</option>`;
+        for (let profissional of profissionais) {
+          opcoes += `<option value="${profissional.nome}">${profissional.nome}</option>`;
+        }
+        listaProfissional.innerHTML=opcoes;
+
+        listaProfissional.value = localStorage.getItem('nome_profissional');
+        if (listaProfissional.value == '') { 
+          listaProfissional.value = '-';
+        }
+      })();
+
+      (async () => {
+        let { data: profissionais, error } = await sb.from('vw_unidades_agenda').select('*');
+        let opcoes = `<option value="-">Selecionar</option>`;
+        for (let profissional of profissionais) {
+          opcoes += `<option value="${profissional.nome}">${profissional.nome}</option>`;
+        }
+        listaUnidadesCadastro.innerHTML=opcoes;
+      })();
+
+
+      (async () => {
+        let { data: profissionais, error } = await sb.from('vw_especialidade_agenda').select('*');
+        let opcoes = `<option value="-">Selecionar</option>`;
+        for (let profissional of profissionais) {
+          opcoes += `<option value="${profissional.nome}">${profissional.nome}</option>`;
+        }
+        listaEspecialidades.innerHTML=opcoes;
+      })();
+
+      (async () => {
+        let { data: profissionais, error } = await sb.from('vw_unidades_agenda_consulta').select('*');
+        let opcoes = `<option value="-">Selecionar</option>`;
+        for (let profissional of profissionais) {
+          opcoes += `<option value="${profissional.nome}">${profissional.nome}</option>`;
+        }
+        listaUnidadesConsulta.innerHTML=opcoes;
+      })();
+    </script>
+  </body>
+</html>

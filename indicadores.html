@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="preload" href="https://unpkg.com/@supabase/supabase-js@2" as="script">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+      if(localStorage.getItem("sb-gnbbejevwbixsubblnua-auth-token") == null) {location.href='login.html';}
+    </script>
+    <style>
+
+/* App base  Layout*/
+
+*,*::before,*::after {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote, dl, dd {
+  margin: 0;
+  padding: 0;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button, input, select, textarea,dialog {
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  outline: none;
+  box-shadow: none;
+}
+
+dialog{
+    margin:auto;
+    padding: 28px;
+    box-shadow: 0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+dialog > * {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+dialog > :first-child {
+  margin-top: 0;
+}
+
+dialog > :last-child {
+  margin-bottom: 0;
+}
+
+fieldset,legend {
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 9px;
+}
+
+fieldset {
+  padding: 18px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+body > header, body > footer, body > main {
+  display: flex;
+  flex-direction: row;
+}
+
+body > main {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0;
+  flex: 1;
+}
+
+body > header > *, body > footer > *, body > main > * {
+  flex: 1;
+}
+
+/* Quickly Layouts*/
+
+left-box {
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+center-box {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+right-box {
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+justify-box {
+  display: flex;
+  justify-content: space-between;
+  text-align: justify;
+}
+
+top-box {
+  display: flex;
+  align-items: flex-start;
+}
+
+middle-box {
+  display: flex;
+  align-items: center;
+}
+
+bottom-box {
+  display: flex;
+  align-items: flex-end;
+}
+
+top-left-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+top-center-box {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: center;
+}
+
+top-right-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  text-align: right;
+}
+
+middle-left-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: left;
+}
+
+middle-center-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+middle-right-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: right;
+}
+
+bottom-left-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  text-align: left;
+}
+
+bottom-center-box {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  text-align: center;
+}
+
+bottom-right-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  text-align: right;
+}
+
+justify-middle-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: justify;
+}
+
+/* Standard tags (WIP)*/
+
+hr{
+    box-sizing:content-box;
+    height:.25em;
+    padding:0;
+    margin:12px 0;
+    border:0;
+}
+
+h1,h2,h3,h4,h5,h6{
+    margin:24px 0 16px;
+    font-weight:600;
+    line-height:1.25;
+    padding-bottom: 9px;
+}
+h1{
+    font-size:2em
+}
+h2{
+    font-size:1.5em
+}
+h3{
+    font-size:1.25em
+}
+h4{
+    font-size:1em
+}
+h5{
+    font-size:.875em
+}
+h6{
+    font-size:.85em
+}
+
+h1,h2{
+    border-bottom: 1px solid;
+}
+
+blockquote{
+    padding:1em 1em;
+    margin:24px 0 24px;
+    border-left: 0.25em solid;
+}
+
+p {
+margin:16px 0 16px;
+}
+
+
+/*Forms controls (WIP)*/
+
+input[type=date-local],
+input[type=date],
+input[type=datetime-local],
+input[type=email],
+input[type=month],
+input[type=password],
+input[type=tel],
+input[type=range],
+input[type=text],
+input[type=time-local],
+input[type=time],
+input[type=url],
+input[type=week],
+select,
+textarea {
+    width:100%;
+    border: 1px solid;
+    padding: 9px;
+    padding-left: 18px;
+    padding-right: 18px;
+    border-radius: 4px;
+}
+
+textarea {
+  padding: 18px;
+  overflow-y: scroll;
+  height:100%;
+  resize: none;
+}
+
+button,
+input[type=submit],
+input[type=button],
+input[type=reset] {
+    padding:9px;
+    border-radius:3px;
+    border: 1px solid;
+    cursor: pointer;
+}
+
+button:active,
+input[type=submit]:active,
+input[type=button]:active,
+input[type=reset]:active {
+    border-top: 1px solid transparent;
+}
+
+input[type="checkbox"] {
+  width: 26px;
+  height: 26px;
+  border: 2px solid;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 6px;
+  margin-left: 0px;
+}
+
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  width: 7px;
+  height: 12px;
+  border: 2px solid;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+input[type="radio"] {
+  width: 26px;
+  height: 26px;
+  border: 2px solid;
+  border-radius: 50%; /* Círculo */
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 6px;
+  margin-left: 0px;
+  appearance: none; /* Remove o estilo padrão */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: black; /* Cor do ponto interno */
+}
+
+
+/*Custom controls*/
+
+card-book {
+  padding: 0px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+card-box {
+  padding: 0px;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1;
+  flex-direction: column;
+  border-radius:3px;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+card-box > :first-child {
+  flex: 1;
+}
+
+card-box > * {
+  padding: 9px;
+}
+
+card-box > card-label {
+  padding:9px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+card-box:active {
+    border-top: 1px solid transparent;
+}
+
+list-box {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+list-item {
+  display: flex;
+  padding: 8px;
+  border-bottom: 1px solid;
+  align-items: center;
+  flex: unset;
+  cursor: pointer;
+}
+
+list-item:last-child {
+  border-bottom: none;
+}
+
+list-item > * {
+  padding: 4px;
+}
+
+vertical-scroll,horizontal-scroll {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+horizontal-scroll {
+  flex-direction: row;
+  overflow-x: auto;
+}
+
+
+/*Tabelas*/
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-size: 1em;
+}
+
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 600;
+  padding: 8px;
+  color: #333;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  font-weight: 600;
+}
+
+/* Suporte para tabelas com rolagem */
+table[scroll] {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+
+/*Cores*/
+
+html,dialog {
+  background-color: #ffffff;
+}
+
+fieldset,
+legend,
+input[type=date-local],
+input[type=date],
+input[type=datetime-local],
+input[type=email],
+input[type=month],
+input[type=password],
+input[type=tel],
+input[type=range],
+input[type=text],
+input[type=time-local],
+input[type=time],
+input[type=url],
+input[type=week],
+input[type="checkbox"],
+input[type="radio"],
+input[type=submit],
+input[type=button],
+input[type=reset],
+button,
+select,
+textarea,
+blockquote,list-box,
+list-item,
+card-box{
+    border-color: #dfe2e5;
+}
+
+input[type="checkbox"]:checked::after {
+  border-color: #333;
+}
+
+
+input[type="radio"]:checked::after {
+  background-color: #333; /* Cor do ponto interno */
+}
+
+
+button,
+input[type=submit],
+input[type=button],
+input[type=reset],
+card-box > card-label {
+    background-color: #eaecef;
+}
+button:focus,
+input[type=submit]:focus,
+input[type=button]:focus,
+input[type=reset]:focus,
+list-item:focus,
+card-box:focus {
+    background-color: #dfe2e5;
+}
+
+button:active,
+input[type=submit]:active,
+input[type=button]:active,
+input[type=reset]:active,
+list-item:active,
+card-box:active {
+    background-color: #dfe2e5 !important;
+}
+
+legend,
+button:hover,
+input[type=submit]:hover,
+input[type=button]:hover,
+input[type=reset]:hover,
+list-item:hover,
+card-box:hover {
+    background-color: #f6f8fa;
+}
+
+hr{
+    background-color: #e1e4e8;
+}
+
+h1,h2{
+    border-color: #eaecef;
+}
+
+blockquote{
+    color: #6a737d;
+}
+
+thead {
+  background-color: #f6f8fa;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #dfe2e5;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  font-weight: 600;
+  background-color: #f6f8fa;
+}
+
+tr:nth-child(even) {
+  background-color: #fafbfc;
+}
+
+
+
+    </style>
+  </head>
+  <body>
+    <header style="min-height: 48px; background: #000000; color: #ffffff;">
+      <middle-left-box style="padding-left: 16px;"><a href="profissional.html">Início</a></middle-left-box>
+      <middle-center-box>Indicadores</middle-center-box>
+      <middle-right-box style="padding-right:9px;" onclick="(async () => {await sb.auth.signOut();location.href='login.html'})()">Sair...</middle-right-box>
+    </header>
+    <main>
+      <div style="padding: 26px;">
+        <h2>Clique nos indicadores para detalhar</h2>
+        <card-book id="graficosIndicadores" style="max-width: 1100px !important;">
+        </card-book>
+        <br>
+        <table>
+          <tbody>
+            <tr>
+              <td style="background-color: #3498db;">&emsp;&emsp;</td>
+              <td>Ótimo</td>
+              <td style="background-color: #2ecc71;">&emsp;&emsp;</td>
+              <td>Bom</td>
+            </tr>
+            <tr>
+              <td style="background-color: #f1c40f;">&emsp;&emsp;</td>
+              <td>Suficiente</td>
+              <td style="background-color: #e74c3c;">&emsp;&emsp;</td>
+              <td>Regular</td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+        <hr>
+        <br>
+        <fieldset style="display: none;" id="detalhamento">
+          <legend>Componentes do indicador - <b id="nomeIndicador">Nome Indicador</b></legend>
+          <table>
+            <thead id="cabecalhoDetalhamento">
+              <th>Componente</th>
+              <th>Quantidade de pacientes</th>
+              <th>Pacientes com atendimento</th>
+              <th>Percentual atingido</th>
+            </thead>
+            <tbody id="componentesIndicador">
+            </tbody>
+          </table>
+        </fieldset>
+      </div>
+    </main>
+    <footer style="display: none;">
+      <div>Esquerda rodapé</div>
+      <div>Centro rodapé</div>
+      <div>Direita rodapé</div>
+    </footer>
+    <script>
+      ['card-book','card-box','card-label','list-item'].forEach((t) => customElements.define(t, class extends HTMLElement {}));
+    </script>
+    <script>
+      const supabaseUrl = 'https://gnbbejevwbixsubblnua.supabase.co';
+      const supabaseKey = 'sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA';
+      let sb = supabase.createClient(supabaseUrl, supabaseKey);
+
+      (async () => {
+        let { data: indicadores, error } = await sb.from('indicadores_esf')
+          .select('*')
+          .eq('esf', (new URLSearchParams(window.location.search)).get('esf'))
+          .order('codigo', { ascending: true });
+
+        let titulosIndicadores = {
+          "C1": "Mais acesso à APS",
+          "C2": "Cuidado no desenvolvimento infantil",
+          "C3": "Cuidado da gestante e puérpera",
+          "C4": "Cuidado da pessoa com diabetes",
+          "C5": "Cuidado da pessoa com hipertensão",
+          "C6": "Cuidado da pessoa idosa",
+          "C7": "Cuidado da mulher na prevenção do câncer",
+        }
+
+        let metaIndicadores = {
+          "C1": {
+            "Ótimo": {
+              min: 51,
+              max: 69,
+            },
+            "Bom": {
+              min: 31,
+              max: 50,
+            },
+            "Suficiente": {
+              min: 11,
+              max: 30,
+            },
+            "Regular": {
+              min: 0,
+              max: 10,
+            },
+          },
+          "C2": {
+            "Ótimo": {
+              min: 76,
+              max: 100,
+            },
+            "Bom": {
+              min: 51,
+              max: 75,
+            },
+            "Suficiente": {
+              min: 26,
+              max: 50,
+            },
+            "Regular": {
+              min: 0,
+              max: 25,
+            },
+          },
+          "C3": {
+            "Ótimo": {
+              min: 76,
+              max: 100,
+            },
+            "Bom": {
+              min: 51,
+              max: 75,
+            },
+            "Suficiente": {
+              min: 26,
+              max: 50,
+            },
+            "Regular": {
+              min: 0,
+              max: 25,
+            },
+          },
+          "C4": {
+            "Ótimo": {
+              min: 76,
+              max: 100,
+            },
+            "Bom": {
+              min: 51,
+              max: 75,
+            },
+            "Suficiente": {
+              min: 26,
+              max: 50,
+            },
+            "Regular": {
+              min: 0,
+              max: 25,
+            },
+          },
+          "C5": {
+            "Ótimo": {
+              min: 76,
+              max: 100,
+            },
+            "Bom": {
+              min: 51,
+              max: 75,
+            },
+            "Suficiente": {
+              min: 26,
+              max: 50,
+            },
+            "Regular": {
+              min: 0,
+              max: 25,
+            },
+          },
+          "C6": {
+            "Ótimo": {
+              min: 76,
+              max: 100,
+            },
+            "Bom": {
+              min: 51,
+              max: 75,
+            },
+            "Suficiente": {
+              min: 26,
+              max: 50,
+            },
+            "Regular": {
+              min: 0,
+              max: 25,
+            },
+          },
+          "C7": {
+            "Ótimo": {
+              min: 76,
+              max: 100,
+            },
+            "Bom": {
+              min: 51,
+              max: 75,
+            },
+            "Suficiente": {
+              min: 26,
+              max: 50,
+            },
+            "Regular": {
+              min: 0,
+              max: 25,
+            },
+          },
+        }
+
+        let cores = {
+          "Ótimo": "#3498db",
+          "Bom": "#2ecc71",
+          "Suficiente": "#f1c40f",
+          "Regular": "#e74c3c",
+        }
+
+        function obterCategoria(indicador, valor) {
+          const categorias = metaIndicadores[indicador];
+
+          for (const [categoria, { min, max }] of Object.entries(categorias)) {
+            if (valor >= min && valor <= max) {
+              return categoria;
+            }
+          }
+
+          return "Regular";
+        }
+
+        for (let linha of indicadores) {
+          let legenda = titulosIndicadores[linha.codigo];
+          let percentual = linha.media_nota;
+          let cardbox = document.createElement("card-box");
+          cardbox.style="max-width: 256px;min-width: 256px;";
+          cardbox.innerHTML = `
+            <center-box>
+              <div style="min-height: 128px;min-width: 256px;border: 0px;" id="${linha.codigo}"></div>
+            </center-box>
+            <card-label>
+              <center-box><b>${legenda}</b></center-box>
+            </card-label>
+          `;
+          cardbox.onclick = () => {
+            detalhamento.style = "";
+            nomeIndicador.innerHTML = legenda;
+            for (let tr of componentesIndicador.getElementsByTagName("tr")) {
+              console.log(tr.classList.contains(linha.codigo))
+              if (tr.classList.contains(linha.codigo)) {
+                tr.style = "";
+                continue;
+              }
+              tr.style = "display: none;";
+            }
+
+            if (linha.codigo == "C1") {
+              cabecalhoDetalhamento.innerHTML = `
+                <th>Componente</th>
+                <th>Total de atendimentos</th>
+                <th>Total de agendamentos</th>
+                <th>Percentual atingido</th>
+              `;
+              return;
+            }
+            cabecalhoDetalhamento.innerHTML = `
+              <th>Componente</th>
+              <th>Quantidade de pacientes</th>
+              <th>Pacientes com atendimento</th>
+              <th>Percentual atingido</th>
+            `;
+          }
+
+          graficosIndicadores.appendChild(cardbox);
+
+          let chart = new ApexCharts(document.getElementById(linha.codigo),{
+            series: [Math.floor(linha.media_notas)],
+            chart: {
+              animations: {
+                enabled: false
+              },
+              type: 'radialBar',
+              offsetY: -20,
+              sparkline: {
+                enabled: true
+              }
+            },
+            plotOptions: {
+              radialBar: {
+                  startAngle: -90,
+                  endAngle: 90,
+                  track: {
+                    background: "#e7e7e7",
+                    strokeWidth: '97%',
+                    margin: 5
+                  },
+                dataLabels: {
+                  name: {
+                    show: false
+                  },
+                  value: {
+                    offsetY: -2,
+                    fontSize: '22px'
+                  }
+                }
+              }
+            },
+            grid: {
+              padding: {
+                top: -10
+              }
+            },
+            fill: {
+              type: 'solid',
+              colors: [cores[obterCategoria(linha.codigo,Math.floor(linha.media_notas))]]
+            },
+          });
+          chart.render();
+          
+          document.getElementById(linha.codigo).parentElement.style = "pointer-events: none;"
+        }
+      })();
+
+      (async () => {
+        let { data: indicadores, error } = await sb.from('indicadores_esf_detalhado')
+          .select('*')
+          .eq('esf', (new URLSearchParams(window.location.search)).get('esf'))
+          .order('codigo', { ascending: true });
+        
+        
+        for (let indicador of indicadores) {
+          let componentes = JSON.parse(indicador.dados);
+          let dados = {}
+
+          for (let [chave,valor] of Object.entries(componentes)) {
+            let texto = chave.replace("subiu_","").replace("total_","").replaceAll("_"," ");
+
+            if (!dados[texto]) {
+              dados[texto] = {};
+            }
+            dados[texto][chave.split("_")[0]] = valor
+          }
+
+          for (let [texto,info] of Object.entries(dados)) {
+            let linha = document.createElement("tr");
+            let descritor = document.createElement("td");
+            let total = document.createElement("td");
+            let atendidos = document.createElement("td");
+            let percentual = document.createElement("td");
+
+            descritor.textContent = texto;
+            total.textContent = info.total;
+            atendidos.textContent = info.subiu;
+            percentual.textContent = `${Math.floor(info.subiu/info.total*100)}%`;
+
+            total.style = "text-align: right;";
+            atendidos.style = "text-align: right;";
+            percentual.style = "text-align: right;";
+
+            linha.appendChild(descritor);
+            linha.appendChild(total);
+            linha.appendChild(atendidos);
+            linha.appendChild(percentual);
+
+            componentesIndicador.appendChild(linha);
+            linha.classList = indicador.codigo;
+            linha.style = "display: none;"
+          }
+
+        }
+      })();
+    </script>
+  </body>
+</html>

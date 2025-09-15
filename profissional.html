@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="preload" href="https://unpkg.com/@supabase/supabase-js@2" as="script">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+      if(localStorage.getItem("sb-gnbbejevwbixsubblnua-auth-token") == null) {location.href='login.html';}
+    </script>
+    <style>
+
+/* App base  Layout*/
+
+*,*::before,*::after {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote, dl, dd {
+  margin: 0;
+  padding: 0;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button, input, select, textarea,dialog {
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  outline: none;
+  box-shadow: none;
+}
+
+dialog{
+    margin:auto;
+    padding: 28px;
+    box-shadow: 0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+dialog > * {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+dialog > :first-child {
+  margin-top: 0;
+}
+
+dialog > :last-child {
+  margin-bottom: 0;
+}
+
+fieldset,legend {
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 9px;
+}
+
+fieldset {
+  padding: 18px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+body > header, body > footer, body > main {
+  display: flex;
+  flex-direction: row;
+}
+
+body > main {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0;
+  flex: 1;
+}
+
+body > header > *, body > footer > *, body > main > * {
+  flex: 1;
+}
+
+/* Quickly Layouts*/
+
+left-box {
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+center-box {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+right-box {
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+justify-box {
+  display: flex;
+  justify-content: space-between;
+  text-align: justify;
+}
+
+top-box {
+  display: flex;
+  align-items: flex-start;
+}
+
+middle-box {
+  display: flex;
+  align-items: center;
+}
+
+bottom-box {
+  display: flex;
+  align-items: flex-end;
+}
+
+top-left-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+top-center-box {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: center;
+}
+
+top-right-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  text-align: right;
+}
+
+middle-left-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: left;
+}
+
+middle-center-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+middle-right-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: right;
+}
+
+bottom-left-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  text-align: left;
+}
+
+bottom-center-box {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  text-align: center;
+}
+
+bottom-right-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  text-align: right;
+}
+
+justify-middle-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: justify;
+}
+
+/* Standard tags (WIP)*/
+
+hr{
+    box-sizing:content-box;
+    height:.25em;
+    padding:0;
+    margin:12px 0;
+    border:0;
+}
+
+h1,h2,h3,h4,h5,h6{
+    margin:24px 0 16px;
+    font-weight:600;
+    line-height:1.25;
+    padding-bottom: 9px;
+}
+h1{
+    font-size:2em
+}
+h2{
+    font-size:1.5em
+}
+h3{
+    font-size:1.25em
+}
+h4{
+    font-size:1em
+}
+h5{
+    font-size:.875em
+}
+h6{
+    font-size:.85em
+}
+
+h1,h2{
+    border-bottom: 1px solid;
+}
+
+blockquote{
+    padding:1em 1em;
+    margin:24px 0 24px;
+    border-left: 0.25em solid;
+}
+
+p {
+margin:16px 0 16px;
+}
+
+
+/*Tabelas*/
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-size: 1em;
+}
+
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 600;
+  padding: 8px;
+  color: #333;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  font-weight: 600;
+}
+
+/* Suporte para tabelas com rolagem */
+table[scroll] {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+
+/*Forms controls (WIP)*/
+
+input[type=date-local],
+input[type=date],
+input[type=datetime-local],
+input[type=email],
+input[type=month],
+input[type=password],
+input[type=tel],
+input[type=range],
+input[type=text],
+input[type=time-local],
+input[type=time],
+input[type=url],
+input[type=week],
+select,
+textarea {
+    width:100%;
+    border: 1px solid;
+    padding: 9px;
+    padding-left: 18px;
+    padding-right: 18px;
+    border-radius: 4px;
+}
+
+textarea {
+  padding: 18px;
+  overflow-y: scroll;
+  height:100%;
+  resize: none;
+}
+
+button,
+input[type=submit],
+input[type=button],
+input[type=reset] {
+    padding:9px;
+    border-radius:3px;
+    border: 1px solid;
+    cursor: pointer;
+}
+
+button:active,
+input[type=submit]:active,
+input[type=button]:active,
+input[type=reset]:active {
+    border-top: 1px solid transparent;
+}
+
+input[type="checkbox"] {
+  width: 26px;
+  height: 26px;
+  border: 2px solid;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 6px;
+  margin-left: 0px;
+}
+
+input[type="radio"] {
+  width: 26px;
+  height: 26px;
+  border: 2px solid;
+  border-radius: 50%; /* Círculo */
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 6px;
+  margin-left: 0px;
+  appearance: none; /* Remove o estilo padrão */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: black; /* Cor do ponto interno */
+}
+
+
+/*Custom controls*/
+
+card-book {
+  padding: 0px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+card-box {
+  padding: 0px;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1;
+  flex-direction: column;
+  border-radius:3px;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+card-box > :first-child {
+  flex: 1;
+}
+
+card-box > * {
+  padding: 9px;
+}
+
+card-box > card-label {
+  padding:9px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+card-box:active {
+    border-top: 1px solid transparent;
+}
+
+list-box {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+list-item {
+  display: flex;
+  padding: 8px;
+  border-bottom: 1px solid;
+  align-items: center;
+  flex: unset;
+  cursor: pointer;
+}
+
+list-item:last-child {
+  border-bottom: none;
+}
+
+list-item > * {
+  padding: 4px;
+}
+
+vertical-scroll,horizontal-scroll {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+horizontal-scroll {
+  flex-direction: row;
+  overflow-x: auto;
+}
+
+/*Light Theme*/
+
+html,dialog {
+  background-color: #ffffff;
+}
+
+fieldset,
+legend,
+input[type=date-local],
+input[type=date],
+input[type=datetime-local],
+input[type=email],
+input[type=month],
+input[type=password],
+input[type=tel],
+input[type=range],
+input[type=text],
+input[type=time-local],
+input[type=time],
+input[type=url],
+input[type=week],
+input[type="checkbox"],
+input[type="radio"],
+input[type=submit],
+input[type=button],
+input[type=reset],
+button,
+select,
+textarea,
+blockquote,list-box,
+list-item,
+card-box{
+    border-color: #dfe2e5;
+}
+
+input[type="checkbox"]:checked::after {
+  border-color: #333;
+}
+
+
+input[type="radio"]:checked::after {
+  background-color: #333; /* Cor do ponto interno */
+}
+
+
+button,
+input[type=submit],
+input[type=button],
+input[type=reset],
+card-box > card-label {
+    background-color: #eaecef;
+}
+button:focus,
+input[type=submit]:focus,
+input[type=button]:focus,
+input[type=reset]:focus,
+list-item:focus,
+card-box:focus {
+    background-color: #dfe2e5;
+}
+
+button:active,
+input[type=submit]:active,
+input[type=button]:active,
+input[type=reset]:active,
+list-item:active,
+card-box:active {
+    background-color: #dfe2e5 !important;
+}
+
+legend,
+button:hover,
+input[type=submit]:hover,
+input[type=button]:hover,
+input[type=reset]:hover,
+list-item:hover,
+card-box:hover {
+    background-color: #f6f8fa;
+}
+
+hr{
+    background-color: #e1e4e8;
+}
+
+h1,h2{
+    border-color: #eaecef;
+}
+
+blockquote{
+    color: #6a737d;
+}
+
+
+    </style>
+  </head>
+  <body>
+    <dialog id="statusCadastros">
+      <h2>Quantitativo de cadastros</h2>
+      <label style="display: inline-flex;align-items: center;margin-bottom: 16px;">
+        <span style="text-wrap: nowrap;padding-right: 16px;">
+          Escolha a ESF:
+        </span>
+        <select class="esf-select">
+        </select>
+      </label>
+      <label style="display: inline-flex;align-items: center;margin-bottom: 16px;margin-left: 32px;">
+        <span style="text-wrap: nowrap;padding-right: 16px;">
+          Micro área:
+        </span>
+        <select class="esf-microarea">
+        </select>
+      </label>
+      <fieldset>
+        <legend>Escolha o tipo de agrupamento</legend>
+        <list-box>
+          <list-item onclick="window.open('Quantitativo-Pacientes-Faixa-etaria.html', '_tab');statusCadastros.close();">
+            <img src="i-text-file.png" width=64>
+            <span style="flex: 1;">
+             <b>Por idade</b><br>
+             Agrupa por faixa etária baseado nas faixas usadas pelo IBGE
+            </span>
+          </list-item>
+          <list-item onclick="window.open('Quantitativo-Pacientes-Condicionalidade.html', '_tab');statusCadastros.close();">
+            <img src="i-text-file.png" width=64>
+            <span style="flex: 1;">
+             <b>Por condicionalidade</b><br>
+             Agrupa por condicionalidade baseado no cadastro individual
+            </span>
+          </list-item>
+          <list-item onclick="window.open('Quantitativo-Pacientes-Indicador.html', '_tab');statusCadastros.close();">
+            <img src="i-text-file.png" width=64>
+            <span style="flex: 1;">
+             <b>Por indicador</b><br>
+             Agrupa por indicador que o paciente impacta
+            </span>
+          </list-item>
+        </list-box>
+      </fieldset>
+      <middle-right-box style="margin-top: 16px;">
+        <button onclick="statusCadastros.close();">Fechar</button>
+      </middle-right-box>
+    </dialog>
+
+    
+    <dialog id="planilhas">
+      <h2>Planilhas</h2>
+      <list-box id="listaRelatorios">
+      </list-box>
+      <middle-right-box style="margin-top: 16px;">
+        <button onclick="planilhas.close();">Fechar</button>
+      </middle-right-box>
+    </dialog>
+
+    <dialog id="indicadores" style="min-width: 720px;">
+      <h2>Equipes com indicadores</h2>
+      <list-box id="listaEquipesIndicadores" style="max-height: 405px;overflow-y:auto;outline: none;">
+      </list-box>
+      <middle-right-box style="margin-top: 16px;">
+        <button onclick="indicadores.close();">Fechar</button>
+      </middle-right-box>
+    </dialog>
+
+    
+
+    <dialog id="pacientes">
+      <h2>Buscar paciente</h2>
+      <label style="display: flex;align-items: center;">
+        Nome: <input type="text" style="flex:1;margin-left: 8px;" name="nome">
+      </label>
+      <div style="display: flex;">
+        <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
+          Nome da mãe: <input type="text" style="flex:1;margin-left: 8px;" name="mae">
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;flex: 1">
+          Nome do pai: <input type="text" style="flex:1;margin-left: 8px;" name="pai">
+        </label>
+      </div>
+      <div style="display: flex;">
+        <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
+          CNS: <input type="text" style="flex:1;margin-left: 8px;" name="cns">
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;">
+          Telefone: <input type="text" style="flex:1;margin-left: 8px;"  name="contato">
+        </label>
+      </div>
+
+      <div style="display: flex;">
+        <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
+          Data de nascimento: <input type="date" style="flex:1;margin-left: 8px;" name="data_nascimento">
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;">
+          Sexo:
+          <select style="flex:1;margin-left: 8px;" name="sexo">
+            <option value="-">Ambos</option>
+            <option>Masculino</option>
+            <option>Feminino</option>
+          </select>
+        </label>
+      </div>
+
+      <div style="display: flex;">
+        <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
+          Unidade:
+          <select style="flex:1;margin-left: 8px;" name="unidade_saude" class="esf-unidade">
+            <option value="-">Todas</option>
+          </select>
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;flex: 1">
+          Equipe:
+          <select style="flex:1;margin-left: 8px;" name="equipe" class="esf-equipe">
+            <option value="-">Todas</option>
+          </select>
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;text-wrap: nowrap;">
+          Micro área:
+          <select style="flex:1;margin-left: 8px;" name="micro_area" class="esf-microarea">
+          </select>
+        </label>
+      </div>
+      <p style="margin-bottom: 0px;margin-top: 32px;">
+        Condicionantes:
+      </p>
+      <div style="display: flex;">
+        <table >
+          <tr>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="gestante">
+                Gestante
+              </label>
+            </td>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="hipertenso">
+                Hipertenso
+              </label>
+            </td>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="diabetico">
+                Diabético
+              </label>
+            </td>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="fumante">
+                Fumante
+              </label>
+            </td>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="alcolatra">
+                Alcoolismo
+              </label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_auditivo">
+                Deficiente auditivo
+              </label>
+            </td>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_intelectual">
+                Deficiente intelectual
+              </label>
+            </td>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_visual">
+                Deficiente visual
+              </label>
+            </td>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_fisico">
+                Deficiente fisico
+              </label>
+
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_asma">
+                Tem asma
+              </label>
+
+            </td>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_dpoc">
+                Tem dPoc
+              </label>
+            </td>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_doenca_cadiaca">
+                Tem doenca cadiaca
+              </label>
+            </td>
+            <td>
+              <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_problema_rins">
+                Tem problema nos rins
+              </label>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <middle-right-box style="margin-top: 16px;">
+        <button onclick="pacientes.close();">Fechar</button>
+        <button onclick="limparPesquisarCadastros();" style="margin-left: 8px;">Limpar</button>
+        <button onclick="pesquisarCadastros();" style="margin-left: 8px;">Pesquisar</button>
+      </middle-right-box>
+    </dialog>
+
+    <dialog id="adicionarSistemaExterno" style="width: 480px;">
+      <h2>Adicionar sistema</h2>
+      <label style="display: flex;align-items: center;">
+        Nome: 
+        <input type="text" style="width: unset;flex:1;margin-left: 8px;" id="nomeSistema">
+      </label>
+      <br>
+      <label style="display: flex;align-items: center;">
+        Link:
+        <input type="text" style="width: unset;flex:1;margin-left: 8px;" id="linkSistema">
+      </label>
+      <br>
+      <label style="display: flex;align-items: center;">
+        Ícone:
+        <input type="file" style="width: unset;flex:1;margin-left: 8px;" onchange="showImageCropperDialog(iconeSistema.files[0]);" id="iconeSistema">
+      </label>
+      <middle-right-box style="margin-top: 16px;">
+        <button onclick="adicionarSistemaExterno.close();">Fechar</button>
+        <button onclick="salvarLinkDeAcessoAosSistemas();" style="margin-left: 8px;">Salvar</button>
+      </middle-right-box>
+    </dialog>
+
+    <header style="min-height: 48px; background: #000000; color: #ffffff;">
+      <div></div>
+      <middle-center-box id="nome"></middle-center-box>
+      <middle-right-box style="padding-right:9px;" onclick="(async () => {await sb.auth.signOut();location.href='login.html'})()">Sair...</middle-right-box>
+    </header>
+    <main>
+      <div style="padding: 26px;">
+        <br><br>
+        <list-box style="display: none;">
+         <list-item>
+           <img src="i-error.png" width=64>
+           <span style="flex: 1;">
+            <b>Problemas urgentes</b><br>
+            Lista de problemas que precisam de atenção máxima
+           </span>
+           <middle-right-box  style="max-width: 64px;min-width: 64px;font-size: 18pt;">
+             0
+           </middle-right-box>
+         </list-item>
+         <list-item>
+           <img src="i-warning.png" width=64>
+           <span style="flex: 1;">
+            <b>Problemas de produção</b><br>
+            Lista de problemas relacionados a sua produção
+           </span>
+           <middle-right-box  style="max-width: 64px;min-width: 64px;font-size: 18pt;">
+             0
+           </middle-right-box>
+         </list-item>
+         <list-item>
+           <img src="i-information.png" width=64>
+           <span style="flex: 1;">
+            <b>Informativos</b><br>
+            Coisas que você precisa saber
+           </span>
+           <middle-right-box  style="max-width: 64px;min-width: 64px;font-size: 18pt;">
+             0
+           </middle-right-box>
+         </list-item>
+        </list-box>
+        <br><br>
+        <hr style="display: none;">
+        <br><br>
+        <card-book>
+          <card-box style="max-width: 128px;min-width: 128px;">
+            <center-box>
+              <img src="i-seo-report.png" width="96px" onclick="window.location.href='producao-individual.html'">
+            </center-box>
+            <card-label>
+              <center-box><b>Produção individual</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;" onclick="indicadores.showModal();">
+            <center-box>
+              <img src="i-improvement.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Indicadores</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;" onclick="window.location.href='solicitacoes-devolvidas.html'">
+            <center-box>
+              <img src="i-risk-analysis.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Solicitações devolvidas</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;" onclick="window.location.href='solicitacoes-agendadas.html'">
+            <center-box>
+              <img src="i-document.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Solicitações agendadas</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;display: none;">
+            <center-box>
+              <img src="i-calendar.png" width="96px">
+            </center-box>
+            <card-label>
+              <b>Agenda</b>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;" onclick="pacientes.showModal();">
+            <center-box>
+              <img src="i-contacts.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Lista de pacientes</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;display: none;" onclick="statusCadastros.showModal();">
+            <center-box>
+              <img src="i-completed-task.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Quantitativo de cadastros</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;" onclick="planilhas.showModal();">
+            <center-box>
+              <img src="i-google-sheets-stack.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Planilhas</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;display: none;">
+            <center-box>
+              <img src="i-inventory.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Controle de estoque</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;display: none;">
+            <center-box>
+              <img src="i-sheet.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Checklists</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;display: none;">
+            <center-box>
+              <img src="i-job.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Formulários</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;display: none;">
+            <center-box>
+              <img src="i-house-cleaning.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Unidade</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;display: none;">
+            <center-box>
+              <img src="i-health-report.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Emitir fichas</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;display: none;">
+            <center-box>
+              <img src="i-chat.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Mensagens</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;display: none;">
+            <center-box>
+              <img src="i-help.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>Ajuda & suporte</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 128px;min-width: 128px;" onclick="window.open('Teste-MCARTH.html','_blank','width=1280,height=600')">
+            <center-box>
+              <img src="i-blocks.png" width="96px">
+            </center-box>
+            <card-label>
+              <center-box><b>M-CHAT</b></center-box>
+            </card-label>
+          </card-box>
+        </card-book>
+        <br>
+        <hr>
+        <h2>Acesso aos sistemas</h2>
+        <card-book id="listaSistemas">
+        </card-book>
+      </div>
+    </main>
+    <br><br>
+    <footer style="display: none;">
+      <div>Esquerda rodapé</div>
+      <div>Centro rodapé</div>
+      <div>Direita rodapé</div>
+    </footer>
+    <script>
+      ['card-book','card-box','card-label','list-item'].forEach((t) => customElements.define(t, class extends HTMLElement {}));
+    </script>
+    <script>
+      function showImageCropperDialog(file, title, outputSize, ok, cancel) {
+        outputSize = outputSize || 300;
+        title = title || "Enquadrar imagem";
+        ok = ok || "Cortar";
+        cancel = cancel || "Cancelar";
+      
+        return new Promise((resolve, reject) => {
+          const dialog = document.createElement('dialog');
+          dialog.classList.add("ImageCropper");
+      
+          const containerSize = 300; // tamanho fixo da área visível
+          let imgNaturalWidth, imgNaturalHeight;
+          let imgX = 0, imgY = 0;
+          let dragging = false;
+          let startX, startY;
+          let mode = null;
+      
+          const titleHeader = document.createElement("h3");
+          titleHeader.innerText = title;
+      
+          const container = document.createElement('div');
+          container.style.width = containerSize + 'px';
+          container.style.height = containerSize + 'px';
+          container.style.overflow = 'hidden';
+          container.style.position = 'relative';
+          container.style.userSelect = 'none';
+          container.style.touchAction = 'none';
+          container.style.marginBottom = '10px';
+      
+          const footer = document.createElement('div');
+          footer.style.display = 'flex';
+          footer.style.justifyContent = 'space-between';
+      
+          const img = document.createElement('img');
+          img.style.position = 'absolute';
+          img.style.cursor = 'grab';
+          img.style.userSelect = 'none';
+          img.style.touchAction = 'none';
+      
+          const btnOk = document.createElement('button');
+          btnOk.textContent = ok;
+          btnOk.style.marginRight = '10px';
+      
+          const btnCancel = document.createElement('button');
+          btnCancel.textContent = cancel;
+      
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+      
+          container.appendChild(img);
+          footer.appendChild(btnCancel);
+          footer.appendChild(btnOk);
+      
+          dialog.appendChild(titleHeader);
+          dialog.appendChild(container);
+          dialog.appendChild(footer);
+          document.body.appendChild(dialog);
+      
+          function updateImagePosition() {
+            img.style.transform = `translate(${imgX}px, ${imgY}px)`;
+          }
+      
+          function startDrag(clientX, clientY) {
+            dragging = true;
+            startX = clientX;
+            startY = clientY;
+            img.style.cursor = 'grabbing';
+          }
+      
+          function moveDrag(clientX, clientY) {
+            if (!dragging) return;
+      
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+      
+            if (mode === 'vertical') {
+              let newY = imgY + dy;
+              const imgHeight = parseFloat(img.style.height);
+      
+              newY = Math.min(0, newY);
+              newY = Math.max(containerSize - imgHeight, newY);
+      
+              imgY = newY;
+            } else {
+              let newX = imgX + dx;
+              const imgWidth = parseFloat(img.style.width);
+      
+              newX = Math.min(0, newX);
+              newX = Math.max(containerSize - imgWidth, newX);
+      
+              imgX = newX;
+            }
+      
+            updateImagePosition();
+      
+            startX = clientX;
+            startY = clientY;
+          }
+      
+          container.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            startDrag(e.clientX, e.clientY);
+          });
+      
+          window.addEventListener('mousemove', (e) => {
+            moveDrag(e.clientX, e.clientY);
+          });
+      
+          window.addEventListener('mouseup', () => {
+            dragging = false;
+            img.style.cursor = 'grab';
+          });
+      
+          container.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+              const touch = e.touches[0];
+              startDrag(touch.clientX, touch.clientY);
+            }
+          }, { passive: false });
+      
+          container.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1) {
+              e.preventDefault();
+              const touch = e.touches[0];
+              moveDrag(touch.clientX, touch.clientY);
+            }
+          }, { passive: false });
+      
+          container.addEventListener('touchend', () => {
+            dragging = false;
+            img.style.cursor = 'grab';
+          });
+      
+          btnOk.addEventListener('click', () => {
+            canvas.width = outputSize;
+            canvas.height = outputSize;
+      
+            ctx.clearRect(0, 0, outputSize, outputSize);
+      
+            if (mode === 'vertical') {
+              const scale = imgNaturalWidth / containerSize;
+              const sx = 0;
+              const sy = -imgY * scale;
+              const sSize = imgNaturalWidth;
+      
+              ctx.drawImage(
+                img,
+                sx, sy, sSize, sSize,
+                0, 0, outputSize, outputSize
+              );
+            } else {
+              const scale = imgNaturalHeight / containerSize;
+              const sx = -imgX * scale;
+              const sy = 0;
+              const sSize = imgNaturalHeight;
+      
+              ctx.drawImage(
+                img,
+                sx, sy, sSize, sSize,
+                0, 0, outputSize, outputSize
+              );
+            }
+      
+            const croppedDataURL = canvas.toDataURL('image/png');
+            dialog.close();
+            dialog.remove();
+            window.iconeSistemaProcessado = croppedDataURL;
+          });
+      
+          btnCancel.addEventListener('click', () => {
+            dialog.close();
+            dialog.remove();
+            reject(new Error('Usuário cancelou.'));
+          });
+      
+          const reader = new FileReader();
+          reader.onload = function (ev) {
+            img.src = ev.target.result;
+            img.onload = function () {
+              imgNaturalWidth = img.naturalWidth;
+              imgNaturalHeight = img.naturalHeight;
+      
+              if (imgNaturalHeight > imgNaturalWidth) {
+                mode = 'vertical';
+                img.style.width = containerSize + 'px';
+                img.style.height = (imgNaturalHeight * (containerSize / imgNaturalWidth)) + 'px';
+                imgX = 0;
+                imgY = (containerSize - parseFloat(img.style.height)) / 2;
+              } else {
+                mode = 'horizontal';
+                img.style.height = containerSize + 'px';
+                img.style.width = (imgNaturalWidth * (containerSize / imgNaturalHeight)) + 'px';
+                imgY = 0;
+                imgX = (containerSize - parseFloat(img.style.width)) / 2;
+              }
+      
+              updateImagePosition();
+            }
+          }
+          reader.readAsDataURL(file);
+      
+          dialog.showModal();
+        });
+      }
+    </script>
+    <script>
+      const supabaseUrl = 'https://gnbbejevwbixsubblnua.supabase.co';
+      const supabaseKey = 'sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA';
+      let sb = supabase.createClient(supabaseUrl, supabaseKey);
+
+      (async () => {
+        let { data: relatorios, error } = await sb.from('relatorios').select('id,nome,descricao,url').order('nome', { ascending: true });
+        for (let relatorio of relatorios) {
+          let listItem = document.createElement("list-item");
+          listItem.innerHTML = `
+            <img src="i-google-sheets.png" width=64>
+            <span>
+              <b>${relatorio.nome}</b><br>
+              ${relatorio.descricao}
+            </span>
+          `;
+          listItem.onclick = () => {
+            window.open(relatorio.url, '_tab');
+          }
+          listaRelatorios.appendChild(listItem);
+        }
+      })();
+
+      (async () => {
+        let { data: listaESF, error } = await sb
+          .from('microarea')
+          .select('nome', { distinct: true })
+          .order('nome', { ascending: true })
+        ;
+
+        let opcoes = `<option value="-">Todas</option>`;
+        for (let linha of listaESF) {
+          opcoes += `<option value="${linha.nome}">${linha.nome ? linha.nome : 'Sem micro'}</option>`;
+        }
+
+        for (let select of document.getElementsByClassName("esf-microarea")) {
+          select.innerHTML = opcoes;
+        }
+      })();
+
+      
+
+      (async () => {
+        let { data: relatorios, error } = await sb.from('unidades').select('unidade_saude').order('unidade_saude', { ascending: true });
+        let opcoes = `<option value="-">Todas</option>`;
+        for (let relatorio of relatorios) {
+          opcoes += `<option value="${relatorio.unidade_saude}">${relatorio.unidade_saude}</option>`;
+        }
+
+        for (let select of document.getElementsByClassName("esf-unidade")) {
+          select.innerHTML = opcoes;
+        }
+
+      })();
+
+      (async () => {
+        let { data, error } = await sb.from('profissionais').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0]);
+        if (data) {
+          if (data[0]) {
+            nome.innerText = data[0].nome;
+            localStorage.setItem('nome_profissional',data[0].nome.toUpperCase());
+
+            let equipes_profissional = [];
+            for (let registro of data) {
+              if (registro.equipe) {
+                if (!equipes_profissional[registro.equipe]) {
+                  equipes_profissional[registro.equipe] = true;
+                  equipes_profissional.push(registro.equipe);
+                }
+              }
+            }
+            equipes_profissional.sort();
+
+
+            await (async () => {
+              let { data: relatorios, error } = await sb.from('equipes').select('nome').order('nome', { ascending: true });
+              let opcoes = `<option value="-">Todas</option>`;
+
+              let eAdmin = (await sb.from('admins').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0])).data.length > 0;
+              for (let relatorio of relatorios) {
+                if (!eAdmin) {
+                  if (!equipes_profissional.includes(relatorio.nome)) continue;
+                }
+
+                let listItem = document.createElement("list-item");
+                listItem.classList = "nome-esf";
+                listItem.setAttribute("name",relatorio.nome);
+                listItem.innerHTML = `
+                  <img src="i-esf.jpg" width=64>
+                  <span>
+                    <b>${relatorio.nome}</b><br>
+                    Equipe Saúde da Família
+                  </span>
+                `;
+                listItem.onclick = () => {
+                  window.location.href = `indicadores.html?esf=${relatorio.nome}`;
+                }
+                listaEquipesIndicadores.appendChild(listItem);
+                opcoes += `<option value="${relatorio.nome}" name="${relatorio.nome}" class="nome-esf">${relatorio.nome}</option>`;
+              }
+
+              for (let select of document.getElementsByClassName("esf-equipe")) {
+                select.innerHTML = opcoes;
+              }
+            })();
+            return;
+          }
+        }
+        window.location.href = "login.html";
+      })();
+
+      async function atualizaAcessoAsistemas(){
+        listaSistemas.innerHTML = `
+          <card-box style="max-width: 150px;min-width: 150px;display: none;"  onclick="adicionarSistemaExterno.showModal();">
+            <center-box>
+              <img src="i-plus.png" style="max-width: 128px;min-width: 128px;min-height: 128px;min-height: 128px;">
+            </center-box>
+            <card-label>
+              <center-box><b>Adicionar</b></center-box>
+            </card-label>
+          </card-box>
+        `;
+        
+        let { data: sistemas, error } = await sb
+          .from('acesso_aos_sistemas')
+          .select('*')
+          .order('nome', { ascending: true })
+        ;
+
+        for (let linha of sistemas) {
+          listaSistemas.innerHTML += `
+          <card-box style="max-width: 150px;min-width: 150px;" onclick="window.open('${linha.link}', '_tab');">
+            <center-box>
+              <img src="${linha.icone}" style="max-width: 128px;min-width: 128px;min-height: 128px;min-height: 128px;">
+            </center-box>
+            <card-label>
+              <center-box><b>${linha.nome}</b></center-box>
+            </card-label>
+          </card-box>
+          `;
+        }
+
+      };
+
+      async function salvarLinkDeAcessoAosSistemas() {
+        await sb.from('acesso_aos_sistemas').insert([
+            { 
+              nome: nomeSistema.value,
+              link: linkSistema.value,
+              icone: window.iconeSistemaProcessado
+            },
+          ]).select();
+        
+        await atualizaAcessoAsistemas();
+      }
+
+      function pesquisarCadastros() {
+        let query = {};
+        for (let input of pacientes.querySelectorAll("input,select")) {
+          if (input.tagName.toLowerCase() === 'select' && input.value === "-") continue;
+          if (input.tagName.toLowerCase() === 'input'  && input.type != "checkbox" && input.value === "") continue;
+          if (input.tagName.toLowerCase() === 'input'  && input.type == "checkbox" && !input.checked) continue;
+
+          if (input.tagName.toLowerCase() === 'input'  && input.type == "checkbox") {
+            query[input.name] = true;
+            continue;
+          }
+
+          query[input.name] = input.value;
+        }
+
+        window.location.href = `lista-pacientes.html?q=${encodeURI(JSON.stringify(query))}`;
+      }
+
+      atualizaAcessoAsistemas();
+    </script>
+
+  </body>
+</html>
