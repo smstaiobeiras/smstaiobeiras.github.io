@@ -634,7 +634,19 @@ tr:nth-child(even) {
         <hr>
         <br>
         <fieldset style="display: none;" id="detalhamento">
-          <legend>Componentes do indicador - <b id="nomeIndicador">Nome Indicador</b></legend>
+          <legend>Detalhes do indicador - <b id="nomeIndicador">Nome Indicador</b></legend>
+          <p>Intervalo de classificação para esse indicador, os operadores comparativos (≤, ≥, &lt; e >) foram substituídos pelo operador de intervalo inclusivo (…) para facilitar a leitura:</p>
+          <table>
+            <thead>
+              <th>Classificação</th>
+              <th>Mínimo</th>
+              <th>Máximo</th>
+            </thead>
+            <tbody id="intervalosClassificacao">
+
+            </tbody>
+          </table>
+          <p>Componentes: </p>
           <table>
             <thead id="cabecalhoDetalhamento">
               <th>Componente</th>
@@ -681,7 +693,7 @@ tr:nth-child(even) {
           "C1": {
             "Ótimo": {
               min: 51,
-              max: 69,
+              max: 70,
             },
             "Bom": {
               min: 31,
@@ -827,7 +839,7 @@ tr:nth-child(even) {
 
         for (let linha of indicadores) {
           let legenda = titulosIndicadores[linha.codigo];
-          let percentual = linha.media_nota;
+          let percentual = linha.media_notas;
           let cardbox = document.createElement("card-box");
           cardbox.style="max-width: 256px;min-width: 256px;";
           cardbox.innerHTML = `
@@ -841,6 +853,19 @@ tr:nth-child(even) {
           cardbox.onclick = () => {
             detalhamento.style = "";
             nomeIndicador.innerHTML = legenda;
+
+            intervalosClassificacao.innerHTML = "";
+
+            for (const [classificacao, valores] of Object.entries(metaIndicadores[linha.codigo])) {
+              intervalosClassificacao.innerHTML += `
+                <tr>
+                  <td>${classificacao}</td>
+                  <td style="text-align: right;">${valores.min}%</td>
+                  <td style="text-align: right;">${valores.max}%</td>
+                </tr>
+              `;
+            }
+
             for (let tr of componentesIndicador.getElementsByTagName("tr")) {
               console.log(tr.classList.contains(linha.codigo))
               if (tr.classList.contains(linha.codigo)) {
