@@ -644,8 +644,6 @@ blockquote{
       const supabaseKey = 'sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA';
       let sb = supabase.createClient(supabaseUrl, supabaseKey);
 
-      (async () => {await sb.auth.signOut()})();
-
       function applyCPFFormat(input) {
         let value = input.value.replace(/\D/g, '');
         let cpf = value;
