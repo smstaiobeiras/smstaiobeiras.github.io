@@ -1316,7 +1316,12 @@ blockquote{
             return;
           }
         }
-        window.location.href = "login.html";
+        await (async () => {
+          if ((await sb.from('admins').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0])).data.length > 0) {
+            return;
+          }
+          window.location.href = "login.html";
+        })();
       })();
 
       async function atualizaAcessoAsistemas(){
