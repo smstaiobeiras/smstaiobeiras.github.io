@@ -659,8 +659,15 @@ blockquote{
       </div>
 
       <div style="display: flex;">
-        <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
-          Data de nascimento: <input type="date" style="flex:1;margin-left: 8px;" name="data_nascimento">
+        <label style="display: flex;align-items: center;margin-top: 8px;flex: 1;text-wrap: nowrap;">
+          Nascido entre: <input type="date" style="flex:1;margin-left: 8px;" name="data_nascimento$gte">
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;">
+          e
+        </label>
+        
+        <label style="display: flex;align-items: center;margin-top: 8px;flex: 1;margin-right: 8px;">
+          <input type="date" style="flex:1;margin-left: 8px;" name="data_nascimento$lte">
         </label>
         <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;">
           Sexo:
@@ -670,6 +677,23 @@ blockquote{
             <option>Feminino</option>
           </select>
         </label>
+        <fieldset style="flex:1;margin: 8px; margin-right: 0px;">
+          <select onchange="preencheCamposPesquisaPacientes(event.target.value);">
+            <option>Grupo rápido</option>
+            <option value="0..1 ano">Crianças menores de 1 ano</option>
+            <option value="0..2 ano">Crianças menores de 2 anos</option>
+            <option value="0..5 ano">Crianças menores de 5 anos</option>
+            <option value="1..4 ano">Crianças de 1 a 4 anos</option>
+            <option value="5..9 ano">Crianças de 5 a 9 anos</option>
+            <option value="10..19 ano">Pacientes de 10 a 19 anos</option>
+            <option value="20..59 ano">Pacientes de 20 a 59 anos</option>
+            <option value="60..125 ano">Idosos</option>
+            <option value="0..18 ano;gestante.checked = true;">Gestantes adolescentes</option>
+            <option value="0..9 ano;deficiente_visual.checked = true;">Crianças com deficiencia visual</option>
+            <option value="0..9 ano;deficiente_auditivo.checked = true;">Crianças com deficiencia auditiva</option>
+            <option value="0..9 ano;deficiente_intelectual.checked = true;">Crianças com deficiencia intelectual</option>
+          </select>
+        </fieldset>
       </div>
 
       <div style="display: flex;">
@@ -690,6 +714,10 @@ blockquote{
           <select style="flex:1;margin-left: 8px;" name="micro_area" class="esf-microarea">
           </select>
         </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;text-wrap: nowrap;">
+          <input type="checkbox" style="flex:1;margin-right: 8px;" name="naoIncluirFA" checked>
+          Não incluir fora de área
+        </label>
       </div>
       <p style="margin-bottom: 0px;margin-top: 32px;">
         Condicionantes:
@@ -699,31 +727,31 @@ blockquote{
           <tr>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="gestante">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="gestante" class="filtroPacienteCheckbox">
                 Gestante
               </label>
             </td>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="hipertenso">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="hipertenso" class="filtroPacienteCheckbox">
                 Hipertenso
               </label>
             </td>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="diabetico">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="diabetico" class="filtroPacienteCheckbox">
                 Diabético
               </label>
             </td>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="fumante">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="fumante" class="filtroPacienteCheckbox">
                 Fumante
               </label>
             </td>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="alcolatra">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="alcolatra" class="filtroPacienteCheckbox">
                 Alcoolismo
               </label>
             </td>
@@ -731,25 +759,25 @@ blockquote{
           <tr>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_auditivo">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_auditivo" class="filtroPacienteCheckbox">
                 Deficiente auditivo
               </label>
             </td>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_intelectual">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_intelectual" class="filtroPacienteCheckbox">
                 Deficiente intelectual
               </label>
             </td>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_visual">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_visual" class="filtroPacienteCheckbox">
                 Deficiente visual
               </label>
             </td>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_fisico">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_fisico" class="filtroPacienteCheckbox">
                 Deficiente fisico
               </label>
 
@@ -758,26 +786,26 @@ blockquote{
           <tr>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_asma">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_asma" class="filtroPacienteCheckbox">
                 Tem asma
               </label>
 
             </td>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_dpoc">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_dpoc" class="filtroPacienteCheckbox">
                 Tem dPoc
               </label>
             </td>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_doenca_cadiaca">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_doenca_cadiaca" class="filtroPacienteCheckbox">
                 Tem doenca cadiaca
               </label>
             </td>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_problema_rins">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_problema_rins" class="filtroPacienteCheckbox">
                 Tem problema nos rins
               </label>
             </td>
@@ -785,14 +813,14 @@ blockquote{
           <tr>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="acamado">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="acamado" class="filtroPacienteCheckbox">
                 Acamado
               </label>
 
             </td>
             <td>
               <label>
-                <input type="checkbox" style="flex:1;margin-right: 8px;" name="domiciliado">
+                <input type="checkbox" style="flex:1;margin-right: 8px;" name="domiciliado" class="filtroPacienteCheckbox">
                 Domiciliado
               </label>
             </td>
@@ -1399,7 +1427,81 @@ blockquote{
           query[input.name] = input.value;
         }
 
+        if (query["data_nascimento$gte"] && (!query["data_nascimento$lte"])) {
+          query["data_nascimento$lte"] = query["data_nascimento$gte"];
+        }
+
+        if (query["data_nascimento$lte"] && (!query["data_nascimento$gte"])) {
+          query["data_nascimento$gte"] = query["data_nascimento$lte"];
+        }
+
         window.location.href = `lista-pacientes.html?q=${encodeURI(JSON.stringify(query))}`;
+      }
+
+      function limparPesquisarCadastros() {
+        for (let input of pacientes.querySelectorAll("input,select")) {
+          if (input.tagName.toLowerCase() === 'select') {
+            input.value = "-";
+            continue;
+          }
+
+          if (input.tagName.toLowerCase() === 'input'  && input.type != "checkbox") {
+            input.value = "";
+            continue;
+          }
+
+          input.checked = false;
+        }
+
+        document.getElementsByName("naoIncluirFA")[0].checked = true;
+      }
+
+      function preencheCamposPesquisaPacientes(grupo) {
+        for (let checkbox of document.getElementsByClassName("filtroPacienteCheckbox")) {
+          checkbox.checked = false;
+        }
+
+        for (let regra of grupo.split(";")){
+          if (regra.includes(" = ")) {
+            let campo = regra.split(".")[0].trim();
+            let atributo = regra.split(".")[1].split("=")[0].trim();
+            let valor = regra.split("=")[1].trim();
+            if (atributo == "checked" && valor == "true") {
+              document.getElementsByName(campo)[0].checked = true;
+              continue;
+            }
+            document.getElementsByName(campo)[0].setAttribute(atributo,valor);
+            continue;
+          }
+          
+          if (regra.includes("..")) {
+            let anoMenor = parseInt(regra.replaceAll(" ano","").split("..")[0]);
+            let anoMaior = parseInt(regra.replaceAll(" ano","").split("..")[1]);
+
+            let data_minima = new Date();
+            data_minima.setFullYear(data_minima.getFullYear() - anoMaior);
+
+            let data_maxima = new Date();
+            data_maxima.setFullYear(data_maxima.getFullYear() - anoMenor);
+            {
+              let ano = data_minima.getFullYear();
+              let mes = String(data_minima.getMonth() + 1).padStart(2, '0');
+              let dia = String(data_minima.getDate()).padStart(2, '0');
+
+              document.getElementsByName("data_nascimento$gte")[0].value = `${ano}-${mes}-${dia}`;
+            }
+  
+            {
+              let ano = data_maxima.getFullYear();
+              let mes = String(data_maxima.getMonth() + 1).padStart(2, '0');
+              let dia = String(data_maxima.getDate()).padStart(2, '0');
+
+              document.getElementsByName("data_nascimento$lte")[0].value = `${ano}-${mes}-${dia}`;
+            }
+
+            continue;
+          }
+        }
       }
 
       atualizaAcessoAsistemas();

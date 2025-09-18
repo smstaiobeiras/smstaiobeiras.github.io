@@ -609,10 +609,35 @@ tr:nth-child(even) {
     <main>
       <div style="padding: 26px;">
         <h2>Informativo</h2>
-        Este módulo permite que você liste pacientes com base nas condições fornecidas.
-        <p>
-          <button onclick="exportarXLSX();">Baixar Planilha</button>  
-        </p>
+        Este módulo permite que você liste pacientes com base nas condições fornecidas. <button onclick="exportarXLSX();">Baixar Planilha</button>  
+        <br><br>
+        <card-book>
+          <card-box style="max-width: 192px;min-width: 192px;">
+            <center-box>
+              <h1 id="totalCadastros">...</h1>
+            </center-box>
+            <card-label>
+              <center-box><b>Cadastros filtrados</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 192px;min-width: 192px;">
+            <center-box>
+              <h1 id="percentualTotal">...</h1>
+            </center-box>
+            <card-label>
+              <center-box><b>...em relação ao total de cadastros</b></center-box>
+            </card-label>
+          </card-box>
+          <card-box style="max-width: 192px;min-width: 192px;">
+            <center-box>
+              <h1 id="percentualVinculados">...</h1>
+            </center-box>
+            <card-label>
+              <center-box><b>...em relação aos cadastros vinculados</b></center-box>
+            </card-label>
+          </card-box>
+        </card-book>
+        <br><br>
         <hr>
         <br>
         <table id="listagem">
@@ -646,9 +671,16 @@ tr:nth-child(even) {
 
       (async () => {
         let query = sb.from("pacientes").select("cns,nome,mae,pai,data_nascimento,contato,equipe,micro_area");
-
         
-        for (const [coluna, valor] of Object.entries(JSON.parse((new URLSearchParams(location.search)).get('q')))) {
+        let parametros = JSON.parse((new URLSearchParams(location.search)).get('q'));
+        delete parametros[""];
+
+
+        for (let [coluna, valor] of Object.entries(parametros)) {
+          if (coluna == "naoIncluirFA") {
+            query = query.neq("micro_area", "FA");
+            continue;
+          }
           if (coluna == "unidade_saude" || coluna == "equipe" || coluna == "micro_area" || coluna == "sexo") {
             query = query.eq(coluna, valor);
             continue;
@@ -657,11 +689,30 @@ tr:nth-child(even) {
             query.ilike(coluna, `%${valor}%`);
             continue;
           }
+
+          if (coluna.startsWith("data_")) {
+            valor = parseInt(valor.replaceAll("-",""));
+            coluna = `cod_${coluna}`;
+
+            if (coluna.endsWith("$lte")) {
+              coluna = coluna.replaceAll("$lte","");
+              query = query.lte(coluna, valor);
+              continue
+            }
+
+            if (coluna.endsWith("$gte")) {
+              coluna = coluna.replaceAll("$gte","");
+              query = query.gte(coluna, valor);
+              continue
+            }
+          }
+
           query = query.eq(coluna, valor);
         }
 
         const { data, error } = await query;
         let tabela = "";
+        let filtrados = 0;
         for (let linha of data) {
           tabela += `
             <tr>
@@ -675,8 +726,17 @@ tr:nth-child(even) {
               <td style="text-align: right;">${linha.micro_area || ""}</td>
             </tr>
           `;
+
+          filtrados += 1;
         }
         listaPacientes.innerHTML = tabela;
+
+        const {total_pacientes: totalGeral,total_pacientes_nao_fa: totalVinculado} = (await sb.from('total_pacientes').select('*')).data[0];
+
+        totalCadastros.innerText = filtrados;
+        percentualTotal.innerText = `${Math.round((filtrados / totalGeral) * 100 * 100) / 100}%`;
+        percentualVinculados.innerText = `${Math.round(filtrados/totalVinculado * 100 * 100) / 100}%`;
+        
       })();
 
       function exportarXLSX() {
