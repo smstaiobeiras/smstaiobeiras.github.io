@@ -636,7 +636,7 @@ blockquote{
 
     
 
-    <dialog id="pacientes">
+    <dialog id="pacientes" style="max-width: 1100px;">
       <h2>Buscar paciente</h2>
       <label style="display: flex;align-items: center;">
         Nome: <input type="text" style="flex:1;margin-left: 8px;" name="nome">
@@ -677,26 +677,9 @@ blockquote{
             <option>Feminino</option>
           </select>
         </label>
-        <fieldset style="flex:1;margin: 8px; margin-right: 0px;">
-          <select onchange="preencheCamposPesquisaPacientes(event.target.value);">
-            <option>Grupo rápido</option>
-            <option value="0..1 ano">Crianças menores de 1 ano</option>
-            <option value="0..2 ano">Crianças menores de 2 anos</option>
-            <option value="0..5 ano">Crianças menores de 5 anos</option>
-            <option value="1..4 ano">Crianças de 1 a 4 anos</option>
-            <option value="5..9 ano">Crianças de 5 a 9 anos</option>
-            <option value="10..19 ano">Pacientes de 10 a 19 anos</option>
-            <option value="20..59 ano">Pacientes de 20 a 59 anos</option>
-            <option value="60..125 ano">Idosos</option>
-            <option value="0..18 ano;gestante.checked = true;">Gestantes adolescentes</option>
-            <option value="0..9 ano;deficiente_visual.checked = true;">Crianças com deficiencia visual</option>
-            <option value="0..9 ano;deficiente_auditivo.checked = true;">Crianças com deficiencia auditiva</option>
-            <option value="0..9 ano;deficiente_intelectual.checked = true;">Crianças com deficiencia intelectual</option>
-          </select>
-        </fieldset>
       </div>
 
-      <div style="display: flex;">
+      <div style="display: flex;align-items: center;">
         <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
           Unidade:
           <select style="flex:1;margin-left: 8px;" name="unidade_saude" class="esf-unidade">
@@ -709,19 +692,56 @@ blockquote{
             <option value="-">Todas</option>
           </select>
         </label>
+      </div>
+      <div style="display: flex;align-items: center;">
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-right: 8px;text-wrap: nowrap;">
+          Localidade:
+          <select style="flex:1;margin-left: 8px;" name="zona_rural">
+            <option value="-">Ambas</option>
+            <option value="false">Apenas zona urbana</option>
+            <option value="true">Apenas zona rural</option>
+          </select>
+        </label>
         <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;text-wrap: nowrap;">
           Micro área:
           <select style="flex:1;margin-left: 8px;" name="micro_area" class="esf-microarea">
           </select>
         </label>
-        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;text-wrap: nowrap;">
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
           <input type="checkbox" style="flex:1;margin-right: 8px;" name="naoIncluirFA" checked>
           Não incluir fora de área
         </label>
       </div>
-      <p style="margin-bottom: 0px;margin-top: 32px;">
-        Condicionantes:
-      </p>
+      <div style="display: flex;align-items: center;margin-top: 8px;">
+        <label style="display: flex;align-items: center;text-wrap: nowrap;">
+          Filtro das condições de saúde:
+          <select style="flex:1;margin-left: 8px;" name="operadorLogico">
+            <option value="and">Precisa ter todas as condições</option>
+            <option value="or">Precisa ao menos uma das condições</option>
+          </select>
+        </label>
+        <label style="display: flex;align-items: center;text-wrap: nowrap;margin-left: 8px;">
+          Grupo rápido:
+          <select onchange="preencheCamposPesquisaPacientes(event.target.value);" style="flex:1;margin-left: 8px;">
+            <option value="-">Selecione</option>
+            <option value="0..1 ano;operadorLogico.value = and">Crianças menores de 1 ano</option>
+            <option value="0..2 ano;operadorLogico.value = and">Crianças menores de 2 anos</option>
+            <option value="0..5 ano;operadorLogico.value = and">Crianças menores de 5 anos</option>
+            <option value="1..4 ano;operadorLogico.value = and">Crianças de 1 a 4 anos</option>
+            <option value="5..9 ano;operadorLogico.value = and">Crianças de 5 a 9 anos</option>
+            <option value="0..9 ano;operadorLogico.value = and">Crianças</option>
+            <option value="10..19 ano;operadorLogico.value = and">Pacientes de 10 a 19 anos</option>
+            <option value="20..59 ano;operadorLogico.value = and">Pacientes de 20 a 59 anos</option>
+            <option value="60..125 ano;operadorLogico.value = and">Idosos</option>
+            <option value="0..18 ano;gestante.checked = true;operadorLogico.value = and">Gestantes adolescentes</option>
+            <option value="0..9 ano;deficiente_visual.checked = true;operadorLogico.value = and">Crianças com deficiencia visual</option>
+            <option value="0..9 ano;deficiente_auditivo.checked = true;operadorLogico.value = and">Crianças com deficiencia auditiva</option>
+            <option value="0..9 ano;deficiente_intelectual.checked = true;operadorLogico.value = and">Crianças com deficiencia intelectual</option>
+            <option value="0..9 ano;deficiente_fisico.checked = true;operadorLogico.value = and">Crianças com deficiencia física</option>
+            <option value="deficiente_intelectual.checked = true;deficiente_auditivo.checked = true;deficiente_visual.checked = true;deficiente_fisico.checked = true;operadorLogico.value = or">Portadores de necessidades especiais</option>
+          </select>
+        </label>
+      </div>
       <div style="display: flex;">
         <table >
           <tr>
@@ -813,10 +833,15 @@ blockquote{
           <tr>
             <td>
               <label>
+                <input type="checkbox" style="flex:1;margin-right: 8px;text-wrap: nowrap;" name="teve_cancer" class="filtroPacienteCheckbox">
+                Tem ou teve câncer
+              </label>
+            </td>
+            <td>
+              <label>
                 <input type="checkbox" style="flex:1;margin-right: 8px;" name="acamado" class="filtroPacienteCheckbox">
                 Acamado
               </label>
-
             </td>
             <td>
               <label>
@@ -1424,6 +1449,11 @@ blockquote{
             continue;
           }
 
+          if (input.tagName.toLowerCase() === 'select' && (input.value === "true" || input.value === "false")) {
+            query[input.name] = input.value == "true";
+            continue;
+          };
+
           query[input.name] = input.value;
         }
 
@@ -1440,6 +1470,14 @@ blockquote{
 
       function limparPesquisarCadastros() {
         for (let input of pacientes.querySelectorAll("input,select")) {
+          if (input.name == "operadorLogico") {
+            input.value = "and";
+            continue;
+          }
+          if (input.name == "naoIncluirFA") {
+            input.checked = true;
+            continue;
+          }
           if (input.tagName.toLowerCase() === 'select') {
             input.value = "-";
             continue;
@@ -1452,8 +1490,6 @@ blockquote{
 
           input.checked = false;
         }
-
-        document.getElementsByName("naoIncluirFA")[0].checked = true;
       }
 
       function preencheCamposPesquisaPacientes(grupo) {
@@ -1470,7 +1506,7 @@ blockquote{
               document.getElementsByName(campo)[0].checked = true;
               continue;
             }
-            document.getElementsByName(campo)[0].setAttribute(atributo,valor);
+            document.getElementsByName(campo)[0].value = valor;
             continue;
           }
           

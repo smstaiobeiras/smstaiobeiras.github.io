@@ -673,7 +673,11 @@ tr:nth-child(even) {
         let query = sb.from("pacientes").select("cns,nome,mae,pai,data_nascimento,contato,equipe,micro_area");
         
         let parametros = JSON.parse((new URLSearchParams(location.search)).get('q'));
+        let operadorLogico = parametros["operadorLogico"];
+        let sequenciaOr = "";
+
         delete parametros[""];
+        delete parametros["operadorLogico"];
 
 
         for (let [coluna, valor] of Object.entries(parametros)) {
@@ -697,17 +701,26 @@ tr:nth-child(even) {
             if (coluna.endsWith("$lte")) {
               coluna = coluna.replaceAll("$lte","");
               query = query.lte(coluna, valor);
-              continue
+              continue;
             }
 
             if (coluna.endsWith("$gte")) {
               coluna = coluna.replaceAll("$gte","");
               query = query.gte(coluna, valor);
-              continue
+              continue;
             }
           }
 
+          if (typeof valor == "boolean" && operadorLogico === "or") {
+            sequenciaOr += `${coluna}.eq.true,`;
+            continue;
+          }
+
           query = query.eq(coluna, valor);
+        }
+
+        if (operadorLogico === "or") {
+          query.or(sequenciaOr.replace(/,$/,""))
         }
 
         const { data, error } = await query;
