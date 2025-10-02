@@ -612,12 +612,28 @@ tr:nth-child(even) {
           Essa seção apresenta sua produção agrupada entre fichas que especificam turno e fichas que não especificam, dentro desses 2 grupos
           há separação por mês e o detalhamento por tipo de ficha
         </p>
-        <h2>Fichas que não especificam turno</h2>
+        <select id="profissional" onchange="obtemProducao(profissional.value);"></select>
+        <h2>
+          <a href="#" style="color: dodgerblue;" onclick="
+            cabecalhoSemTurno.style = 'color: dodgerblue;';
+            cabecalhoComTurno.style = '';
+
+            producaoDiariaSemTurno.style = '';
+            producaoDiariaComTurno.style = 'display: none;';
+          " id="cabecalhoSemTurno">Fichas que não especificam turno</a>
+          |
+          <a href="#" id="cabecalhoComTurno"  onclick="
+            cabecalhoSemTurno.style = '';
+            cabecalhoComTurno.style = 'color: dodgerblue;';
+
+            producaoDiariaSemTurno.style = 'display: none;';
+            producaoDiariaComTurno.style = '';
+          ">Fichas que especificam turno</a>
+        </h2>
         <div id="producaoDiariaSemTurno">
         </div>
-        <hr>
-        <h2>Fichas que especificam turno</h2>
-        <div id="producaoDiariaComTurno">
+        <h2></h2>
+        <div id="producaoDiariaComTurno" style="display: none;">
         </div>
       </div>
     </main>
@@ -676,14 +692,14 @@ tr:nth-child(even) {
         return resultado;
       }
 
-      (async () => {
+      async function obtemProducao (cpf) {
+        producaoDiariaSemTurno.innerHTML = "";
+        producaoDiariaComTurno.innerHTML = "";
         const {data,error} = await sb
           .from('producao_diaria')
           .select('cpf,ficha,atendimentos,mes')
           .order('mes,ficha', { ascending: true })
-          .eq('cpf',localStorage.getItem("profissional_cpf"));
-
-        console.log(data);
+          .eq('cpf',cpf);
         
         var ultimoMes = undefined;
         var anoBase = new Date().getFullYear()*100;
@@ -839,9 +855,58 @@ tr:nth-child(even) {
               <td colspan=34 style="border: 0px !important">&emsp;</td>
             </tr>
           `;
-          console.log('----------------------------------------------------------------------------------');
         }
+      };
+
+      (async () => {
+        let { data: equipes, error } = await sb.from('equipes').select('nome').order('nome', { ascending: true });
+        let lista = [];
+
+        if ((await sb.from('profissionais').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0]).in('cbo',[
+          'AGENTE COMUNITÁRIO DE SAÚDE',
+          'AGENTE DE COMBATE ÀS ENDEMIAS',
+          'AGENTE DE SAÚDE PÚBLICA',
+          'ATENDENTE DE ENFERMAGEM',
+          'AUXILIAR DE ENFERMAGEM DA ESTRATÉGIA DE SAÚDE DA FAMÍLIA',
+          'AUXILIAR EM SAÚDE BUCAL',
+          'AUXILIAR EM SAÚDE BUCAL DA ESTRATÉGIA DE SAÚDE DA FAMÍLIA',
+          'TÉCNICO DE ENFERMAGEM',
+          'TÉCNICO DE ENFERMAGEM DA ESTRATÉGIA DE SAÚDE DA FAMÍLIA',
+          'TÉCNICO EM SAÚDE BUCAL',
+          'TÉCNICO EM SAÚDE BUCAL DA ESTRATÉGIA DE SAÚDE DA FAMÍLIA',
+          'VISITADOR SANITÁRIO'])).data.length > 0){
+            profissional.style = "display: none;";
+        }
+
+        let eAdmin = (await sb.from('admins').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0])).data.length > 0;
+
+        if (eAdmin) {
+          profissional.style = "";
+        }
+        for (let equipe of equipes) {
+          if (!eAdmin) {
+            if (!equipes_profissional.includes(equipe.nome)) continue;
+          }
+
+          lista.push(equipe.nome);
+        }
+
+        lista.sort();
+
+        await (async () => {
+          const { data, error } = await sb.from('profissionais').select('nome,cpf',{distinct: 'cpf'}).in('equipe', lista).order('nome', { ascending: true });
+          const profissionais = [...new Map(data.map(item => [item.cpf, item])).values()];
+
+          let opcoes = `<option value="${localStorage.profissional_cpf.split("@")[0]}">Minha produção</option>`;
+          for (let profissional of profissionais) {
+            opcoes += `<option value="${profissional.cpf}">${profissional.nome}</option>`;
+          }
+
+          profissional.innerHTML = opcoes;
+        })();
       })();
+
+      obtemProducao(localStorage.profissional_cpf.split("@")[0]);
     </script>
   </body>
 </html>
