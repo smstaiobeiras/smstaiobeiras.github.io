@@ -878,6 +878,20 @@ tr:nth-child(even) {
             profissional.style = "display: none;";
         }
 
+        let equipes_profissional = [];
+        let _ = await (async () => {
+          let { data, error } = await sb.from('profissionais').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0]);
+          for (let registro of data) {
+              if (registro.equipe) {
+                if (!equipes_profissional[registro.equipe]) {
+                  equipes_profissional[registro.equipe] = true;
+                  equipes_profissional.push(registro.equipe);
+                }
+              }
+          }
+          equipes_profissional.sort();
+        })();
+
         let eAdmin = (await sb.from('admins').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0])).data.length > 0;
 
         if (eAdmin) {
