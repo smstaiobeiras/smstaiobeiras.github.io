@@ -615,16 +615,16 @@ tr:nth-child(even) {
         <select id="profissional" onchange="obtemProducao(profissional.value);"></select>
         <h2>
           <a href="#" style="color: dodgerblue;" onclick="
-            cabecalhoSemTurno.style = 'color: dodgerblue;';
-            cabecalhoComTurno.style = '';
+            cabecalhoSemTurno.style = '';
+            cabecalhoComTurno.style = 'color: dodgerblue;';
 
             producaoDiariaSemTurno.style = '';
             producaoDiariaComTurno.style = 'display: none;';
           " id="cabecalhoSemTurno">Fichas que não especificam turno</a>
           |
           <a href="#" id="cabecalhoComTurno"  onclick="
-            cabecalhoSemTurno.style = '';
-            cabecalhoComTurno.style = 'color: dodgerblue;';
+            cabecalhoSemTurno.style = 'color: dodgerblue;';
+            cabecalhoComTurno.style = '';
 
             producaoDiariaSemTurno.style = 'display: none;';
             producaoDiariaComTurno.style = '';
