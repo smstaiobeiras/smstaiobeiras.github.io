@@ -1510,6 +1510,11 @@ blockquote{
             continue;
           };
 
+          if (input.tagName.toLowerCase() === 'select' && Number.isInteger(Number(input.value))) {
+            query[input.name] = Number(input.value);
+            continue;
+          };
+
           query[input.name] = input.value;
         }
 
