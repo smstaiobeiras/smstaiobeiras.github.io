@@ -693,52 +693,6 @@ blockquote{
         </label>
       </div>
       <div style="display: flex;align-items: center;">
-        <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
-          Orientação sexual:
-          <select style="flex:1;margin-left: 8px;" name="orientacao_sexual">
-            <option value="-">Todas</option>
-            <option value="1">Heterossexual</option>
-            <option value="2">Homossexual (gay / lésbica)</option>
-            <option value="3">Bissexual</option>
-            <option value="6">Gay</option>
-            <option value="7">Lésbica</option>
-            <option value="8">Assexual</option>
-            <option value="9">Panssexual</option>
-            <option value="4">Outro</option>
-            <option value="5">Não informado</option>
-          </select>
-        </label>
-        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;flex: 1">
-          Identidade de gênero:
-          <select style="flex:1;margin-left: 8px;" name="identidade_genero">
-            <option value="-">Todas</option>
-            <option value="6">Homem cisgênero</option>
-            <option value="7">Mulher cisgênero</option>
-            <option value="9">Não-Binário</option>
-            <option value="8">Transgênero</option>
-            <option value="1">Homem transgênero</option>
-            <option value="2">Mulher transgênero</option>
-            <option value="3">Travesti</option>
-            <option value="4">Outro</option>
-            <option value="5">Não informado</option>
-          </select>
-        </label>
-        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;flex: 1">
-          Peso:
-          <select style="flex:1;margin-left: 8px;" name="condicao_peso">
-            <option value="-">Todas</option>
-            <option value="1">Abaixo do peso</option>
-            <option value="2">Peso adequado</option>
-            <option value="3">Acima do peso</option>
-            <option value="4">Não informado</option>
-          </select>
-        </label>
-        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
-          <input type="checkbox" style="flex:1;margin-right: 8px;" name="recebe_beneficio" checked="">
-          Recebe benefífios
-        </label>
-      </div>
-      <div style="display: flex;align-items: center;">
         <label style="display: flex;align-items: center;margin-top: 8px;margin-right: 8px;text-wrap: nowrap;">
           Localidade:
           <select style="flex:1;margin-left: 8px;" name="zona_rural">
@@ -781,10 +735,56 @@ blockquote{
             <option value="0..18 ano;gestante.checked = true;operadorLogico.value = and">Gestantes adolescentes</option>
             <option value="0..9 ano;deficiente_visual.checked = true;operadorLogico.value = and">Crianças com deficiencia visual</option>
             <option value="0..9 ano;deficiente_auditivo.checked = true;operadorLogico.value = and">Crianças com deficiencia auditiva</option>
-            <option value="0..9 ano;deficiente_intelectual.checked = true;operadorLogico.value = and">Crianças com deficiencia intelectual</option>
+            <option value="0..9 ano;deficiente_intelectual.checked = true;tea.checked = true;operadorLogico.value = or">Crianças com deficiencia intelectual</option>
             <option value="0..9 ano;deficiente_fisico.checked = true;operadorLogico.value = and">Crianças com deficiencia física</option>
             <option value="deficiente_intelectual.checked = true;deficiente_auditivo.checked = true;deficiente_visual.checked = true;deficiente_fisico.checked = true;operadorLogico.value = or">Portadores de necessidades especiais</option>
           </select>
+        </label>
+      </div>
+<div style="display: flex;align-items: center;">
+        <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
+          Orientação sexual:
+          <select style="flex:1;margin-left: 8px;" name="orientacao_sexual">
+            <option value="-">Todas</option>
+            <option value="1">Heterossexual</option>
+            <option value="2">Homossexual (gay / lésbica)</option>
+            <option value="3">Bissexual</option>
+            <option value="6">Gay</option>
+            <option value="7">Lésbica</option>
+            <option value="8">Assexual</option>
+            <option value="9">Panssexual</option>
+            <option value="4">Outro</option>
+            <option value="5">Não informado</option>
+          </select>
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;flex: 1">
+          Identidade de gênero:
+          <select style="flex:1;margin-left: 8px;" name="identidade_genero">
+            <option value="-">Todas</option>
+            <option value="6">Homem cisgênero</option>
+            <option value="7">Mulher cisgênero</option>
+            <option value="9">Não-Binário</option>
+            <option value="8">Transgênero</option>
+            <option value="1">Homem transgênero</option>
+            <option value="2">Mulher transgênero</option>
+            <option value="3">Travesti</option>
+            <option value="4">Outro</option>
+            <option value="5">Não informado</option>
+          </select>
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;flex: 1">
+          Peso:
+          <select style="flex:1;margin-left: 8px;" name="condicao_peso">
+            <option value="-">Todas</option>
+            <option value="1">Abaixo do peso</option>
+            <option value="2">Peso adequado</option>
+            <option value="3">Acima do peso</option>
+            <option value="4">Não informado</option>
+          </select>
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
+          <input type="checkbox" style="flex:1;margin-right: 8px;" name="recebe_beneficio">
+          Recebe benefífios
         </label>
       </div>
       <div style="display: flex;">
