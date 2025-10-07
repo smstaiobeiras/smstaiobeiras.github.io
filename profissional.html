@@ -638,9 +638,30 @@ blockquote{
 
     <dialog id="pacientes" style="max-width: 1100px;">
       <h2>Buscar paciente</h2>
-      <label style="display: flex;align-items: center;">
-        Nome: <input type="text" style="flex:1;margin-left: 8px;" name="nome">
-      </label>
+      <div style="display: flex;">
+        <label style="display: flex;flex:1;align-items: center;">
+          Nome: <input type="text" style="flex:1;margin-left: 8px;" name="nome">
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;">
+          Sexo:
+          <select style="flex:1;margin-left: 8px;" name="sexo">
+            <option value="-">Ambos</option>
+            <option>Masculino</option>
+            <option>Feminino</option>
+          </select>
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;">
+          Raça/cor:
+          <select style="flex:1;margin-left: 8px;" name="raca_cor">
+            <option value="-">Selecionar</option>
+            <option>Branca</option>
+            <option>Preta</option>
+            <option>Parda</option>
+            <option>Amarela</option>
+            <option>Indígena</option>
+          </select>
+        </label>
+      </div>
       <div style="display: flex;">
         <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
           Nome da mãe: <input type="text" style="flex:1;margin-left: 8px;" name="mae">
@@ -668,14 +689,6 @@ blockquote{
         
         <label style="display: flex;align-items: center;margin-top: 8px;flex: 1;margin-right: 8px;">
           <input type="date" style="flex:1;margin-left: 8px;" name="data_nascimento$lte">
-        </label>
-        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;">
-          Sexo:
-          <select style="flex:1;margin-left: 8px;" name="sexo">
-            <option value="-">Ambos</option>
-            <option>Masculino</option>
-            <option>Feminino</option>
-          </select>
         </label>
       </div>
       <div style="display: flex;align-items: center;">
