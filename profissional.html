@@ -654,11 +654,11 @@ blockquote{
           Raça/cor:
           <select style="flex:1;margin-left: 8px;" name="raca_cor">
             <option value="-">Selecionar</option>
-            <option value="3">Amarela</option>
             <option value="1">Branca</option>
-            <option value="5">Indígena</option>
-            <option value="4">Parda</option>
             <option value="2">Preta</option>
+            <option value="3">Parda</option>
+            <option value="4">Amarela</option>
+            <option value="5">Indígena</option>
           </select>
         </label>
       </div>
@@ -677,8 +677,11 @@ blockquote{
         <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;">
           Telefone: <input type="text" style="flex:1;margin-left: 8px;"  name="contato">
         </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
+          <input type="checkbox" style="flex:1;margin-right: 8px;" name="recebe_beneficio">
+          Recebe benefífios
+        </label>
       </div>
-
       <div style="display: flex;">
         <label style="display: flex;align-items: center;margin-top: 8px;flex: 1;text-wrap: nowrap;">
           Nascido entre: <input type="date" style="flex:1;margin-left: 8px;" name="data_nascimento$gte">
@@ -687,10 +690,11 @@ blockquote{
           e
         </label>
         
-        <label style="display: flex;align-items: center;margin-top: 8px;flex: 1;margin-right: 8px;">
+        <label style="display: flex;align-items: center;margin-top: 8px;flex: 1;">
           <input type="date" style="flex:1;margin-left: 8px;" name="data_nascimento$lte">
         </label>
       </div>
+      <hr>
       <div style="display: flex;align-items: center;">
         <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
           Unidade:
@@ -706,7 +710,12 @@ blockquote{
         </label>
       </div>
       <div style="display: flex;align-items: center;">
-        <label style="display: flex;align-items: center;margin-top: 8px;margin-right: 8px;text-wrap: nowrap;">
+        <label style="display: flex;align-items: center;margin-top: 8px;text-wrap: nowrap;">
+          Micro área:
+          <select style="flex:1;margin-left: 8px;" name="micro_area" class="esf-microarea">
+          </select>
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;text-wrap: nowrap;margin-left: 16px;">
           Localidade:
           <select style="flex:1;margin-left: 8px;" name="zona_rural">
             <option value="-">Ambas</option>
@@ -714,16 +723,12 @@ blockquote{
             <option value="true">Apenas zona rural</option>
           </select>
         </label>
-        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;text-wrap: nowrap;">
-          Micro área:
-          <select style="flex:1;margin-left: 8px;" name="micro_area" class="esf-microarea">
-          </select>
-        </label>
         <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
           <input type="checkbox" style="flex:1;margin-right: 8px;" name="naoIncluirFA" checked>
           Não incluir fora de área
         </label>
       </div>
+      <hr>
       <div style="display: flex;align-items: center;">
         <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
           Orientação sexual:
@@ -755,7 +760,10 @@ blockquote{
             <option value="5">Não informado</option>
           </select>
         </label>
-        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;flex: 1">
+      </div>
+      <hr>
+      <div style="display: flex;align-items: center;margin-top: 8px;">
+        <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
           Peso:
           <select style="flex:1;margin-left: 8px;" name="condicao_peso">
             <option value="-">Todas</option>
@@ -763,19 +771,6 @@ blockquote{
             <option value="2">Peso adequado</option>
             <option value="3">Acima do peso</option>
             <option value="4">Não informado</option>
-          </select>
-        </label>
-        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
-          <input type="checkbox" style="flex:1;margin-right: 8px;" name="recebe_beneficio">
-          Recebe benefífios
-        </label>
-      </div>
-      <div style="display: flex;align-items: center;margin-top: 8px;">
-        <label style="display: flex;align-items: center;text-wrap: nowrap;">
-          Filtro das condições de saúde:
-          <select style="flex:1;margin-left: 8px;" name="operadorLogico">
-            <option value="and">Precisa ter todas as condições</option>
-            <option value="or">Precisa ao menos uma das condições</option>
           </select>
         </label>
         <label style="display: flex;align-items: center;text-wrap: nowrap;margin-left: 8px;">
@@ -797,6 +792,16 @@ blockquote{
             <option value="0..9 ano;deficiente_intelectual.checked = true;tea.checked = true;operadorLogico.value = or">Crianças com deficiencia intelectual</option>
             <option value="0..9 ano;deficiente_fisico.checked = true;operadorLogico.value = and">Crianças com deficiencia física</option>
             <option value="deficiente_intelectual.checked = true;deficiente_auditivo.checked = true;deficiente_visual.checked = true;deficiente_fisico.checked = true;operadorLogico.value = or">Portadores de necessidades especiais</option>
+          </select>
+        </label>
+      </div>
+      <hr>
+      <div style="display: flex;align-items: center;margin-top: 8px;">
+        <label style="display: flex;align-items: center;text-wrap: nowrap;">
+          Filtro das condições de saúde:
+          <select style="flex:1;margin-left: 8px;" name="operadorLogico">
+            <option value="and">Precisa ter todas as condições</option>
+            <option value="or">Precisa ao menos uma das condições</option>
           </select>
         </label>
       </div>
