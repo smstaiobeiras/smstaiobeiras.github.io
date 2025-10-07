@@ -1528,7 +1528,7 @@ blockquote{
             continue;
           };
 
-          if (input.tagName.toLowerCase() === 'select' && Number.isInteger(Number(input.value))) {
+          if (input.tagName.toLowerCase() === 'select' && Number.isInteger(Number(input.value)) && input.classList.contains("esf-microarea") == false) {
             query[input.name] = Number(input.value);
             continue;
           };
