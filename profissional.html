@@ -1544,7 +1544,10 @@ blockquote{
           query["data_nascimento$gte"] = query["data_nascimento$lte"];
         }
 
-        window.location.href = `lista-pacientes.html?q=${encodeURI(JSON.stringify(query))}`;
+        window.location.href = `lista-pacientes.html?q=${encodeURI(JSON.stringify(query))}&h=${encodeURI(
+          JSON.stringify(['CNS','Nome do paciente','Nome da mãe','Nome do pai','Data de nascimento','Contato','Equipe','Micro'])
+        )}&c=cns,nome,mae,pai,data_nascimento,contato,equipe,micro_area&t=pacientes${
+        "&r=cns,data_nascimento,contato,micro_area"}`;
       }
 
       function limparPesquisarCadastros() {

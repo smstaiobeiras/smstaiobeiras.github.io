@@ -641,15 +641,7 @@ tr:nth-child(even) {
         <hr>
         <br>
         <table id="listagem">
-          <thead>
-            <th>CNS</th>
-            <th>Nome do paciente</th>
-            <th>Nome da mãe</th>
-            <th>Nome do pai</th>
-            <th>Data de nascimento</th>
-            <th>Contato</th>
-            <th>Equipe</th>
-            <th>Micro</th>
+          <thead id="cabecalho">
           </thead>
           <tbody id="listaPacientes">
           </tbody>
@@ -670,7 +662,7 @@ tr:nth-child(even) {
       let sb = supabase.createClient(supabaseUrl, supabaseKey);
 
       (async () => {
-        let query = sb.from("pacientes").select("cns,nome,mae,pai,data_nascimento,contato,equipe,micro_area");
+        let query = sb.from((new URLSearchParams(location.search)).get('t')).select((new URLSearchParams(location.search)).get('c'));
         
         let parametros = JSON.parse((new URLSearchParams(location.search)).get('q'));
         let operadorLogico = parametros["operadorLogico"];
@@ -724,24 +716,24 @@ tr:nth-child(even) {
         }
 
         const { data, error } = await query;
+        let colunas = (new URLSearchParams(location.search)).get('c').split(",");
+        let realinhar = (new URLSearchParams(location.search)).get('r').split(",");
         let tabela = "";
         let filtrados = 0;
         for (let linha of data) {
           tabela += `
             <tr>
-              <td style="text-align: right;">${linha.cns || ""}</td>
-              <td>${linha.nome || ""}</td>
-              <td>${linha.mae || ""}</td>
-              <td>${linha.pai || ""}</td>
-              <td style="text-align: right;">${linha.data_nascimento || ""}</td>
-              <td style="text-align: right;">${linha.contato || ""}</td>
-              <td>${linha.equipe || ""}</td>
-              <td style="text-align: right;">${linha.micro_area || ""}</td>
+          `;
+          for (let coluna of colunas) {
+              tabela += `<td style="text-align: ${realinhar.includes(coluna)?'right':'left'};">${linha[coluna] || ""}</td>`;
+          }
+          tabela += `
             </tr>
           `;
 
           filtrados += 1;
         }
+        cabecalho.innerHTML = `<th>${JSON.parse((new URLSearchParams(location.search)).get('h')).join("</th><th>")}</th>`;
         listaPacientes.innerHTML = tabela;
 
         const {total_pacientes: totalGeral,total_pacientes_nao_fa: totalVinculado} = (await sb.from('total_pacientes').select('*')).data[0];
