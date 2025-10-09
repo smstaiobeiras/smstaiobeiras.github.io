@@ -10,6 +10,8 @@
     <meta content="width=device-width,initial-scale=1.0" name="viewport" />
     <link href="/webapps/assets/css/style.css" rel="stylesheet" />
     <link href="/webapps/assets/css/home.css" rel="stylesheet" />
+    <link rel="preload" href="https://unpkg.com/@supabase/supabase-js@2" as="script">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   </head>
   <body class="container-lg px-3 my-5 markdown-body">
 
@@ -69,13 +71,47 @@
     <script src="/webapps/js/farmacia-publica.js"></script>
     <script>
       let medicamentoAtual = "";
-      let seletorMedicamentos = `<option value="">Escolha aqui</option>\n`;
-      for (let medicamento of Object.keys(medicamentos)) {
-        seletorMedicamentos += `<option value="${medicamento}">${medicamento}</option>\n`;
-      }
-      listaMedicamentosDisponiveis.innerHTML = seletorMedicamentos;
-
       let i = 1;
+      let unidades = {
+        "FARMACIA DE MINAS": {
+          icone: "farmacia-minas.jpg",
+          endereco: "Avenida São João, nº 59 - Centro.",
+          codigo: "22",
+        },
+        "UAPS DONA NININHA": {
+          icone: "uaps.jpg",
+          endereco: "Rua Guaicurus, 1625 - Sagrada Família.",
+          codigo: "91",
+        },
+        "UAPS MARY TATIANE ANTUNES LOPES": {
+          icone: "uaps.jpg",
+          endereco: "Rua Santa Rita de Cássia, 1555 - Bom Jardim.",
+          codigo: "92",
+        },
+        "UAPS MILTON MENDES DA SILVA": {
+          icone: "uaps.jpg",
+          endereco: "Avenida JK, 150 - Santos Cruzeiro.`",
+          codigo: "93",
+        },
+        "UAPS VEREADOR JOSE SENA": {
+          icone: "uaps.jpg",
+          endereco: "Rua Bom fim, 136 - Centro",
+          codigo: "104",
+        },
+        "UAPS VEREADOR MANOEL DOS SANTOS SILVA": {
+          icone: "uaps.jpg",
+          endereco: "Rua Paraíba, 170 - Planalto.",
+          codigo: "90",
+        },
+      }
+
+      function carregaListaMedicamentos() {
+        let seletorMedicamentos = `<option value="">Escolha aqui</option>\n`;
+        for (let medicamento of Object.keys(medicamentos)) {
+          seletorMedicamentos += `<option value="${medicamento}">${medicamento}</option>\n`;
+        }
+        listaMedicamentosDisponiveis.innerHTML = seletorMedicamentos;
+      }
 
       function removerMedicamento(id) {
         document.getElementById(id).remove();
@@ -105,77 +141,83 @@
       }
 
       function pesquisarUnidades() {
-        let unidadesComMedicamento = [];
+        let estoqueMedicamentos = [];
         for (let medicamento of document.getElementsByClassName("medicamento")) {
-          for (let codUnidade of Object.keys(medicamentos[medicamento.innerText])){
-            unidadesComMedicamento[unidades[codUnidade]] = unidadesComMedicamento[unidades[codUnidade]] || [];
-            unidadesComMedicamento[unidades[codUnidade]][medicamento.innerText] = medicamentos[medicamento.innerText][codUnidade];
-          }
+          let nome = medicamento.innerText;
+          estoqueMedicamentos[nome] = medicamentos[nome];
         }
 
         receituarioMensagem.style.display = 'none';
         listaMedicamentosUnidades.innerHTML = "";
+        resultadoBusca.style.display = "";
+        montarReceituario.style.display = "none";
 
-        for (let unidade of Object.keys(unidades)) {
-          if (!unidadesComMedicamento[unidade]) continue;
-          if (unidade.includes("de Minas")) {
-            listaMedicamentosUnidades.innerHTML += `<tr class="header border">
-              <td colspan=2>
-                <b>${unidade}</b><br>Avenida São João, nº 59, Centro.
-              </td>
-            </tr>`;
-          } else if (unidade.includes("Mary")) {
-            listaMedicamentosUnidades.innerHTML += `<tr class="header border">
-              <td colspan=2>
-                <b>${unidade}</b><br>Rua Santa Rita de Cássia, 1555, Bom Jardim.
-              </td>
-            </tr>`;
-          } else if (unidade.includes("Milton")) {
-            listaMedicamentosUnidades.innerHTML += `<tr class="header border">
-              <td colspan=2>
-                <b>${unidade}</b><br>Avenida JK, 150, Santos Cruzeiro.
-              </td>
-            </tr>`;
-          } else if (unidade.includes("Dona")) {
-            listaMedicamentosUnidades.innerHTML += `<tr class="header border">
-              <td colspan=2>
-                <b>${unidade}</b><br>Rua Guaicurus, 1625, Sagrada Família.
-              </td>
-            </tr>`;
-          } else if (unidade.includes("Sena")) {
-            listaMedicamentosUnidades.innerHTML += `<tr class="header border">
-              <td colspan=2>
-                <b>${unidade}</b><br>Rua Bom Fim, 136, Centro.
-              </td>
-            </tr>`;
-          } else if (unidade.includes("Manoel")) {
-            listaMedicamentosUnidades.innerHTML += `<tr class="header border">
-              <td colspan=2>
-                <b>${unidade}</b><br>Rua paraíba, 170, Planalto.
-              </td>
+        let lista = "";
+
+        for (let [unidade,dados] of Object.entries(unidades)) {
+          let medicamentosUnidade = "";
+          for (let [medicamento,estoque] of Object.entries(estoqueMedicamentos)) {
+            if (!estoque[dados.codigo]) continue;
+            medicamentosUnidade += `
+            <tr>
+              <td class="border">${medicamento}</td>
+              <td class="border" style="text-align:right;">${estoque[dados.codigo]}</td>
             </tr>`;
           }
+          if (medicamentosUnidade == "") continue;
 
-          listaMedicamentosUnidades.innerHTML += `
+          lista += `
+            <tr class="header border">
+              <td colspan=2>
+                <b>${unidade}</b><br>
+              ${dados.endereco}
+              </td>
+            </tr>
             <tr>
               <td class="border"><b>Medicamento</b></td>
               <td class="border" style="text-align:center;white-space:nowrap;"><b>Em estoque</b></td>
-            </tr>`;
-          for (let medicamento of Object.keys(unidadesComMedicamento[unidade])) {
-            listaMedicamentosUnidades.innerHTML += `
-            <tr>
-              <td class="border">${medicamento}</td>
-              <td class="border" style="text-align:right;">${unidadesComMedicamento[unidade][medicamento]}</td>
-            </tr>`;
-          }
-          listaMedicamentosUnidades.innerHTML += `<tr><td><br></td></tr>`;
+            </tr>
+            ${medicamentosUnidade}
+            <tr><td><br></td></tr>
+          `;
         }
 
-        resultadoBusca.style.display = "";
-        montarReceituario.style.display = "none";
+        listaMedicamentosUnidades.innerHTML = lista;
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     </script>
+    <script>
+      const supabaseUrl = 'https://gnbbejevwbixsubblnua.supabase.co';
+      const supabaseKey = 'sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA';
+      let sb = supabase.createClient(supabaseUrl, supabaseKey);
+
+      (async () => {
+        let { data: estoques, error } = await sb.from('estoques').select("*").eq('nome', 'farmacia');
+
+        medicamentos = JSON.parse(estoques[0].dados);
+        carregaListaMedicamentos();
+
+        let data = estoques[0].created_at.split("T")[0].split("-").reverse().join("/");
+        let hora = estoques[0].created_at.split("T")[1].split(".")[0];
+        
+        dataAtualizacao.innerHTML = `${data} às ${hora}`;
+
+        let seletorUnidades = ``;
+        for (let [unidade,dados] of Object.entries(unidades)) {
+          seletorUnidades += `
+            <tr class="border tr" data-page="/webapps/apps/farmacia-facil.html" tabindex="0" role="button" aria-label="Abrir ${unidade}" onclick="pesquisarFarmacia('${unidade}')">
+              <td>
+                <img src="/webapps/assets/img/${dados.icone}" width="72" alt="Ícone Farmácia">
+              </td>
+              <td>
+                <b>${unidade}</b><br>
+                ${dados.endereco}
+              </td>
+            </tr>
+          `;
+        }
+        listaFarmacias.innerHTML = seletorUnidades;
+      })();
     </script>
   </body>
 </html>
