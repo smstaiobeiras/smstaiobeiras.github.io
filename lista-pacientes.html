@@ -717,7 +717,8 @@ tr:nth-child(even) {
 
         const { data, error } = await query;
         let colunas = (new URLSearchParams(location.search)).get('c').split(",");
-        let realinhar = (new URLSearchParams(location.search)).get('r').split(",");
+        let realinhar = ((new URLSearchParams(location.search)).get('r') || '').split(",");
+        let naoQuebrar = ((new URLSearchParams(location.search)).get('w') || '').split(",");
         let tabela = "";
         let filtrados = 0;
         for (let linha of data) {
@@ -725,7 +726,7 @@ tr:nth-child(even) {
             <tr>
           `;
           for (let coluna of colunas) {
-              tabela += `<td style="text-align: ${realinhar.includes(coluna)?'right':'left'};">${linha[coluna] || ""}</td>`;
+              tabela += `<td style="text-align: ${realinhar.includes(coluna)?'right':'left'};text-wrap: ${naoQuebrar.includes(coluna)?'nowrap':'wrap'}">${linha[coluna] || ""}</td>`;
           }
           tabela += `
             </tr>

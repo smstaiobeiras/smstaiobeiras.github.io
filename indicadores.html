@@ -886,13 +886,14 @@ tr:nth-child(even) {
             }
 
             for (let tr of componentesIndicador.getElementsByTagName("tr")) {
-              console.log(tr.classList.contains(linha.codigo))
               if (tr.classList.contains(linha.codigo)) {
                 tr.style = "";
                 continue;
               }
               tr.style = "display: none;";
             }
+
+            listagem.style.display = "flex";
 
             if (linha.codigo == "C1") {
               cabecalhoDetalhamento.innerHTML = `
@@ -901,6 +902,7 @@ tr:nth-child(even) {
                 <th>Total de agendamentos</th>
                 <th>Percentual atingido</th>
               `;
+              listagem.style.display = "none";
               return;
             }
             cabecalhoDetalhamento.innerHTML = `
@@ -1007,7 +1009,87 @@ tr:nth-child(even) {
             linha.style = "display: none;"
           }
 
-          console.log(indicadores)
+          let colunasIndicadores = {
+            c2: {
+              headers : [
+              "Ficha","Nome do Cidadão","Data de Nascimento","Idade","Microárea",
+              "Teve a Consulta do Recém-Nascido?", "Teve pelo menos 9 Consultas com Médico ou Enfermeiro?","Teve pelo menos 9 registros de peso e altura?",
+              "Teve pelo menos 2 Visitas do ACS?","Está com Esquema Vacinal Completo?"
+              ],
+              columns : [
+                "co_fat_cidadao_pec","no_cidadao","dt_nascimento","idade","micro_area",
+                "teve_1_consulta_recem_nascido","teve_9_consulta_com_medico_enfermeiro","teve_9_consulta_puericultura",
+                "teve_2_visitas_acs",
+                "esta_com_esquema_vacinal_completo"
+              ]
+            },
+            c3: {
+              headers : [
+                "Ficha", "Nome do Cidadão", "Data de Nascimento", "Idade", "Microárea", "Data do Primeiro Atendimento",
+                "DPP", "Teve Captação Precoce?", "Teve pelo menos 7 Consultas de Pré-natal?", "Teve pelo menos 7 Aferições de Pressão Arterial?",
+                "Teve pelo menos 7 registros de peso e altura?", "Teve pelo menos 3 Visitas do ACS?", "Foi Vacinada com dTpa?",
+                "Realizou Exames do Primeiro Trimestre?", "Realizou Exames do Terceiro Trimestre?", "Realizou Consulta de Puerpério?",
+                "Teve Visita no Puerpério?", "Teve Atendimento Odontológico?"
+              ],
+              columns : [
+                "co_fat_cidadao_pec","no_cidadao","dt_nascimento","idade","micro_area","dt_atendimento","dpp",
+                "teve_captacao_precoce","teve_pelo_menos_7_consultas_pre_natal","teve_pelo_menos_7_afericoes_pa",
+                "teve_pelo_menos_7_consultas_puericultura","teve_pelo_menos_3_visitas_acs","foi_vacinada_com_dtpa",
+                "realizou_exames_primeiro_trimestre","realizou_exames_terceiro_trimestre","realizou_consulta_puerperio",
+                "teve_visita_puerperio","teve_atendimento_odontologico"
+              ]
+            },
+            c4: {
+              headers : [
+                "Ficha","Nome do Cidadão","Data de Nascimento","Idade","Microárea","Data do Último Atendimento",
+                "Teve pelo menos 1 Consulta?", "Teve pelo menos 1 Aferição de Pressão Arterial?", "Teve pelo menos 2 Visitas do ACS?",
+                "Teve pelo menos 1 registro de peso e altura?", "Teve pelo menos 1 Registro de Hemoglobina Glicada?",
+                "Realizou Exame do Pé Diabético?"
+              ],
+              columns : headers = [
+                "co_fat_cidadao_pec","no_cidadao","dt_nascimento","idade","micro_area","dt_atendimento",
+                "teve_pelo_menos_1_consulta","teve_pelo_menos_1_afericao_pa","teve_2_visitas_acs",
+                "teve_pelo_menos_1_consulta_puericultura","teve_pelo_menos_1_registro_hemoglobina_glicada",
+                "realizou_exame_pe_diabetico"
+              ]
+            },
+            c5: {
+              headers : [
+                "Ficha","Nome do Cidadão","Data de Nascimento","Idade","Microárea","Data do Último Atendimento",
+                "Teve pelo menos 1 Consulta?", "Teve pelo menos 1 Aferição de Pressão Arterial?", "Teve pelo menos 2 Visitas do ACS?",
+                "Teve pelo menos 1 registro de peso e altura?",
+              ],
+              columns : [
+                "co_fat_cidadao_pec","no_cidadao","dt_nascimento","idade","micro_area","dt_atendimento",
+                "teve_pelo_menos_1_consulta","teve_pelo_menos_1_afericao_pa","teve_2_visitas_acs",
+                "teve_pelo_menos_1_consulta_puericultura",
+              ]
+            },
+            c6: {
+              headers : [
+                "Ficha","Nome do Cidadão","Data de Nascimento","Idade","Microárea",
+                "Teve pelo menos 1 Consulta?", "Teve pelo menos 2 Visitas do ACS?",
+                "Teve pelo menos 1 registro de peso e altura?","Foi vacinado contra a gripe?"
+              ],
+              columns : [
+                "co_fat_cidadao_pec","no_cidadao","dt_nascimento","idade","micro_area",
+                "teve_pelo_menos_1_consulta","teve_2_visitas_acs",
+                "teve_pelo_menos_1_consulta_puericultura","foi_vacinado_contra_gripe"
+              ]
+            },
+            c7: {
+              headers : [
+                "Ficha","Nome do Cidadão","Data de Nascimento","Idade","Microárea",
+                "Exame citopatológico?","Exame mamografia?","Vacinada contra HPV?",
+                "Teve consulta sobre educacao sexual?",
+              ],
+              columns : [
+                "co_fat_cidadao_pec","no_cidadao","dt_nascimento","idade","micro_area",
+                "teve_exame_citopatologico","teve_mamografia","foi_vacinado_contra_hpv",
+                "teve_consulta_educacao_sexual"
+              ]
+            }
+          }
 
           areaBotao.innerHTML = "";
 
@@ -1015,6 +1097,30 @@ tr:nth-child(even) {
           acessarLista.innerHTML = 'Acessar lista de pacientes';
 
           areaBotao.appendChild(acessarLista);
+
+          acessarLista.onclick = () => {
+            let tabela = componentesIndicador.querySelector('tr:not([style*="display: none"])').className.toLocaleLowerCase();
+            let query = {
+              operadorLogico: "and",
+              equipe: `${(new URLSearchParams(window.location.search)).get('esf')}`,
+            };
+            if (!(micro.value == "-")) {
+              query.micro_area = micro.value;
+            }
+
+            let headers = colunasIndicadores[tabela].headers;
+            let columns = colunasIndicadores[tabela].columns.join(",");
+            let alinharDireita = "co_fat_cidadao_pec,dt_nascimento,micro_area,dt_atendimento,dpp";
+            let naoQuebrar = "no_cidadao,dt_nascimento,idade,dt_atendimento,dpp";
+
+            window.open(`lista-pacientes.html?q=${encodeURI(JSON.stringify(query))}&h=${encodeURI(
+              JSON.stringify(headers)
+            )}&c=${columns}&r=${alinharDireita}&t=${tabela}&w=${naoQuebrar}`,"_blank");
+
+            console.log(`lista-pacientes.html?q=${encodeURI(JSON.stringify(query))}&h=${encodeURI(
+              JSON.stringify(headers)
+            )}&c=${columns}&r=${alinharDireita}&t=${tabela}&w=${naoQuebrar}`)
+          }
         }
       })();
     </script>
