@@ -657,6 +657,10 @@ tr:nth-child(even) {
             <tbody id="componentesIndicador">
             </tbody>
           </table>
+          <div id="listagem" style="display: flex;align-items: center;">
+            Escolha a micro área: <select class="esf-microarea" style="width: unset;margin-left: 16px;" id="micro"></select>
+            <span id="areaBotao" style="margin-left: 16px;"></span>
+          </div>
         </fieldset>
       </div>
     </main>
@@ -674,6 +678,21 @@ tr:nth-child(even) {
       let sb = supabase.createClient(supabaseUrl, supabaseKey);
 
       (async () => {
+        let { data: listaESF } = await sb
+          .from('microarea')
+          .select('nome', { distinct: true })
+          .order('nome', { ascending: true })
+        ;
+
+        let opcoes = `<option value="-">Todas</option>`;
+        for (let linha of listaESF) {
+          opcoes += `<option value="${linha.nome}">${linha.nome ? linha.nome : 'Sem micro'}</option>`;
+        }
+
+        for (let select of document.getElementsByClassName("esf-microarea")) {
+          select.innerHTML = opcoes;
+        }
+
         let { data: indicadores, error } = await sb.from('indicadores_esf')
           .select('*')
           .eq('esf', (new URLSearchParams(window.location.search)).get('esf'))
@@ -988,6 +1007,14 @@ tr:nth-child(even) {
             linha.style = "display: none;"
           }
 
+          console.log(indicadores)
+
+          areaBotao.innerHTML = "";
+
+          let acessarLista = document.createElement("button");
+          acessarLista.innerHTML = 'Acessar lista de pacientes';
+
+          areaBotao.appendChild(acessarLista);
         }
       })();
     </script>
