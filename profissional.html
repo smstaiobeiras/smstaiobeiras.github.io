@@ -1407,10 +1407,11 @@ blockquote{
 
       (async () => {
         let { data, error } = await sb.from('profissionais').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0]);
-        if (data) {
-          if (data[0]) {
-            nome.innerText = data[0].nome;
-            localStorage.setItem('nome_profissional',data[0].nome.toUpperCase());
+        let eAdmin = (await sb.from('admins').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0])).data.length > 0;
+        if (data || eAdmin) {
+          if (data[0] || eAdmin) {
+            nome.innerText = data[0]?.nome;
+            localStorage.setItem('nome_profissional',data[0]?.nome.toUpperCase());
 
             let equipes_profissional = [];
             for (let registro of data) {
@@ -1428,10 +1429,10 @@ blockquote{
               let { data: relatorios, error } = await sb.from('equipes').select('nome').order('nome', { ascending: true });
               let opcoes = `<option value="-">Todas</option>`;
 
-              let eAdmin = (await sb.from('admins').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0])).data.length > 0;
               for (let relatorio of relatorios) {
                 if (!eAdmin) {
                   if (!equipes_profissional.includes(relatorio.nome)) continue;
+                  
                 }
 
                 let listItem = document.createElement("list-item");
@@ -1462,7 +1463,7 @@ blockquote{
           if ((await sb.from('admins').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0])).data.length > 0) {
             return;
           }
-          window.location.href = "login.html";
+          //window.location.href = "login.html";
         })();
       })();
 
