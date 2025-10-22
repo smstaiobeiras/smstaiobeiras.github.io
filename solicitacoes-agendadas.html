@@ -672,6 +672,14 @@ tr:nth-child(even) {
           <br>
           <label style="display: flex;align-items: center;">
             <span style="text-wrap: nowrap;margin-right: 8px;">
+              Solicitado na unidade:
+            </span>
+            <select style="width: unset;" id="listaUnidadesAgenda" onchange="carregarTabela();">
+            </select>
+          </label>
+          <br>
+          <label style="display: flex;align-items: center;">
+            <span style="text-wrap: nowrap;margin-right: 8px;">
               Agendadas com o profissional:
             </span>
             <select style="width: unset;" id="listaProfissional" onchange="carregarTabela();">
@@ -763,6 +771,9 @@ tr:nth-child(even) {
           if (listaUnidadesConsulta.value != "-"){
             if (listaUnidadesConsulta.value != solicitacao.nome_unidade_agenda) continue;
           }
+          if (listaUnidadesAgenda.value != "-"){
+            if (listaUnidadesAgenda.value != solicitacao.nome_unidade_solicitacao) continue;
+          }
           resultado += `
             <tr>
               <td style="text-align: right;">${solicitacao.data_agenda}</td>
@@ -815,6 +826,14 @@ tr:nth-child(even) {
         listaUnidadesCadastro.innerHTML=opcoes;
       })();
 
+      (async () => {
+        let { data: profissionais, error } = await sb.from('vw_unidades_agenda_solicitante').select('*');
+        let opcoes = `<option value="-">Selecionar</option>`;
+        for (let profissional of profissionais) {
+          opcoes += `<option value="${profissional.nome}">${profissional.nome}</option>`;
+        }
+        listaUnidadesAgenda.innerHTML=opcoes;
+      })();
 
       (async () => {
         let { data: profissionais, error } = await sb.from('vw_especialidade_agenda').select('*');
