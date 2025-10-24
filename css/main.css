@@ -19,14 +19,11 @@
     overflow: hidden;
   }
   
-  h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote, dl, dd {
+  h1, h2, h3, h4, h5, h6, p,  figure, blockquote, dl, dd {
     margin: 0;
     padding: 0;
   }
   
-  ul, ol {
-   
-  }
   
   img, picture, video, canvas, svg {
     display: block;
@@ -43,30 +40,6 @@
     background: none;
     outline: none;
     box-shadow: none;
-    appearance: none;
-    -webkit-appearance: none;
-  }
-
-  select {
-    appearance: base-select;
-    -webkit-appearance: base-select;
-  }
-
-  table {
-    border-spacing:0;
-    border-collapse:collapse
-  }
-
-  td,th {
-    padding:6px 13px
-  }
-
-  tr {
-    display:table-row;
-    vertical-align:inherit;
-    unicode-bidi:isolate;
-    border-color:inherit;
-    border-top:1px solid;
   }
   
   dialog{
@@ -392,7 +365,7 @@
     gap: 12px;
   }
   
-  card-box,horizontal-box {
+  card-box {
     padding: 0px;
     box-sizing: border-box;
     display: flex;
@@ -402,21 +375,16 @@
     border: 1px solid;
     cursor: pointer;
   }
-
-  horizontal-box {
-    flex-direction: row;
-    cursor: unset;
-  }
   
-  card-box > :first-child, horizontal-box > :last-child  {
+  card-box > :first-child {
     flex: 1;
   }
   
-  card-box > * , horizontal-box > * {
+  card-box > * {
     padding: 9px;
   }
   
-  card-box card-label, horizontal-box card-label {
+  card-box > card-label {
     padding:9px;
     min-height: 56px;
     display: flex;
@@ -467,7 +435,42 @@
     overflow-x: auto;
   }
   
-  /*Light Theme*/
+  
+  /*Tabelas*/
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 16px 0;
+    font-size: 1em;
+  }
+  
+  caption {
+    caption-side: top;
+    text-align: left;
+    font-weight: 600;
+    padding: 8px;
+    color: #333;
+  }
+  
+  th, td {
+    padding: 12px;
+    text-align: left;
+    vertical-align: middle;
+  }
+  
+  th {
+    font-weight: 600;
+  }
+  
+  /* Suporte para tabelas com rolagem */
+  table[scroll] {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  
+  /*Cores*/
   
   html,dialog {
     background-color: #ffffff;
@@ -498,14 +501,8 @@
   textarea,
   blockquote,list-box,
   list-item,
-  card-box,
-  horizontal-box,
-  th, td, tr, table{
+  card-box{
       border-color: #dfe2e5;
-  }
-
-  horizontal-box:last-child > *{
-    border-left: 1px solid #dfe2e5;
   }
   
   input[type="checkbox"]:checked::after {
@@ -522,8 +519,7 @@
   input[type=submit],
   input[type=button],
   input[type=reset],
-  card-box  card-label,
-  horizontal-box card-label {
+  card-box > card-label {
       background-color: #eaecef;
   }
   button:focus,
@@ -565,4 +561,26 @@
   blockquote{
       color: #6a737d;
   }
+  
+  thead {
+    background-color: #f6f8fa;
+  }
+  
+  th, td {
+    padding: 12px;
+    border: 1px solid #dfe2e5;
+    text-align: left;
+    vertical-align: middle;
+  }
+  
+  th {
+    font-weight: 600;
+    background-color: #f6f8fa;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #fafbfc;
+  }
+  
+  
   
