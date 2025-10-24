@@ -25,7 +25,30 @@
           Essa seção apresenta sua produção agrupada entre fichas que especificam turno e fichas que não especificam, dentro desses 2 grupos
           há separação por mês e o detalhamento por tipo de ficha
         </p>
-        <select id="profissional" onchange="obtemProducao(profissional.value);"></select>
+        <div style="display: flex;">
+          <label style="display: flex;align-content: center;padding-right: 32px !important;flex: 1;">
+            <span style="display: flex;align-items: center;padding-right: 9px !important;">
+              Unidade:
+            </span>
+            <select id="unidadeLotacao" onchange="listarProfissionais();"></select>
+          </label>
+          <label style="display: flex;align-content: center;">
+            <span style="display: flex;align-items: center;padding-right: 9px !important;">
+              Ocupação:
+            </span>
+            <select id="cbo" onchange="listarProfissionais();"></select>
+          </label>
+        </div>
+        <br>
+        <label style="display: flex;align-content: center;">
+          <span style="display: flex;align-items: center;padding-right: 9px !important;">
+            Profissional:
+          </span>
+          <select id="profissional" onchange="obtemProducao(profissional.value);"></select>
+        </label>
+        <br>
+
+        <hr>
         <h2>
           <a href="#" onclick="
             cabecalhoSemTurno.style = '';
@@ -45,7 +68,6 @@
         </h2>
         <div id="producaoDiariaSemTurno">
         </div>
-        <h2></h2>
         <div id="producaoDiariaComTurno" style="display: none;">
         </div>
       </div>
@@ -271,66 +293,93 @@
         }
       };
 
-      (async () => {
-        let { data: equipes, error } = await sb.from('equipes').select('nome').order('nome', { ascending: true });
-        let lista = [];
+      function listarProfissionais() {
+        let opcoes = `<option value="${localStorage.profissional_cpf}">Minha produção</option>`;
+        let profissionais = [];
+        for (let profissional of window.profissionaisLotados){
+          if (cbo.value!= '-' && profissional.cbo != cbo.value) continue;
+          if (unidadeLotacao.value!= '-' && profissional.unidade_saude != unidadeLotacao.value) continue;
+          profissionais.push(`${profissional.nome}`+"\0"+`${profissional.cpf}`);
+        }
+        profissionais = [...(new Set(profissionais))];
+        profissionais.sort();
 
-        if ((await sb.from('profissionais').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0]).in('cbo',[
-          'AGENTE COMUNITÁRIO DE SAÚDE',
-          'AGENTE DE COMBATE ÀS ENDEMIAS',
-          'AGENTE DE SAÚDE PÚBLICA',
-          'ATENDENTE DE ENFERMAGEM',
-          'AUXILIAR DE ENFERMAGEM DA ESTRATÉGIA DE SAÚDE DA FAMÍLIA',
-          'AUXILIAR EM SAÚDE BUCAL',
-          'AUXILIAR EM SAÚDE BUCAL DA ESTRATÉGIA DE SAÚDE DA FAMÍLIA',
-          'TÉCNICO DE ENFERMAGEM',
-          'TÉCNICO DE ENFERMAGEM DA ESTRATÉGIA DE SAÚDE DA FAMÍLIA',
-          'TÉCNICO EM SAÚDE BUCAL',
-          'TÉCNICO EM SAÚDE BUCAL DA ESTRATÉGIA DE SAÚDE DA FAMÍLIA',
-          'VISITADOR SANITÁRIO'])).data.length > 0){
-            profissional.style = "display: none;";
+        for (let profissional of profissionais) {
+          opcoes += `<option value="${profissional.split("\0")[1]}">${profissional.split("\0")[0]}</option>`;
         }
 
-        let equipes_profissional = [];
-        let _ = await (async () => {
-          let { data, error } = await sb.from('profissionais').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0]);
-          for (let registro of data) {
-              if (registro.equipe) {
-                if (!equipes_profissional[registro.equipe]) {
-                  equipes_profissional[registro.equipe] = true;
-                  equipes_profissional.push(registro.equipe);
-                }
-              }
-          }
-          equipes_profissional.sort();
-        })();
+        profissional.innerHTML = opcoes;
+      }
 
-        let eAdmin = (await sb.from('admins').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0])).data.length > 0;
+      (async () => {
+        let eAdmin = (await sb.from('admins').select('*').eq('cpf', localStorage.profissional_cpf)).data.length > 0;
+        let unidadesProfissional = [];
 
         if (eAdmin) {
-          profissional.style = "";
+          let { data:unidades, error } = await sb.from('unidades').select('*');
+          for (let unidade of unidades) {
+            unidadesProfissional.push(unidade.unidade_saude);
+          }
+          unidadesProfissional.sort();
+        } else {
+          let { data:profissionais, error } = await sb.from('profissionais').select('*').eq('cpf', localStorage.profissional_cpf);
+          for (let lotacao of profissionais) {
+            unidadesProfissional.push(lotacao.unidade_saude);
+          }
+          unidadesProfissional = [...(new Set(unidadesProfissional))];
+          unidadesProfissional.sort();
         }
-        for (let equipe of equipes) {
-          if (!eAdmin) {
-            if (!equipes_profissional.includes(equipe.nome)) continue;
+
+        {
+          let { data:profissionais, error } = await sb.from('profissionais').select('*').in('unidade_saude',unidadesProfissional);
+          let cbos = [];
+          let unidades = [];
+          let profissionaisLotados = [];
+          for (let profissional of profissionais){
+            cbos.push(profissional.cbo);
+            unidades.push(profissional.unidade_saude);
           }
 
-          lista.push(equipe.nome);
-        }
+          cbos = [...(new Set(cbos))];
+          unidades = [...(new Set(unidades))];
+          
+          cbos.sort();
+          unidades.sort();
 
-        lista.sort();
+          for (let profissional of profissionais){
+            if (!unidades.includes(profissional.unidade_saude)) continue;
+            if (!cbos.includes(profissional.cbo)) continue;
 
-        await (async () => {
-          const { data, error } = await sb.from('profissionais').select('nome,cpf',{distinct: 'cpf'}).in('equipe', lista).order('nome', { ascending: true });
-          const profissionais = [...new Map(data.map(item => [item.cpf, item])).values()];
-
-          let opcoes = `<option value="${localStorage.profissional_cpf.split("@")[0]}">Minha produção</option>`;
-          for (let profissional of profissionais) {
-            opcoes += `<option value="${profissional.cpf}">${profissional.nome}</option>`;
+            profissionaisLotados.push(profissional);
           }
 
-          profissional.innerHTML = opcoes;
-        })();
+          {
+            let opcoes = `<option value="-">Selecione</option>`;
+            for (let cbo of cbos) {
+              opcoes += `<option value="${cbo}">${cbo.charAt(0).toUpperCase()}${cbo.slice(1).toLowerCase()}</option>`;
+            }
+            cbo.innerHTML = opcoes;
+          }
+
+          {
+            let opcoes = `<option value="-">Selecione</option>`;
+            for (let unidade of unidades) {
+              opcoes += `<option value="${unidade}">${unidade}</option>`;
+            }
+            unidadeLotacao.innerHTML = opcoes;
+          }
+
+          {
+            let opcoes = `<option value="-">Selecione</option>`;
+            for (let unidade of unidades) {
+              opcoes += `<option value="${unidade}">${unidade}</option>`;
+            }
+            unidadeLotacao.innerHTML = opcoes;
+          }
+          
+          window.profissionaisLotados = profissionaisLotados;
+          listarProfissionais();
+        }
       })();
 
       obtemProducao(localStorage.profissional_cpf.split("@")[0]);
