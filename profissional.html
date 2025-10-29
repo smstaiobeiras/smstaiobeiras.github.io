@@ -137,6 +137,20 @@
         <label style="display: flex;align-items: center;margin-top: 8px;flex: 1;">
           <input type="date" style="flex:1;margin-left: 8px;" name="data_nascimento$lte">
         </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;">
+          ,  ou com &nbsp;
+        </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;">
+          <select style="min-width: 142px;" id="modoIdadePaciente" onchange="defineDataNascimentoPaciente();">
+            <option value="-">até</option>
+            <option value="pelo menos">pelo menos</option>
+          </select>
+          <input type="number" style="max-width: 72px;" id="idadeDesejadaPaciente" onchange="defineDataNascimentoPaciente();" min="1">
+          <select id="tipoIdadePaciente" onchange="defineDataNascimentoPaciente();">
+            <option value="-">anos</option>
+            <option value="12">meses</option>
+          </select>
+        </label>
       </div>
       <hr>
       <div style="display: flex;align-items: center;">
@@ -993,6 +1007,29 @@
           JSON.stringify(['CNS','Nome do paciente','Nome da mãe','Nome do pai','Data de nascimento','Contato','Equipe','Micro'])
         )}&c=cns,nome,mae,pai,data_nascimento,contato,equipe,micro_area&t=pacientes${
         "&r=cns,data_nascimento,contato,micro_area"}`;
+      }
+
+      function defineDataNascimentoPaciente() {
+        let modoCalculo = modoIdadePaciente.value == "-" ? 'até' : 'pelo menos';
+        let idadeAlvo = parseInt(idadeDesejadaPaciente.value)*(tipoIdadePaciente.value == "-" ? 12 : 1);
+
+        if (modoCalculo == "até") {
+          let dataMinima = new Date;
+          dataMinima.setMonth(dataMinima.getMonth() - idadeAlvo);
+
+          document.getElementsByName("data_nascimento$lte")[0].value = (new Date).toISOString().split('T')[0];
+          document.getElementsByName("data_nascimento$gte")[0].value = dataMinima.toISOString().split('T')[0];
+          return;
+        }
+
+        let dataMinima = new Date;
+        let dataMaxima = new Date;
+
+        dataMinima.setMonth(dataMinima.getMonth() - (127)*12);
+        dataMaxima.setMonth(dataMinima.getMonth() - idadeAlvo);
+
+        document.getElementsByName("data_nascimento$lte")[0].value = dataMaxima.toISOString().split('T')[0];
+        document.getElementsByName("data_nascimento$gte")[0].value = dataMinima.toISOString().split('T')[0];
       }
 
       function limparPesquisarCadastros() {
