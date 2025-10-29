@@ -526,7 +526,8 @@
   input[type=button]:active,
   input[type=reset]:active,
   list-item:active,
-  card-box:active {
+  card-box:active,
+  .selected {
       background-color: #dfe2e5 !important;
   }
   
