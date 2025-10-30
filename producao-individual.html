@@ -236,10 +236,6 @@
       }
 
       async function obtemProducao (cpf) {
-        for (let elemento of [...document.getElementsByClassName("pilula")]) {
-          elemento.remove();
-        }
-
         tabelas.innerHTML = '';
 
         const {data,error} = await sb
@@ -370,12 +366,14 @@
         }
       };
 
-      function listarProfissionais() {
-        for (let elemento of [...document.getElementsByClassName("pilula")]) {
-          elemento.remove();
+      function listarProfissionais(mostrandProducaoPropria) {
+        if (!mostrandProducaoPropria){
+          for (let elemento of [...document.getElementsByClassName("pilula")]) {
+            elemento.remove();
+          }
+          mostrandProducaoPropria = false;
         }
         let opcoes = `
-          <option value="${localStorage.profissional_cpf}">Selecione</option>
           <option value="${localStorage.profissional_cpf}">Minha produção</option>
         `;
         let profissionais = [];
@@ -461,11 +459,11 @@
           }
           
           window.profissionaisLotados = profissionaisLotados;
-          listarProfissionais();
+          listarProfissionais(true);
         }
       })();
 
-      obtemProducao(localStorage.profissional_cpf.split("@")[0]);
+      obtemProducao(localStorage.profissional_cpf.split("@")[0],true);
     </script>
   </body>
 </html>

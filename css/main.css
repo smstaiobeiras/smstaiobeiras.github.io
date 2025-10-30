@@ -573,5 +573,7 @@
     background-color: #fafbfc;
   }
   
-  
+  footer {
+    display: none !important;
+  }
   
