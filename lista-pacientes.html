@@ -99,6 +99,11 @@
             continue;
           }
 
+          if (coluna == "ultima_atualizacao_fci$lte") {
+            query = query.lte("ultima_atualizacao_fci", valor);
+            continue;
+          }
+
           if (coluna.startsWith("data_")) {
             valor = parseInt(valor.replaceAll("-",""));
             coluna = `cod_${coluna}`;
@@ -139,7 +144,7 @@
             <tr>
           `;
           for (let coluna of colunas) {
-              tabela += `<td style="text-align: ${realinhar.includes(coluna)?'right':'left'};text-wrap: ${naoQuebrar.includes(coluna)?'nowrap':'wrap'}">${linha[coluna] || ""}</td>`;
+              tabela += `<td style="text-align: ${realinhar.includes(coluna)?'right':'left'};text-wrap: ${naoQuebrar.includes(coluna)?'nowrap':'wrap'};user-select: text;">${linha[coluna] || ""}</td>`;
           }
           tabela += `
             </tr>

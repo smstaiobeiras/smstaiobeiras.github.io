@@ -185,6 +185,10 @@
           <input type="checkbox" style="flex:1;margin-right: 8px;" name="naoIncluirFA" checked>
           Não incluir fora de área
         </label>
+        <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
+          <input type="checkbox" style="flex:1;margin-right: 8px;" id="apenasDesatualizados">
+          Apenas desatualizados
+        </label>
       </div>
       <hr>
       <div style="display: flex;align-items: center;">
@@ -1001,6 +1005,10 @@
 
         if (query["data_nascimento$lte"] && (!query["data_nascimento$gte"])) {
           query["data_nascimento$gte"] = query["data_nascimento$lte"];
+        }
+
+        if (apenasDesatualizados.checked) {
+          query["ultima_atualizacao_fci$lte"] = parseInt(((d => (d.setMonth(d.getMonth() - 11), d))(new Date())).toISOString().slice(0,10).replace(/-/g,''));
         }
 
         window.location.href = `lista-pacientes.html?q=${encodeURI(JSON.stringify(query))}&h=${encodeURI(
