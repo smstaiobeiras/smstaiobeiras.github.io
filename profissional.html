@@ -1011,10 +1011,10 @@
           query["ultima_atualizacao_fci$lte"] = parseInt(((d => (d.setMonth(d.getMonth() - 11), d))(new Date())).toISOString().slice(0,10).replace(/-/g,''));
         }
 
-        window.location.href = `lista-pacientes.html?q=${encodeURI(JSON.stringify(query))}&h=${encodeURI(
+        window.open(`lista-pacientes.html?q=${encodeURI(JSON.stringify(query))}&h=${encodeURI(
           JSON.stringify(['CNS','Nome do paciente','Nome da mãe','Nome do pai','Data de nascimento','Contato','Equipe','Micro'])
         )}&c=cns,nome,mae,pai,data_nascimento,contato,equipe,micro_area&t=pacientes${
-        "&r=cns,data_nascimento,contato,micro_area"}`;
+        "&r=cns,data_nascimento,contato,micro_area"}`);
       }
 
       function defineDataNascimentoPaciente() {
