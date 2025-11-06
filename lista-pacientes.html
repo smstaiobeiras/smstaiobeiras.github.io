@@ -20,6 +20,279 @@
       <middle-right-box style="padding-right:9px;" onclick="(async () => {await sb.auth.signOut();location.href='login.html'})()">Sair...</middle-right-box>
     </header>
     <main>
+      <dialog id="pacientes" style="max-width: 1100px;">
+        <h2>Informações do paciente</h2>
+        <p style="border-radius: 12px;background-color: rgba(50, 143, 224,0.2);padding: 18px;border-left: 8px solid rgba(50, 143, 224,1.0);" id="bannerBaixandoFicha">Baixando última ficha processada...</p>
+
+        <hr>
+        Legenda:
+        <div style="display: flex;margin-left: 12px;">
+          <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
+            Campos com a cor vermelha são campos não preenchidos
+          </label>
+        </div>
+        <div style="display: flex;margin-left: 12px;">
+          <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
+            <input type="checkbox" style="flex:1;margin-right: 8px;">
+            Campo marcado como 'Não'
+          </label>
+        </div>
+        <div style="display: flex;margin-left: 12px;">
+          <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
+            <input type="checkbox" style="flex:1;margin-right: 8px;" checked>
+            Campo marcado como 'Sim'
+          </label>
+        </div>
+        <hr>
+        <div style="display: flex;">
+          <label style="display: flex;flex:1;align-items: center;">
+            Nome: <input type="text" style="flex:1;margin-left: 8px;" name="nome">
+          </label>
+          <label style="display: flex;align-items: center;margin-left: 8px;">
+            Sexo:
+            <select style="flex:1;margin-left: 8px;" name="sexo">
+              <option value="-">-</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Feminino">Feminino</option>
+            </select>
+          </label>
+          <label style="display: flex;align-items: center;margin-left: 8px;">
+            Raça/cor:
+            <select style="flex:1;margin-left: 8px;" name="raca_cor">
+              <option value="-">-</option>
+              <option value="1">Branca</option>
+              <option value="2">Preta</option>
+              <option value="4">Parda</option>
+              <option value="3">Amarela</option>
+              <option value="5">Indígena</option>
+            </select>
+          </label>
+        </div>
+        <div style="display: flex;">
+          <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
+            Nome da mãe: <input type="text" style="flex:1;margin-left: 8px;" name="mae">
+          </label>
+          <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;flex: 1">
+            Nome do pai: <input type="text" style="flex:1;margin-left: 8px;" name="pai">
+          </label>
+        </div>
+        <div style="display: flex;">
+          <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
+            CNS: <input type="text" style="flex:1;margin-left: 8px;" name="cns">
+          </label>
+          <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;">
+            Telefone: <input type="text" style="flex:1;margin-left: 8px;"  name="contato">
+          </label>
+          <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
+            <input type="checkbox" style="flex:1;margin-right: 8px;" name="recebe_beneficio">
+            Recebe benefícios
+          </label>
+        </div>
+        <div style="display: flex;">
+          <label style="display: flex;align-items: center;margin-top: 8px;flex: 1;text-wrap: nowrap;">
+            Data de nascimento: <input type="text" style="flex:1;margin-left: 8px;" name="data_nascimento">
+          </label>
+          <label style="display: flex;align-items: center;margin-top: 8px;flex: 1;margin-left: 9px;">
+            Peso:
+            <select style="flex:1;margin-left: 8px;" name="condicao_peso">
+              <option value="-">Todas</option>
+              <option value="1">Abaixo do peso</option>
+              <option value="2">Peso adequado</option>
+              <option value="3">Acima do peso</option>
+              <option value="4">Não informado</option>
+            </select>
+          </label>
+        </div>
+        <hr>
+        <div style="display: flex;align-items: center;">
+          <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
+            Unidade:
+            <input style="flex:1;margin-left: 8px;" name="unidade_saude" type="text">
+          </label>
+          <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;flex: 1">
+            Equipe:
+            <input name="equipe" class="esf-equipe" type="text" style="margin-left: 8px;">
+          </label>
+        </div>
+        <div style="display: flex;align-items: center;">
+          <label style="display: flex;align-items: center;margin-top: 8px;text-wrap: nowrap;">
+            Micro área:
+            <input type="text" style="flex:1;margin-left: 8px;max-width: 72px;;" name="micro_area" class="esf-microarea">
+          </label>
+          <label style="display: flex;align-items: center;margin-top: 8px;text-wrap: nowrap;margin-left: 16px;">
+            Localidade:
+            <select style="flex:1;margin-left: 8px;" name="zona_rural">
+              <option value="-">-</option>
+              <option value="false">Zona urbana</option>
+              <option value="true">Zona rural</option>
+            </select>
+          </label>
+        </div>
+        <hr>
+        <div style="display: flex;align-items: center;">
+          <label style="display: flex;align-items: center;margin-top: 8px;flex: 1">
+            Orientação sexual:
+            <select style="flex:1;margin-left: 8px;" name="orientacao_sexual">
+              <option value="-">-</option>
+              <option value="1">Heterossexual</option>
+              <option value="2">Homossexual (gay / lésbica)</option>
+              <option value="3">Bissexual</option>
+              <option value="6">Gay</option>
+              <option value="7">Lésbica</option>
+              <option value="8">Assexual</option>
+              <option value="9">Panssexual</option>
+              <option value="4">Outro</option>
+              <option value="5">Não informado</option>
+            </select>
+          </label>
+          <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 8px;flex: 1">
+            Identidade de gênero:
+            <select style="flex:1;margin-left: 8px;" name="identidade_genero">
+              <option value="-">-</option>
+              <option value="6">Homem cisgênero</option>
+              <option value="7">Mulher cisgênero</option>
+              <option value="9">Não-Binário</option>
+              <option value="8">Transgênero</option>
+              <option value="1">Homem transgênero</option>
+              <option value="2">Mulher transgênero</option>
+              <option value="3">Travesti</option>
+              <option value="4">Outro</option>
+              <option value="5">Não informado</option>
+            </select>
+          </label>
+        </div>
+        <hr>
+        <div style="display: flex;">
+          <style>
+            .no-border * {
+              border: none !important;
+              background-color: transparent !important;
+            }
+          </style>
+          <table class="no-border">
+            <tr>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="gestante" class="filtroPacienteCheckbox">
+                  Gestante
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="hipertenso" class="filtroPacienteCheckbox">
+                  Hipertenso
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="diabetico" class="filtroPacienteCheckbox">
+                  Diabético
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="fumante" class="filtroPacienteCheckbox">
+                  Fumante
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="alcolatra" class="filtroPacienteCheckbox">
+                  Alcoolismo
+                </label>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_auditivo" class="filtroPacienteCheckbox">
+                  Deficiente auditivo
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_intelectual" class="filtroPacienteCheckbox">
+                  Deficiente intelectual
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_visual" class="filtroPacienteCheckbox">
+                  Deficiente visual
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="deficiente_fisico" class="filtroPacienteCheckbox">
+                  Deficiente fisico
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="tea" class="filtroPacienteCheckbox">
+                  Autismo
+                </label>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_asma" class="filtroPacienteCheckbox">
+                  Tem asma
+                </label>
+  
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_dpoc" class="filtroPacienteCheckbox">
+                  Tem dPoc
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_doenca_cadiaca" class="filtroPacienteCheckbox">
+                  Tem doenca cadiaca
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="tem_problema_rins" class="filtroPacienteCheckbox">
+                  Tem problema nos rins
+                </label>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;text-wrap: nowrap;" name="teve_cancer" class="filtroPacienteCheckbox">
+                  Tem ou teve câncer
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="acamado" class="filtroPacienteCheckbox">
+                  Acamado
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="domiciliado" class="filtroPacienteCheckbox">
+                  Domiciliado
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" style="flex:1;margin-right: 8px;" name="morador_de_rua" class="filtroPacienteCheckbox">
+                  Situação de rua
+                </label>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <middle-right-box style="margin-top: 16px;">
+          <button onclick="pacientes.close();">Fechar</button>
+        </middle-right-box>
+      </dialog>
       <div style="padding: 26px;">
         <h2>Informativo</h2>
         Este módulo permite que você liste pacientes com base nas condições fornecidas. <button onclick="exportarXLSX();">Baixar Planilha</button>  
@@ -70,9 +343,38 @@
       ['card-book','card-box','card-label','list-item'].forEach((t) => customElements.define(t, class extends HTMLElement {}));
     </script>
     <script>
+      [...pacientes.querySelectorAll("input")].forEach((input) => {
+        input.readOnly=true;
+        input.onclick = () => event.preventDefault();
+      });
+      [...pacientes.querySelectorAll("select")].forEach((input) => input.style=`pointer-events: none;${input.style.cssText}`);
+
       const supabaseUrl = 'https://gnbbejevwbixsubblnua.supabase.co';
       const supabaseKey = 'sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA';
       let sb = supabase.createClient(supabaseUrl, supabaseKey);
+
+      async function baixarFicha(id) {
+        bannerBaixandoFicha.style = "border-radius: 12px;background-color: rgba(50, 143, 224,0.2);padding: 18px;border-left: 8px solid rgba(50, 143, 224,1.0);";
+        pacientes.showModal();
+
+        let { data: dados, error } = await sb.from('pacientes').select("*").eq('cns', id);
+
+        for (let [nome,valor] of Object.entries(dados[0])) {
+          let input = document.getElementsByName(nome)[0];
+          if (!input) continue;
+
+          input.closest('label').style.color = "";
+
+          if (valor == null || valor === "" || (nome == "orientacao_sexual" && valor ==5) || (nome == "identidade_genero" && valor ==5)|| (nome == "condicao_peso" && valor ==4)) {
+            input.closest('label').style.color = "red";
+          }
+
+          input.checked = valor;
+          input.value = valor;
+        }
+
+        bannerBaixandoFicha.style = "display:none;"
+      }
 
       (async () => {
         let query = sb.from((new URLSearchParams(location.search)).get('t')).select((new URLSearchParams(location.search)).get('c'));
@@ -144,7 +446,10 @@
             <tr>
           `;
           for (let coluna of colunas) {
-              tabela += `<td style="text-align: ${realinhar.includes(coluna)?'right':'left'};text-wrap: ${naoQuebrar.includes(coluna)?'nowrap':'wrap'};user-select: text;">${linha[coluna] || ""}</td>`;
+
+              tabela += `<td style="text-align: ${realinhar.includes(coluna)?'right':'left'};text-wrap: ${naoQuebrar.includes(coluna)?'nowrap':'wrap'};user-select: text;">
+                ${coluna == "cns" ? `<a href="#" style="color:blue;text-decoration: underline;" onclick="baixarFicha('${linha[coluna]}');">${linha[coluna]}</a>` : linha[coluna] || ""}
+              </td>`;
           }
           tabela += `
             </tr>
