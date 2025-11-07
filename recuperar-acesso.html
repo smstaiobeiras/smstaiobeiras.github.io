@@ -15,10 +15,18 @@
     </style>
   </head>
   <body>
-    <dialog id="login" style="border: 0;position: absolute;top: 50%;transform: translate(0%, -50%);" open="true">
+    <dialog id="login" style="border: 0;position: absolute;top: 50%;transform: translate(0%, -50%);min-width: 640px;" open="true">
       <center-box>
         <img src="img/logo-prefeitura.png">
       </center-box>
+      <label style="display: flex;align-items: center;margin-top: 16px;text-wrap: nowrap;">
+        Nome completo:
+        <input type="text" id="nome" style="padding-left: 12px;padding-right: 12px;margin-left: 8px;" style="height: 100%;">
+      </label>
+      <label style="display: flex;align-items: center;margin-top: 16px;">
+        Unidade:
+        <input type="text" id="unidade" style="padding-left: 12px;padding-right: 12px;margin-left: 8px;" style="height: 100%;">
+      </label>
       <label style="display: flex;align-items: center;margin-top: 16px;">
         CPF:
         <input type="text" id="cpf" oninput="applyCPFFormat(this)" style="padding-left: 12px;padding-right: 12px;margin-left: 8px;" style="height: 100%;">
@@ -29,7 +37,6 @@
         <input id="senha" type="password" style="height: 38px;border-right: 0px;border-top-right-radius: 0px;border-bottom-right-radius: 0px; margin-left: 8px;padding-left: 12px;padding-right: 12px;">
             <button  style="min-height: 38px;min-width: 38px;border-left: 0px;border-top-left-radius: 0px;border-bottom-left-radius: 0px; display: flex; align-items: center; justify-content: center;" onclick="
                 senha.type = senha.type == 'password' ? 'text' : 'password';
-                confirmarSenha.type = confirmarSenha.type == 'password' ? 'text' : 'password';
               ">
               <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 2L22 22" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -47,7 +54,6 @@
         <input id="confirmarSenha" type="password" style="height: 38px;border-right: 0px;border-top-right-radius: 0px;border-bottom-right-radius: 0px; margin-left: 8px;padding-left: 12px;padding-right: 12px;">
             <button  style="min-height: 38px;min-width: 38px;border-left: 0px;border-top-left-radius: 0px;border-bottom-left-radius: 0px; display: flex; align-items: center; justify-content: center;" onclick="
                 senha.type = senha.type == 'password' ? 'text' : 'password';
-                confirmarSenha.type = confirmarSenha.type == 'password' ? 'text' : 'password';
               ">
               <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 2L22 22" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -64,11 +70,11 @@
       <span style="color: rgb(200, 56, 30);padding: 16px !important;" id="erro"></span>
 
       <right-box style="margin-top: 16px;align-items: center;">
-        <a href="login.html" style="color: dodgerblue;">Voltar</a>
+        <a href="login.html" style="color: dodgerblue;">Fazer Login</a>
         <span style="margin-left: 16px;">|</span>
-        <a href="recuperar-acesso.html" style="color: rgb(200, 56, 30);margin-left: 16px;">Esqueci a senha</a>
+        <a href="cadastrar-acesso.html" style="color: rgb(30, 200, 135);margin-left: 16px;">Cadastrar Acesso</a>
         <span style="margin-left: 16px;">|</span>
-        <button onclick="signup();" style="margin-left: 16px;">Cadastrar</button>
+        <button onclick="signup();" style="margin-left: 16px;">Solicitar recuperação</button>
       </right-box>
     </dialog>
 
@@ -104,6 +110,16 @@
       }
 
       async function signup() {
+        if (nome.value == "") {
+          erro.innerText = "*Nome completo não pode estar em branco";
+          return;
+        }
+
+        if (unidade.value == "") {
+          erro.innerText = "*Unidade não pode estar em branco";
+          return;
+        }
+
         if (cpf.value == "") {
           erro.innerText = "*CPF não pode estar em branco";
           return;
@@ -124,33 +140,25 @@
           return;
         }
 
-        let { data, error } = await sb.auth.signUp({
-          email: `${parseInt(document.getElementById("cpf").value.replaceAll(".","").replaceAll("-","")).toString(36)}@profissional.ext`,
-          password: `${document.getElementById("senha").value}`,
-        })
+        let chave = [1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F','G','H','I'].sort(() => Math.random() - 0.5).slice(12).join(" ");;
+
+        const { data, error } = await sb.from('solicitaca_de_recuperacao_de_acesso').insert([
+          { 
+            nome: nome.value, 
+            unidade: unidade.value,
+            cpf: cpf.value,
+            senha: senha.value,
+            chave: chave
+          },
+
+        ]).select();
 
         if (!error) {
-          login();
+          erro.innerText = `Solicitação registrada, entre em contato com a Gestão da APS, a chave: <b>${chave}</b>`;
           return
         }
 
-        erro.innerText = "Ocorreu um erro, parece que você já se cadastrou";
-      }
-
-      async function login() {
-        const { data, error } = await sb.auth.signInWithPassword({
-          email: `${parseInt(document.getElementById("cpf").value.replaceAll(".","").replaceAll("-","")).toString(36)}@profissional.ext`,
-          password: `${document.getElementById("senha").value}`,
-        });
-
-        if (error) {
-          document.getElementById('loginErro').showModal();
-          console.log(error)
-          return;
-        }
-
-        localStorage.setItem("profissional_cpf", `${document.getElementById("cpf").value.replaceAll(".","").replaceAll("-","")}`);
-        location.href = "profissional.html";
+        erro.innerText = "Ocorreu um erro, tente novamente mais tarde";
       }
     </script>
   </body>
