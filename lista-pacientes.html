@@ -24,24 +24,25 @@
         <h2>Informações do paciente</h2>
         <p style="border-radius: 12px;background-color: rgba(50, 143, 224,0.2);padding: 18px;border-left: 8px solid rgba(50, 143, 224,1.0);" id="bannerBaixandoFicha">Baixando última ficha processada...</p>
 
-        <hr>
-        Legenda:
-        <div style="display: flex;margin-left: 12px;">
-          <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
-            Campos com a cor vermelha são campos não preenchidos
-          </label>
-        </div>
-        <div style="display: flex;margin-left: 12px;">
-          <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
-            <input type="checkbox" style="flex:1;margin-right: 8px;">
-            Campo marcado como 'Não'
-          </label>
-        </div>
-        <div style="display: flex;margin-left: 12px;">
-          <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
-            <input type="checkbox" style="flex:1;margin-right: 8px;" checked>
-            Campo marcado como 'Sim'
-          </label>
+        <div style="border-radius: 12px;background-color: rgba(120, 224, 143,0.2);padding: 18px;border-left: 8px solid rgba(120, 224, 143,1.0);">
+          <b>Legenda:</b>
+          <div style="display: flex;margin-left: 12px;">
+            <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
+              Campos com o texto na cor&nbsp;<span style="color: red;">vermelha</span>&nbsp;são campos com "Não Informado"
+            </label>
+          </div>
+          <div style="display: flex;margin-left: 12px;">
+            <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
+              <input type="checkbox" style="flex:1;margin-right: 8px;" checked>
+              Paciente possui a condição
+            </label>
+          </div>
+          <div style="display: flex;margin-left: 12px;">
+            <label style="display: flex;align-items: center;margin-top: 8px;margin-left: 16px;text-wrap: nowrap;">
+              <input type="checkbox" style="flex:1;margin-right: 8px;">
+              Paciente NÃO possui a condição
+            </label>
+          </div>
         </div>
         <hr>
         <div style="display: flex;">
@@ -448,7 +449,7 @@
           for (let coluna of colunas) {
 
               tabela += `<td style="text-align: ${realinhar.includes(coluna)?'right':'left'};text-wrap: ${naoQuebrar.includes(coluna)?'nowrap':'wrap'};user-select: text;">
-                ${coluna == "cns" ? `<a href="#" style="color:blue;text-decoration: underline;" onclick="baixarFicha('${linha[coluna]}');">${linha[coluna]}</a>` : linha[coluna] || ""}
+                ${coluna == "cns" ? `<a href="#" style="color:blue;text-decoration: underline;user-select: text;" onclick="baixarFicha('${linha[coluna]}');">${linha[coluna]}</a>` : linha[coluna] || ""}
               </td>`;
           }
           tabela += `
