@@ -911,7 +911,7 @@
               <td>
                 <button onclick="(
                   async () => {
-                    await atualizaSenha('${parseInt(solicitacao.cpf).toString(36)}@profissional.ext', '${solicitacao.senha.replaceAll('\'','\\\'')}');
+                    await atualizaSenha('${parseInt(solicitacao.cpf.replaceAll(".","").replaceAll("-","")).toString(36)}@profissional.ext', '${solicitacao.senha.replaceAll('\'','\\\'')}');
                     await sb.from('solicitaca_de_recuperacao_de_acesso').delete().eq('cpf', '${solicitacao.cpf}');
                     const tr = event.target.closest('tr');
                     tr.lastElementChild?.remove();
@@ -1000,7 +1000,8 @@
 
       async function atualizaSenha(email, senha) {
         const usuario = usuarios.find(u => u.email === email)
-        const { data, error } = await supabase.auth.admin.updateUserById(usuario.id, {
+        console.log([email])
+        const { data, error } = await se.auth.admin.updateUserById(usuario.id, {
           password: senha,
         })
         if (error) throw error
