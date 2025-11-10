@@ -12,6 +12,27 @@
     <link rel="stylesheet" href="css/main.css">
   </head>
   <body>
+    <dialog id="pedidosSenha">
+      <h2>Usuários que solicitaram recuperação de senha:</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Unidade</th>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Chave</th>
+            <th colspan="2">Decisão</th>
+          </tr>
+        </thead>
+        <tbody id="listaPedidosSenha">
+        </tbody>
+      </table>
+      <middle-right-box style="margin-top: 16px;">
+        <button onclick="pacientes.close();">Fechar</button>
+        <button onclick="limparPesquisarCadastros();" style="margin-left: 8px;">Limpar</button>
+        <button onclick="pesquisarCadastros();" style="margin-left: 8px;">Pesquisar</button>
+      </middle-right-box>
+    </dialog>
     <dialog id="statusCadastros">
       <h2>Quantitativo de cadastros</h2>
       <label style="display: inline-flex;align-items: center;margin-bottom: 16px;">
@@ -822,6 +843,8 @@
       const supabaseUrl = 'https://gnbbejevwbixsubblnua.supabase.co';
       const supabaseKey = 'sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA';
       let sb = supabase.createClient(supabaseUrl, supabaseKey);
+      let se = supabase.createClient(supabaseUrl, supabaseKey);
+      let usuarios = [];
 
       (async () => {
         let { data: relatorios, error } = await sb.from('relatorios').select('id,nome,descricao,url').order('nome', { ascending: true });
@@ -858,8 +881,6 @@
         }
       })();
 
-      
-
       (async () => {
         let { data: relatorios, error } = await sb.from('unidades').select('unidade_saude').order('unidade_saude', { ascending: true });
         let opcoes = `<option value="-">Todas</option>`;
@@ -876,6 +897,49 @@
       (async () => {
         let { data, error } = await sb.from('profissionais').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0]);
         let eAdmin = (await sb.from('admins').select('*').eq('cpf', localStorage.profissional_cpf.split("@")[0])).data.length > 0;
+        if (eAdmin) {
+          se = supabase.createClient(supabaseUrl,(await sb.from('service_role').select('*')).data[0].key);
+          let possuiSolicitacoes = false;
+          for (let solicitacao of (await se.from('solicitaca_de_recuperacao_de_acesso').select('*')).data) {
+            possuiSolicitacoes = true;
+            listaPedidosSenha.innerHTML = `
+            <tr>
+              <td>${solicitacao.unidade}</td>
+              <td>${solicitacao.nome}</td>
+              <td>${solicitacao.cpf.replace(/\D/g, '').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2')}</td>
+              <td>${solicitacao.chave}</td>
+              <td>
+                <button onclick="(
+                  async () => {
+                    await atualizaSenha('${parseInt(solicitacao.cpf).toString(36)}@profissional.ext', '${solicitacao.senha.replaceAll('\'','\\\'')}');
+                    await sb.from('solicitaca_de_recuperacao_de_acesso').delete().eq('cpf', '${solicitacao.cpf}');
+                    const tr = event.target.closest('tr');
+                    tr.lastElementChild?.remove();
+                    tr.lastElementChild?.remove();
+                    tr.innerHTML += \`<td colspan=2>Aceito</td>\`;
+                  })();">
+                  Aceitar
+                </button>
+              </td>
+              <td>
+                <button onclick="(
+                  async () => {
+                    await sb.from('solicitaca_de_recuperacao_de_acesso').delete().eq('cpf', '${solicitacao.cpf}');
+                    const tr = event.target.closest('tr');
+                    tr.lastElementChild?.remove();
+                    tr.lastElementChild?.remove();
+                    tr.innerHTML += \`<td colspan=2>Recusado</td>\`;
+                  })();">
+                  Recusar
+                </button>
+              </td>
+            </tr>`;
+          }
+
+          usuarios = (await se.auth.admin.listUsers({page: 1, perPage: 1000})).data.users;
+
+          if (possuiSolicitacoes) pedidosSenha.showModal();
+        }
         if (data || eAdmin) {
           if (data[0] || eAdmin) {
             nome.innerText = data[0]?.nome;
@@ -900,7 +964,6 @@
               for (let relatorio of relatorios) {
                 if (!eAdmin) {
                   if (!equipes_profissional.includes(relatorio.nome)) continue;
-                  
                 }
 
                 let listItem = document.createElement("list-item");
@@ -935,6 +998,14 @@
         })();
       })();
 
+      async function atualizaSenha(email, senha) {
+        const usuario = usuarios.find(u => u.email === email)
+        const { data, error } = await supabase.auth.admin.updateUserById(usuario.id, {
+          password: senha,
+        })
+        if (error) throw error
+      }
+
       async function atualizaAcessoAsistemas(){
         listaSistemas.innerHTML = `
           <card-box style="max-width: 150px;min-width: 150px;display: none;"  onclick="adicionarSistemaExterno.showModal();">
@@ -965,7 +1036,6 @@
           </card-box>
           `;
         }
-
       };
 
       async function salvarLinkDeAcessoAosSistemas() {
@@ -1074,7 +1144,6 @@
         for (let checkbox of document.getElementsByClassName("filtroPacienteCheckbox")) {
           checkbox.checked = false;
         }
-
         for (let regra of grupo.split(";")){
           if (regra.includes(" = ")) {
             let campo = regra.split(".")[0].trim();
