@@ -142,19 +142,19 @@
 
         let chave = [1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F','G','H','I'].sort(() => Math.random() - 0.5).slice(12).join(" ");;
 
-        const { data, error } = await sb.from('solicitaca_de_recuperacao_de_acesso').insert([
-          { 
-            nome: nome.value, 
+        const { data, error } = await sb.from('solicitaca_de_recuperacao_de_acesso').upsert(
+          {
+            nome: nome.value,
             unidade: unidade.value,
             cpf: cpf.value,
             senha: senha.value,
             chave: chave
           },
-
-        ]).select();
+          { onConflict: ['cpf'] }
+        ).select();
 
         if (!error) {
-          erro.innerText = `Solicitação registrada, entre em contato com a Gestão da APS, a chave: <b>${chave}</b>`;
+          erro.innerHTML = `Solicitação registrada, entre em contato com a Gestão da APS, a chave: <b>${chave}</b>`;
           return
         }
 
