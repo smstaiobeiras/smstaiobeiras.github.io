@@ -28,55 +28,17 @@
         </tbody>
       </table>
       <middle-right-box style="margin-top: 16px;">
-        <button onclick="pacientes.close();">Fechar</button>
-        <button onclick="limparPesquisarCadastros();" style="margin-left: 8px;">Limpar</button>
-        <button onclick="pesquisarCadastros();" style="margin-left: 8px;">Pesquisar</button>
+        <button onclick="pedidosSenha.close();">Fechar</button>
       </middle-right-box>
     </dialog>
-    <dialog id="statusCadastros">
-      <h2>Quantitativo de cadastros</h2>
-      <label style="display: inline-flex;align-items: center;margin-bottom: 16px;">
-        <span style="text-wrap: nowrap;padding-right: 16px;">
-          Escolha a ESF:
-        </span>
-        <select class="esf-select">
-        </select>
-      </label>
-      <label style="display: inline-flex;align-items: center;margin-bottom: 16px;margin-left: 32px;">
-        <span style="text-wrap: nowrap;padding-right: 16px;">
-          Micro área:
-        </span>
-        <select class="esf-microarea">
-        </select>
-      </label>
-      <fieldset>
-        <legend>Escolha o tipo de agrupamento</legend>
-        <list-box>
-          <list-item onclick="window.open('Quantitativo-Pacientes-Faixa-etaria.html', '_tab');statusCadastros.close();">
-            <img src="img/i-text-file.png" width=64>
-            <span style="flex: 1;">
-             <b>Por idade</b><br>
-             Agrupa por faixa etária baseado nas faixas usadas pelo IBGE
-            </span>
-          </list-item>
-          <list-item onclick="window.open('Quantitativo-Pacientes-Condicionalidade.html', '_tab');statusCadastros.close();">
-            <img src="img/i-text-file.png" width=64>
-            <span style="flex: 1;">
-             <b>Por condicionalidade</b><br>
-             Agrupa por condicionalidade baseado no cadastro individual
-            </span>
-          </list-item>
-          <list-item onclick="window.open('Quantitativo-Pacientes-Indicador.html', '_tab');statusCadastros.close();">
-            <img src="img/i-text-file.png" width=64>
-            <span style="flex: 1;">
-             <b>Por indicador</b><br>
-             Agrupa por indicador que o paciente impacta
-            </span>
-          </list-item>
-        </list-box>
-      </fieldset>
+    
+
+    <dialog id="geradorFichas" style="width: 640px;">
+      <h2>Fichas disponíveis</h2>
+      <list-box id="listaFichasDisponiveis">
+      </list-box>
       <middle-right-box style="margin-top: 16px;">
-        <button onclick="statusCadastros.close();">Fechar</button>
+        <button onclick="geradorFichas.close();">Fechar</button>
       </middle-right-box>
     </dialog>
 
@@ -608,12 +570,12 @@
               <center-box><b>Ajuda & suporte</b></center-box>
             </card-label>
           </card-box>
-          <card-box style="max-width: 128px;min-width: 128px;" onclick="window.open('Teste-MCARTH.html','_blank','width=1280,height=600')">
+          <card-box style="max-width: 128px;min-width: 128px;" onclick="geradorFichas.showModal();">
             <center-box>
-              <img src="img/i-blocks.png" width="96px">
+              <img src="img/i-registration-form.png" width="96px">
             </center-box>
             <card-label>
-              <center-box><b>M-CHAT</b></center-box>
+              <center-box><b>Emissor de fichas</b></center-box>
             </card-label>
           </card-box>
         </card-book>
@@ -845,6 +807,14 @@
       let sb = supabase.createClient(supabaseUrl, supabaseKey);
       let se = supabase.createClient(supabaseUrl, supabaseKey);
       let usuarios = [];
+      let unidades = [];
+
+      (async () => {
+        let { data: _unidades, error } = await sb.from('unidades').select('*');
+        for (let unidade of _unidades) {
+          unidades[unidade.unidade_saude] = unidade;
+        }
+      })();
 
       (async () => {
         let { data: relatorios, error } = await sb.from('relatorios').select('id,nome,descricao,url').order('nome', { ascending: true });
@@ -861,6 +831,361 @@
             window.open(relatorio.url, '_tab');
           }
           listaRelatorios.appendChild(listItem);
+        }
+      })();
+
+      (async () => {
+        let { data: relatorios, error } = await sb.from('fichas_formulario').select('*').order('nome', { ascending: true });
+        for (let relatorio of relatorios) {
+          let listItem = document.createElement("list-item");
+          listItem.innerHTML = `
+            <img src="img/i-sign-form.png" width=64>
+            <span>
+              <b>${relatorio.nome}</b><br>
+              ${relatorio.descricao}
+            </span>
+          `;
+          listItem.onclick = () => {
+            let campos = JSON.parse(relatorio.campos);
+            let dialogo = document.body.appendChild(document.createElement("dialog"));
+            dialogo.onclose = (event) => event.target.remove();
+            dialogo.style.maxWidth = "1000px"
+            dialogo.appendChild(document.createElement("h2")).innerHTML = relatorio.nome;
+            dialogo.appendChild(document.createElement("p")).innerHTML = relatorio.instrutivo;
+            dialogo.appendChild(document.createElement("hr"));
+
+            for (let [campo,dados] of Object.entries(campos)) {
+              let label = document.createElement('label');
+              let texto = document.createElement('span');
+
+              label.style = 'margin-bottom: 9px;align-items: center; display:flex;';
+              texto.style = 'text-wrap: nowrap;';
+
+              if (typeof(dados) == "object" && dados.tag == "select") {
+                label.appendChild(texto).innerHTML = campo;
+
+                let input = label.appendChild(document.createElement('select'));
+                input.style = 'margin-left: 9px;';
+                input.name = campo;
+
+                for (let dado of dados.dados){
+                  let opcao = input.appendChild(document.createElement("option"));
+                  opcao.value = dado.split(":")[0];
+                  opcao.innerText = dado.split(":")[1];
+                }
+
+                dialogo.appendChild(label);
+                continue;
+              }
+
+              if (typeof(dados) == "object" && dados.tag == "checklist") {
+                label = dialogo.appendChild(document.createElement('div'));
+                label.style = 'margin-bottom: 9px;display:flex;flex-direction: column;';
+                label.appendChild(document.createElement("br"));
+                label.appendChild(texto).innerHTML = campo;
+
+                let tabela = label.appendChild(document.createElement("table"));
+                tabela = tabela.appendChild(document.createElement("tbody"));
+
+                console.log(dados);
+
+                for (let campos of dados.dados) {
+                  let linha = tabela.appendChild(document.createElement("tr"));
+                  for (let campo of campos) {
+                    let td = linha.appendChild(document.createElement("td"));
+                    let checkbox = td.appendChild(document.createElement("label"));
+                    let input = checkbox.appendChild(document.createElement("input"));
+                    input.type = "checkbox";
+                    input.style = 'margin-right: 9px;';
+                    input.name = campo;
+                    input.setAttribute('ifTrue',dados["true"])
+                    input.setAttribute('ifFalse',dados["false"])
+
+                    checkbox.innerHTML += campo;
+                  }
+                }
+
+                dialogo.appendChild(label);
+                continue;
+              }
+              
+              let [nome,tipo] = dados.split(":");
+
+              if (tipo == "logradouro") {
+                label.appendChild(document.createElement('span')).innerHTML="Endereço:&nbsp;";
+                let logradouro = label.appendChild(document.createElement('input'));
+                logradouro.name = "Endereço:";
+                logradouro.type = "text";
+
+                label.appendChild(document.createElement('span')).innerHTML="&nbsp;Número:&nbsp;";
+                let numero = label.appendChild(document.createElement('input'));
+                numero.name = "Número:"
+                numero.type = "text";
+                numero.style = "max-width: 96px;"
+
+                label.style = 'margin-bottom: 9px;align-items: center; display:flex;';
+
+                dialogo.appendChild(label);
+
+                label = dialogo.appendChild(document.createElement('div'));
+                label.style = 'margin-bottom: 9px;align-items: center; display:flex;';
+
+                label.appendChild(document.createElement('span')).innerHTML="Bairro:&nbsp;";
+
+                let bairro = label.appendChild(document.createElement('input'));
+                bairro.name = "Bairro:";
+                bairro.type = "text";
+
+                label.appendChild(document.createElement('span')).innerHTML="&nbsp;Zona:&nbsp;";
+                let zona = label.appendChild(document.createElement('select'));
+                zona.name = "Zona:";
+
+                let ignorado = zona.appendChild(document.createElement('option'))
+                ignorado.innerHTML = "Ignorado"
+                ignorado.value = "Ignorado"
+
+                let urbana = zona.appendChild(document.createElement('option'))
+                urbana.innerHTML = "Urbana"
+                urbana.value = "Urbana"
+
+                let periurbana = zona.appendChild(document.createElement('option'))
+                periurbana.innerHTML = "Periurbana"
+                periurbana.value = "Periurbana"
+
+                let rural = zona.appendChild(document.createElement('option'))
+                rural.innerHTML = "Rural"
+                rural.value = "Rural"
+
+                dialogo.appendChild(label);
+                dialogo.appendChild(document.createElement('hr'));
+                continue;
+              }
+
+              if (tipo == "paciente") {
+                label = dialogo.appendChild(document.createElement('div'));
+                label.style = 'margin-bottom: 9px;align-items: center; display:flex;';
+                label.appendChild(document.createElement('span')).innerHTML="Nome:&nbsp;";
+                let nome = label.appendChild(document.createElement('input'));
+                nome.name = "Nome:"
+
+                label.appendChild(document.createElement('span')).innerHTML="&nbsp;Data&nbsp;nasc.:&nbsp;";
+                let data_nascimento = label.appendChild(document.createElement('input'));
+                data_nascimento.name = "Data nasc.:";
+
+                nome.type = "text";
+                data_nascimento.type = "date";
+                data_nascimento.style = "max-width: 158px;"
+
+                label = dialogo.appendChild(document.createElement('div'));
+                label.style = 'margin-bottom: 9px;align-items: center; display:flex;';
+                label.appendChild(document.createElement('span')).innerHTML="CNS:&nbsp;";
+
+                let cns = label.appendChild(document.createElement('input'));
+                cns.name = "CNS:";
+                cns.type = "text";
+                
+                label.appendChild(document.createElement('span')).innerHTML="&nbsp;Sexo:&nbsp;";
+                let sexo = label.appendChild(document.createElement('select'));
+                sexo.name = "Sexo:";
+
+                let ignorado = sexo.appendChild(document.createElement('option'))
+                ignorado.innerHTML = "Ignorado"
+                ignorado.value = "IGNORADO"
+
+                let masculino = sexo.appendChild(document.createElement('option'))
+                masculino.innerHTML = "Masculino"
+                masculino.value = "MASCULINO"
+
+                let feminino = sexo.appendChild(document.createElement('option'))
+                feminino.innerHTML = "Feminino"
+                feminino.value = "FEMININO"
+
+                label.appendChild(document.createElement('span')).innerHTML="&nbsp;Raça/cor:&nbsp;";
+                let raca = label.appendChild(document.createElement('select'));
+                raca.name = "Raça/cor:";
+
+                ignorado = raca.appendChild(document.createElement('option'))
+                ignorado.innerHTML = "Ignorado"
+
+                let branca = raca.appendChild(document.createElement('option'))
+                branca.innerHTML = "Branca"
+                branca.value = 1;
+
+                let preta = raca.appendChild(document.createElement('option'))
+                preta.innerHTML = "Preta"
+                preta.value = 2;
+
+                let amarela = raca.appendChild(document.createElement('option'))
+                amarela.innerHTML = "Amarela"
+                amarela.value = 3;
+
+                let parda = raca.appendChild(document.createElement('option'))
+                parda.innerHTML = "Parda"
+                parda.value = 4;
+
+                let indigena = raca.appendChild(document.createElement('option'))
+                indigena.innerHTML = "Indigena"
+                indigena.value = 5;
+
+                label = dialogo.appendChild(document.createElement('div'));
+                label.style = 'margin-bottom: 9px;align-items: center; display:flex;';
+                label.appendChild(document.createElement('span')).innerHTML="Contato:&nbsp;";
+
+                let telefone = label.appendChild(document.createElement('input'));
+                telefone.name = "Contato:";
+                telefone.type = "text";
+                telefone.style.maxWidth = "200px;"
+
+                let span = label.appendChild(document.createElement('span'))
+                span.innerHTML="&nbsp;Nome da mãe:&nbsp;";
+                span.style = "text-wrap: nowrap;"
+
+                let nomeMae = label.appendChild(document.createElement('input'));
+                nomeMae.name = "Nome da mãe:";
+                nomeMae.type = "text";
+
+                label = dialogo.appendChild(document.createElement('div'));
+                label.style = 'margin-bottom: 9px;align-items: center; display:flex;';
+                label.appendChild(document.createElement('span')).innerHTML="Ocupação:&nbsp;";
+
+                let ocupacao = label.appendChild(document.createElement('input'));
+                ocupacao.name = "Ocupação: ";
+                ocupacao.type = "text";
+
+                cns.onchange = async () => {
+                  let { data: paciente, error } = await sb.from('pacientes').select("*").eq('cns', cns.value);
+                  if (paciente[0]) {
+                    const yyyymmdd = `${paciente[0].cod_data_nascimento}`;
+                    const yyyy = yyyymmdd.slice(0, 4);
+                    const mm = yyyymmdd.slice(4, 6);
+                    const dd = yyyymmdd.slice(6, 8);
+
+                    nome.value = paciente[0].nome;
+                    data_nascimento.value = `${yyyy}-${mm}-${dd}`;
+                    sexo.value = paciente[0].sexo;
+                    raca.value = paciente[0].raca_cor;
+                    nomeMae.value = paciente[0].mae;
+                    telefone.value = paciente[0].contato;
+                    ocupacao.value = paciente[0].ocupacao || 'Não informado';
+
+                    console.log(paciente)
+                  }
+                }
+
+                dialogo.appendChild(document.createElement('hr'));
+                continue;
+              }
+
+              let input = document.createElement(tipo == 'boolean' ? 'input' : (tipo == 'text' ? 'textarea' : 'input'));
+              label.style = tipo == 'text' ? 'margin-bottom: 9px;align-items: center;margin-right: 9px;' : 'margin-bottom: 9px;align-items: center; display:flex;';
+              texto.style = 'text-wrap: nowrap;';
+              input.style = tipo == 'string' ? 'margin-left: 9px;' : (tipo == 'text' ? 'min-height: 200px' : '');
+
+              texto.innerHTML = `${campo}${tipo == 'boolean' ? '' : ':'}`;
+              input.name = texto.innerHTML;
+              input.type = (tipo == 'boolean' ? 'checkbox' : (tipo == 'data' ? 'date' : 'text'));
+
+              console.log(tipo)
+
+              label.appendChild(tipo == 'boolean' ? input : texto);
+              label.appendChild(tipo == 'boolean' ? texto : input);
+
+              dialogo.appendChild(label);
+            }
+
+            dialogo.appendChild(document.createElement("hr"));
+            let rodape = dialogo.appendChild(document.createElement("middle-right-box"))
+            let close = rodape.appendChild(document.createElement("button"))
+            close.innerHTML = `Fechar`;
+            close.onclick = (event) => dialogo.close();
+
+            let imprimir = rodape.appendChild(document.createElement("button"))
+            imprimir.style = "margin-left: 9px;"
+            imprimir.innerHTML = `Imprimir`;
+            imprimir.onclick = async () => {
+              let { data: profissional, error } = await sb.from('profissionais').select("*").eq('cpf', localStorage.profissional_cpf);
+
+              let escolherUnidade = document.body.appendChild(document.createElement("dialog"));
+              escolherUnidade.onclose = (event) => event.target.remove();
+              escolherUnidade.appendChild(document.createElement("h3")).innerHTML = "Escolha a unidade para registrar a notificação";
+
+              let listaUnidades = escolherUnidade.appendChild(document.createElement("list-box"))
+
+              for (let lotacao of profissional){
+                let unidade_saude = lotacao.unidade_saude;
+                let cnes = unidades[lotacao.unidade_saude].cnes;
+
+                let item = listaUnidades.appendChild(document.createElement("list-item"));
+                let img = item.appendChild(document.createElement("img"))
+                img.src = "img/i-house-cleaning.png"
+                img.width = 64;
+
+                item.appendChild(document.createElement("span")).innerHTML = `
+                  <b>${unidade_saude}</b><br>
+                  ${unidades[lotacao.unidade_saude].endereco}
+                `;
+                
+                item.onclick = async () => {
+                  let campos = dialogo.querySelectorAll("input,textarea,select");
+                  let coletor = {};
+                  for (let campo of campos) {
+                    if (campo.type == "checkbox") {
+                      coletor[campo.name] = campo.getAttribute(campo.checked ? "ifTrue" : "ifFalse");
+                      continue;
+                    }
+                    if (campo.type == "date") {
+                      coletor[campo.name] = document.getElementsByName("Inicio dos sintomas:")[0].value.split("-").reverse().join("/");
+                      continue;
+                    }
+                    coletor[campo.name] = campo.value;
+                  }
+
+                  coletor = Object.fromEntries(Object.entries(coletor).sort(([a],[b]) => a.localeCompare(b)));
+                  coletor["--"] = "--";
+                  coletor["Data de registro"] = new Date().toISOString().split("T")[0].split("-").reverse().join("/");
+                  coletor["Nome Profissional"] = lotacao.nome;
+                  coletor["CBO Profissional"] = lotacao.cbo;
+                  coletor["Numero do conselho de classe"] = lotacao.numero_conselho_classe;
+                  coletor["Unidade de Saúde"] = unidade_saude;
+                  coletor["CNES Unidade de Saúde"] = cnes;
+
+                  const { data:resposta, error } = await sb.from('fichas_formulario_repostas').insert([
+                    { 
+                      cns: coletor["CNS:"],
+                      ficha: relatorio.arquivo,
+                      versao: relatorio.versao,
+                      dados: JSON.stringify(coletor)
+                    },
+                  ]).select()
+
+                  escolherUnidade.close();
+                  dialogo.close();
+                  geradorFichas.close();
+
+                  open(`fichas/${relatorio.versao}/${relatorio.arquivo}?id=${resposta[0].id}`)
+                }
+              }
+
+              let rodape = escolherUnidade.appendChild(document.createElement("middle-right-box"))
+              rodape.style = "margin-top: 9px;"
+
+              let close = rodape.appendChild(document.createElement("button"))
+              close.innerHTML = `Fechar`;
+              close.onclick = (event) => escolherUnidade.close();
+              escolherUnidade.showModal();
+            };
+
+            dialogo.showModal();
+
+            for (let input of document.getElementsByName("CNS:")){
+              if (input.closest('dialog') == dialogo) {
+                input.value = new URLSearchParams(location.search).get('paciente') || '';;
+                input.onchange();
+                break;
+              }
+            }
+          }
+          listaFichasDisponiveis.appendChild(listItem);
         }
       })();
 

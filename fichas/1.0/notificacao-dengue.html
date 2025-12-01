@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preload" href="https://unpkg.com/@supabase/supabase-js@2" as="script" />
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <style>
+      @media print {
+        @page {
+          margin: 0in;
+          background-color: #ffffff;
+        }
+        body {
+          margin: 0px;
+          padding: 0px;
+          background-color: #ffffff !important;
+          display: block !important;
+        }
+        input,
+        textarea {
+          border: 1px solid transparent;
+          background-color: transparent;
+        }
+
+        #toolbar {
+          display: none !important;
+        }
+      }
+      .page {
+        width: 210mm; /* largura A4 */
+        height: 297mm; /* altura A4 */
+        padding: 0;
+        margin: 0;
+        position: relative;
+        background-color: #ffffff;
+      }
+
+      .page img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* ou 'contain', dependendo do que você quer */
+      }
+
+      * {
+        user-select: none;
+        font-family: sans-serif;
+      }
+      #selection {
+        position: absolute;
+        border: 2px dashed #007bff;
+        background: rgba(0, 123, 255, 0.1);
+        pointer-events: none;
+        display: none;
+        z-index: 99999;
+      }
+
+      .drawn-input {
+        position: absolute;
+        z-index: 99999;
+      }
+
+      .page {
+        position: relative;
+      }
+
+      img {
+        pointer-events: none;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        background-color: gray;
+        gap: 1em;
+        margin-top: 0px;
+        margin: 0px;
+        height: unset;
+        overflow-x: visible;
+      }
+
+      select,
+      button {
+        padding: 9px;
+      }
+    </style>
+
+    <title></title>
+  </head>
+  <body>
+    <div
+      id="toolbar"
+      style="
+        position: sticky;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 64px;
+        background-color: black;
+        z-index: 999999;
+        display: none;
+        justify-content: center;
+        color: white;
+        align-items: center;
+      "
+    >
+      <span style="display: flex; padding-right: 9px;">Campo:</span>
+      <select
+        style="background-color: white; max-width: 200px;"
+        id="tipo"
+        onchange="window.input.name = event.target.value;window.input.value = window.ficha[event.target.value] || '';"
+      >
+        <option value="-">Constante</option>
+      </select>
+      <span style="display: flex; padding-right: 9px; margin-left: 9px;">Estilo do campo:</span>
+      <select
+        style="background-color: white; max-width: 200px;"
+        onchange="
+          let old = window.input;
+          let value = old.value;
+
+          if (event.target.value === 'textarea') {
+            const textarea = document.createElement('textarea');
+            textarea.value = value;
+
+            for (const attr of old.attributes) {
+              if (attr.name !== 'value') textarea.setAttribute(attr.name, attr.value);
+            }
+
+            textarea.onclick = () => {
+              window.input = textarea;
+              estilo.value = textarea.tagName.toLowerCase();
+              tipo.value = textarea.name;
+            };
+
+            old.replaceWith(textarea);
+            window.input = textarea;
+          } else {
+            const input = document.createElement('input');
+            input.value = textarea.value;
+
+            for (const attr of textarea.attributes) {
+              if (attr.name !== 'value') input.setAttribute(attr.name, attr.value);
+            }
+
+            input.onclick = () => {
+              window.input = input;
+              estilo.value = input.tagName.toLowerCase();
+              tipo.value = input.name;
+            };
+
+            textarea.replaceWith(input);
+            window.input = input;
+          }
+        "
+        id="estilo"
+      >
+        <option value="input">Linha de texto</option>
+        <option value="textarea">Bloco de texto</option>
+      </select>
+      <button onclick="window.input.remove();" style="margin-left: 9px;">Remover campo</button>
+    </div>
+
+    <div id="selection"></div>
+
+    <div class="page" id="1">
+      <img src="image-0.png" />
+    </div>
+    <div class="page" id="2">
+      <img src="image-1.png" />
+    </div>
+
+    <script>
+      const supabaseUrl = "https://gnbbejevwbixsubblnua.supabase.co";
+      const supabaseKey = "sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA";
+      let sb = supabase.createClient(supabaseUrl, supabaseKey);
+      window.ficha = {};
+
+      (async () => {
+        let { data: fichas_formulario_repostas, error } = await sb
+          .from("fichas_formulario_repostas")
+          .select("*")
+          .eq("id", new URLSearchParams(location.search).get("id"));
+        let ficha = JSON.parse(fichas_formulario_repostas[0].dados);
+        for (let [key, value] of Object.entries(ficha)) {
+          tipo.innerHTML += `<option value="${key}">${key}</option>`;
+          if (key == "Zona:") {
+            value =
+              value == "Ignorado"
+                ? "9"
+                : value == "Urbana"
+                ? "1"
+                : value == "Rural"
+                ? "2"
+                : "3";
+          }
+          if (key == "Sexo:") value = value.charAt(0);
+          window.ficha[key] = value;
+        }
+
+        {
+          let { data: fichas_formulario, error } = await sb
+            .from("fichas_formulario")
+            .select("campos_ficha")
+            .eq("arquivo", fichas_formulario_repostas[0].ficha)
+            .eq("versao", fichas_formulario_repostas[0].versao);
+
+          let campos = JSON.parse(fichas_formulario[0].campos_ficha);
+          for (let campo of campos) {
+            let elemento = document.createElement(campo.tipo);
+            elemento.name = campo.nome;
+            elemento.value = window.ficha[campo.nome] || campo.valor;
+            elemento.style = campo.style;
+            elemento.className = "drawn-input";
+
+            console.log(campo);
+            document.getElementById(campo.pagina).appendChild(elemento);
+          }
+
+          if (fichas_formulario.length > 0) {
+            window.print();
+          }
+        }
+      })();
+    </script>
+
+    <script>
+      let startX = 0;
+      let startY = 0;
+      let drawing = false;
+
+      for (let pf1 of document.getElementsByClassName("page")) {
+        pf1.addEventListener("mousedown", (e) => {
+          const rect = pf1.getBoundingClientRect();
+
+          drawing = true;
+          startX = e.clientX - rect.left;
+          startY = e.clientY - rect.top;
+
+          pf1.appendChild(selection);
+
+          selection.style.left = startX + "px";
+          selection.style.top = startY + "px";
+          selection.style.width = 0;
+          selection.style.height = 0;
+          selection.style.display = "block";
+        });
+
+        pf1.addEventListener("mousemove", (e) => {
+          if (!drawing) return;
+
+          const rect = pf1.getBoundingClientRect();
+          const currentX = e.clientX - rect.left;
+          const currentY = e.clientY - rect.top;
+
+          const width = currentX - startX;
+          const height = currentY - startY;
+
+          selection.style.width = Math.abs(width) + "px";
+          selection.style.height = Math.abs(height) + "px";
+
+          selection.style.left = (width < 0 ? currentX : startX) + "px";
+          selection.style.top = (height < 0 ? currentY : startY) + "px";
+        });
+
+        pf1.addEventListener("mouseup", (e) => {
+          if (!drawing) return;
+          drawing = false;
+
+          selection.style.display = "none";
+
+          const rect = pf1.getBoundingClientRect();
+          const endX = e.clientX - rect.left;
+          const endY = e.clientY - rect.top;
+
+          const left = Math.min(startX, endX);
+          const top = Math.min(startY, endY);
+          const width = Math.abs(endX - startX);
+          const height = Math.abs(endY - startY);
+
+          if (width < 10 || height < 10) return;
+
+          const input = document.createElement("input");
+          input.type = "text";
+          input.className = "drawn-input";
+
+          input.style.left = left + "px";
+          input.style.top = top + "px";
+          input.style.width = width - 2 + "px";
+          input.style.height = height - 2 + "px";
+          input.style.resize = "none";
+
+          pf1.appendChild(input);
+
+          input.onclick = () => {
+            window.input = input;
+            estilo.value = input.tagName.toLowerCase();
+            tipo.value = input.name;
+          };
+
+          estilo.value = input.tagName.toLowerCase();
+          window.input = input;
+          input.name = "-";
+        });
+      }
+    </script>
+  </body>
+</html>
