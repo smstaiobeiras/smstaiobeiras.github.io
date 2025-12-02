@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="preload" href="https://unpkg.com/@supabase/supabase-js@2" as="script">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+      if(localStorage.getItem("sb-gnbbejevwbixsubblnua-auth-token") == null) {location.href='login.html';}
+    </script>
+    <link rel="stylesheet" href="css/main.css">
+  </head>
+  <body>
+    <header style="min-height: 48px; background: #000000; color: #ffffff;">
+      <middle-left-box style="padding-left: 16px;"><a href="profissional.html">Início</a></middle-left-box>
+      <middle-center-box>Painel de situação populacional</middle-center-box>
+      <middle-right-box style="padding-right:9px;" onclick="(async () => {await sb.auth.signOut();location.href='login.html'})()">Sair...</middle-right-box>
+    </header>
+    <main>
+      <center-box>
+        <div style="padding: 26px;">
+          <left-box style="border-radius: 12px;background-color: rgba(120, 224, 143,0.2);padding: 18px;border-left: 8px solid rgb(120, 224, 143) !important;margin-bottom: 32px;max-width: 1200px !important;flex-direction:column;">
+            <p>
+              Nessa tela você pode acompanhar como está a situação da população vinculada a equipe, observadas as seguintes condições:
+              </p><ol>
+                <li>
+                  É um relatório baseado na ficha de cadastro individual disponível no e-SUS AB, 
+                  isso significa que representa o que Ministério da Saúde vê da equipe, não sendo portanto
+                  necessariamente equivalente a informação que está no Vivver
+                </li>
+                <li>
+                  O percentual a direita (cor azul) se refere ao percendutal considerando apenas
+                  cadastros com o campo informado
+                </li>
+                <li>
+                  O percentual a esquer (cor vermelha) se refere ao percendutal em relação ao total de cadastros
+                </li>
+                <li>
+                  O painel ainda se encontra em fase de construção
+                </li>
+              </ol> 
+          </left-box>
+          <left-box style="align-items: center;margin-bottom: 32px;">
+            Equipe:
+            <select id="escolhaEquipe" style="width: auto;margin-left: 9px;" onchange="atualizaGraficos(event.target.value);"></select>
+          </left-box>
+          <card-book id="graficosIndicadores" style="max-width: 1200px !important;">
+          </card-book>
+          <br>
+          <br>
+        </div>
+      </center-box>
+    </main>
+    <footer style="display: none;">
+      <div>Esquerda rodapé</div>
+      <div>Centro rodapé</div>
+      <div>Direita rodapé</div>
+    </footer>
+    <script>
+      ['card-book','card-box','card-label','list-item'].forEach((t) => customElements.define(t, class extends HTMLElement {}));
+    </script>
+    <script>
+      const supabaseUrl = 'https://gnbbejevwbixsubblnua.supabase.co';
+      const supabaseKey = 'sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA';
+      let sb = supabase.createClient(supabaseUrl, supabaseKey);
+      let dadosPorEquipe = {};
+
+      function criarGrafico(container,cor,percentual) {
+        let chart = new ApexCharts(document.getElementById(container),{
+            series: [percentual],
+            chart: {
+              animations: {
+                enabled: false
+              },
+              type: 'radialBar',
+              offsetY: -20,
+              sparkline: {
+                enabled: true
+              }
+            },
+            plotOptions: {
+              radialBar: {
+                  startAngle: -90,
+                  endAngle: 90,
+                  track: {
+                    background: "#e7e7e7",
+                    strokeWidth: '97%',
+                    margin: 5
+                  },
+                dataLabels: {
+                  name: {
+                    show: false
+                  },
+                  value: {
+                    offsetY: -2,
+                    fontSize: '22px'
+                  }
+                }
+              }
+            },
+            grid: {
+              padding: {
+                top: -10
+              }
+            },
+            fill: {
+              type: 'solid',
+              colors: [cor]
+            },
+        });
+
+        chart.render();
+      }    
+
+      function atualizaGraficos(equipe) {
+        let coletor = {};
+        graficosIndicadores.innerHTML = "";
+
+        for (let [_,linha] of Object.entries(dadosPorEquipe)) {
+          if (linha.equipe != equipe) continue;
+
+          for (let [coluna,valor] of Object.entries(linha)) {
+            if (coluna.includes("_sim") || coluna.includes("_nao")) {
+              let nome = coluna.split("_nao")[0].split("_sim")[0];
+            
+              coletor[nome] = coletor[nome] || {};
+              coletor[nome][coluna.split("_").at(-1)] = valor;
+              coletor[nome].elegiveis = nome == "gestante" ? linha.mulher_idade_fertil : linha.total_cidadaos;
+            }
+          }
+        }
+        for (let [coluna,valores] of Object.entries(coletor)) {
+          let nome = coluna;
+          let percentualSimNao = Math.ceil(valores.sim/(valores.sim+valores.nao)*100)
+          let percentualNaoInformado = Math.floor(100-((valores.sim+valores.nao)/valores.elegiveis*100));
+          let titulo = nome;
+
+          if ((valores.sim+valores.nao) == valores.elegiveis) {
+            percentualNaoInformado = 0;
+          }
+
+          if (nome.indexOf("_") === -1) {
+            titulo = `${nome.charAt(0).toUpperCase()}${nome.slice(1)}s`.replaceAll("_"," ");
+            if (titulo == "Deficientes") {
+              titulo = "Pessoas com Deficiêcia"
+            }
+          } else if (nome.startsWith("tem")) {
+            titulo = `Pacientes com ${nome.replace("tem_","").replaceAll("_"," ")}`;
+          } else if (nome.startsWith("teve")) {
+            titulo = `Pacientes que tiveram ou tem ${nome.replace("teve_","").replaceAll("_"," ")}`;
+          } else if (nome.startsWith("deficiente")) {
+            titulo = `${nome.replace("deficiente_","").charAt(0).toUpperCase()}${nome.replace("deficiente_","").slice(1)}`;
+            titulo = `PcD: ${titulo}`;
+          } else if (nome == "morador_de_rua") {
+            titulo = "Pessoas em situação de rua"
+          } else {
+            titulo = `${nome.charAt(0).toUpperCase()}${nome.slice(1)}s`.replaceAll("_"," ");
+          }
+
+          let cardbox = document.createElement("card-box");
+          cardbox.style="max-width: 256px;min-width: 580px;pointer-events: none;";
+          cardbox.innerHTML = `
+            <card-label>
+              <center-box style="flex-direction:column;">
+                <b>${titulo}</b>
+                <table style="background-color:white;">
+                  <tr>
+                    <td>Possui a condição:</td>
+                    <td style="text-align: right;">${valores.sim}</td>
+                  </tr>
+                  <tr>
+                    <td>Elegiveis para a condição:</td>
+                    <td style="text-align: right;">${valores.elegiveis}</td>
+                  </tr>
+                  <tr>
+                    <td>Com o campo informado:</td>
+                    <td style="text-align: right;">${valores.sim+valores.nao}</td>
+                  </tr>
+                  <tr>
+                    <td>Sem informação:</td>
+                    <td style="text-align: right;">${valores.elegiveis-valores.sim-valores.nao}</td>
+                  </tr>
+                </table>
+              </center-box>
+            </card-label>
+            <center-box>
+              <top-box style="flex-direction:column;padding-left:9px;">
+                <div style="min-height: 128px;border: 0px;min-width: 256px;" id="${nome}"></div>
+              </top-box>
+              <top-box style="flex-direction:column;border-left: 1px solid;padding-left:9px;">
+                <span style="paddign: 9px;"><b>Cadastros NÃO preenchidos:</b></span>
+                <div style="min-height: 128px;border: 0px;min-width: 256px;" id="${nome}2"></div>
+              </top-box>
+            </center-box>
+          `;
+          
+
+          graficosIndicadores.appendChild(cardbox);
+
+          criarGrafico(`${nome}`,"#3498db",percentualSimNao);
+          criarGrafico(`${nome}2`,"#e74c3c",percentualNaoInformado);
+        }
+      };
+
+      (async () => {
+        {
+          let { data: equipes, error } = await sb.from('equipes').select('nome').order('nome', { ascending: true });
+          let opcoes = `<option value="-">Todas</option>`;
+          for (let equipe of equipes) {
+            if (equipe.nome.includes("BUCAL")) continue;
+            if (equipe.nome.includes("NASF")) continue;
+            if (equipe.nome.includes("EMAD")) continue;
+            if (equipe.nome.includes("EMAP")) continue;
+            opcoes += `<option value="${equipe.nome}" >${equipe.nome}</option>`;
+          }
+
+          escolhaEquipe.innerHTML = opcoes;
+        }
+        
+        let { data: indicadores, error } = await sb.from('dados_grafico_cadastros_por_equipe')
+          .select('*')
+        ;
+ 
+        dadosPorEquipe = indicadores;
+
+        atualizaGraficos((new URLSearchParams(window.location.search)).get('esf'));
+      })();
+
+    </script>
+  </body>
+</html>

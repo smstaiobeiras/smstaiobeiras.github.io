@@ -465,34 +465,8 @@
     background-color: #ffffff;
   }
   
-  fieldset,
-  legend,
-  input[type=date-local],
-  input[type=date],
-  input[type=datetime-local],
-  input[type=email],
-  input[type=month],
-  input[type=password],
-  input[type=number],
-  input[type=tel],
-  input[type=range],
-  input[type=text],
-  input[type=time-local],
-  input[type=time],
-  input[type=url],
-  input[type=week],
-  input[type="checkbox"],
-  input[type="radio"],
-  input[type=submit],
-  input[type=button],
-  input[type=reset],
-  button,
-  select,
-  textarea,
-  blockquote,list-box,
-  list-item,
-  card-box{
-      border-color: #dfe2e5;
+  * {
+      border-color: #dfe2e5 !important;
   }
   
   input[type="checkbox"]:checked::after {
