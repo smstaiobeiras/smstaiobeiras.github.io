@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="css/app.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+      if (localStorage.getItem("darkMode")) document.documentElement.setAttribute("dark", "");
+    </script>
+  </head>
+  <body>
+
+    <dialog id="escolherAcesso" style="overflow: hidden;">
+      <h3>Escolha seu acesso:</h3>
+      <menu style="overflow-y: auto; max-height: 480px;">
+
+      </menu>
+    </dialog>
+
+    <header>
+      <section></section>
+      <section desktop></section>
+      <section></section>
+    </header>
+    <main>
+      <menu>
+        
+      </menu>
+      <article>
+      </article>
+    </main>
+    <footer desktop>
+      <section>A</section>
+      <section>B</section>
+      <section>C</section>
+    </footer>
+  </body>
+  <script src="js/SmiloDOM.js"></script>
+  <script>
+    const supabaseUrl = 'https://gnbbejevwbixsubblnua.supabase.co';
+    const supabaseKey = 'sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA';
+    const sb = supabase.createClient(supabaseUrl, supabaseKey);
+
+    (async ()=>{
+      app([
+        page({
+          title: "Emissor de fichas",
+          icon: "paper",
+          body: [
+            blockquote(["fd"]),
+            wrap([
+              card({
+                content: img("img/i-seo-report.png"),
+                text: "Relatório de produção"
+              }),
+              card({
+                content: img("img/i-seo-report.png"),
+                text: "Relatório de produção"
+              }),
+              card({
+                content: img("img/i-seo-report.png"),
+                text: "Relatório de produção"
+              }),
+            ])
+          ]
+        }),
+        page({
+          title: "Emissor de fichas",
+          icon: "paper",
+          body: [
+            blockquote(["fd"]),
+            wrap([
+              card({
+                content: img("img/i-seo-report.png"),
+                text: "Relatório de produção"
+              }),
+              card({
+                content: img("img/i-seo-report.png"),
+                text: "Relatório de produção"
+              }),
+              card({
+                content: img("img/i-seo-report.png"),
+                text: "Relatório de produção"
+              }),
+            ])
+          ]
+        }),
+        page({
+          title: "Emissor de fichas",
+          icon: "paper",
+          body: [
+            blockquote(["fd"]),
+            wrap([
+              card({
+                content: img("img/i-seo-report.png"),
+                text: "Relatório de produção"
+              }),
+              card({
+                content: img("img/i-seo-report.png"),
+                text: "Relatório de produção"
+              }),
+              card({
+                content: img("img/i-seo-report.png"),
+                text: "Relatório de produção"
+              }),
+            ])
+          ]
+        }),
+        page({
+          title: "Emissor de fichas",
+          icon: "paper",
+          body: [
+            blockquote(["fd"]),
+            wrap([
+              card({
+                content: img("img/i-seo-report.png"),
+                text: "Relatório de produção"
+              }),
+              card({
+                content: img("img/i-seo-report.png"),
+                text: "Relatório de produção"
+              }),
+              card({
+                content: img("img/i-seo-report.png"),
+                text: "Relatório de produção"
+              }),
+            ])
+          ]
+        }),
+      ]);
+
+      escolherAcesso.showModal();
+      const menuAcessos = escolherAcesso.querySelector("menu");
+      const acessos = (await sb.from('lotacao').select("*").eq('nu_cpf',localStorage.profissional_cpf).order('no_unidade_saude', { ascending: false })).data;
+      console.log(acessos);
+      for (const acesso of acessos) {
+        menuAcessos.appendChild(li({
+          onclick: () => {
+            document.querySelectorAll(".change-access").forEach((el) => el.remove());
+            let banner = menu([
+              li({
+                childrenList: [
+                div({
+              style: {
+                paddingLeft: "18px",
+                flex: 1
+              },
+              childrenList: [
+                p({innerHTML: `<b>Unidade</b>: ${acesso.no_unidade_saude}`}),
+                p({innerHTML: `<b>Equipe</b>: ${acesso.no_equipe || '-'}`}),
+                p({innerHTML: `<b>CBO</b>: ${acesso.no_cbo}`}),
+              ]
+            }),
+            div({
+              style: {
+                paddingRight: "18px"
+              },
+              childrenList: [
+                p({innerHTML: `CNS: ${acesso.nu_cns}`}),
+              ]
+            }),
+                ]
+              })
+            ]);
+
+            console.log(banner)
+          },
+          childrenList: [
+            div({
+              style: {
+                paddingLeft: "18px",
+                flex: 1
+              },
+              childrenList: [
+                p({innerHTML: `<b>Unidade</b>: ${acesso.no_unidade_saude}`}),
+                p({innerHTML: `<b>Equipe</b>: ${acesso.no_equipe || '-'}`}),
+                p({innerHTML: `<b>CBO</b>: ${acesso.no_cbo}`}),
+              ]
+            }),
+            div({
+              style: {
+                paddingRight: "18px"
+              },
+              childrenList: [
+                p({innerHTML: `CNS: ${acesso.nu_cns}`}),
+              ]
+            }),
+          ]
+        }));
+      }
+
+    })();
+  </script>  
+</html>

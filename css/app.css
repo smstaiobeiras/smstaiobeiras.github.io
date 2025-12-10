@@ -1,0 +1,562 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+body > header, body > footer, body > main {
+  display: flex;
+}
+
+body > header {
+  border-bottom: 1px solid;
+}
+
+body > footer {
+  border-top: 1px solid;
+}
+
+body > header, body > footer {
+  flex-shrink: 0;
+  min-height: 40px;
+  display: flex;
+}
+
+body > header > section, body > footer > section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  align-items: center;
+  padding: 9px;
+  border-left: 1px solid;
+}
+
+body > header > section:first-of-type, body > footer > section:first-of-type {
+  justify-content: left;
+  padding-left: 18px;
+}
+
+body > header > section:last-of-type, body > footer > section:last-of-type {
+  justify-content: right;
+  padding-right: 18px;
+}
+
+
+body > main {
+  flex: 1;
+  flex-direction: row;
+  overflow: hidden;
+}
+  
+menu {
+  padding: 0px;
+  width: 100vw;
+  list-style: none;
+  flex-shrink: 0;
+  overflow-y: auto;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+body > main > menu {
+  width: 262px;
+  padding: 12px;
+  border-right: 1px solid;
+}
+
+menu * {
+  cursor: pointer;
+}
+
+body > main > article {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  cursor: default;
+}
+
+input, textarea, td, th, table > caption, a, code, pre, output {
+  user-select: text;
+  cursor: text;
+}
+
+a {
+  cursor: pointer;
+}
+
+*:focus {
+  outline-offset: 2px;
+  outline: 2px solid;
+}
+
+dialog:focus {
+  outline: 0px;
+}
+
+input, select, textarea {
+  padding: 9px;
+  width: 100%;
+  border: 1px solid;
+}
+
+input, select, progress,output {
+  margin-left: 9px;
+}
+
+progress {
+  height: 32px;
+  border-radius: 0px;
+  border: 1px solid;
+  padding: 3px;
+}
+
+input[type="checkbox"], input[type="radio"] {
+  width: 26px;
+  height: 26px;
+  padding: 0px;
+  margin-left: 0px;
+  margin-right: 9px;
+  user-select: none;
+}
+
+input[type=date-local], input[type=date], input[type=datetime-local], input[type=month], input[type=number], input[type=time-local], input[type=time], input[type=week]{
+  width: auto;
+}
+
+label {
+  text-wrap: nowrap;
+  display: flex;
+  align-items: center;
+  margin-bottom: 9px;
+  gap: 3px;
+}
+
+label * {
+  margin-left: auto;
+}
+
+label:has(textarea) {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+  
+label:has(textarea) textarea {
+  width: 100%;
+}
+
+fieldset, legend {
+  border: 1px solid;
+  padding: 9px;
+}
+
+fieldset {
+  padding: 18px;
+  margin-bottom: 9px;
+  padding-bottom: 0px;
+}
+
+button, input[type=submit], input[type=button], input[type=reset] {
+  padding:9px;
+  border: 1px solid;
+  cursor: pointer;
+  user-select: none;
+}
+
+textarea {
+  overflow-y: scroll;
+  height:100%;
+  min-height: 96pt;
+  resize: none;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 1em;
+  border-spacing: 10px;
+}
+
+table > caption, table > tfoot, th {
+  margin: 9px;
+  font-weight: bold;
+}
+
+td, th {
+  padding: 9px;
+  border: 1px solid;
+}
+
+dialog[open]{
+  border: none;
+  margin:auto;
+  padding: 28px;
+  box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 9px;
+  max-width: 1024px;
+}
+
+dialog[open] > * {
+  width: 100%;
+}
+
+dialog[open] > :is(button, input[type="submit"], input[type="button"], input[type="reset"]) {
+  width: auto;
+}
+
+h1, h2, h3 {
+  padding-left: 9px;
+  padding-right: 9px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid;
+}
+
+hr {
+  box-sizing:content-box;
+  height: 4px;
+  padding:0;
+  margin:12px 0;
+  border:0;
+}
+
+blockquote {
+  padding: 18px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+  margin: 0px;
+  border-left: 4px solid;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  border: 3px solid;
+}
+
+* {
+  scrollbar-width: thin;
+}
+
+/*************************************************************************************************************************************************************************/
+
+html, body, dialog, form {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+body > header, body > footer, menu {
+  background-color: var(--bg);
+}
+
+body > header > section {
+  background-color: var(--section-bg);
+}
+
+menu > li {
+  padding: 9px;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  border-top: 1px solid;
+  border-left: 1px solid;
+  border-right: 1px solid;
+  cursor: pointer;
+} 
+
+menu > li:last-of-type {
+  border-bottom: 1px solid;
+} 
+
+menu > li img {
+  width: 32px;
+  height: 32px;
+}
+
+input, select, textarea, fieldset, legend, td, th {
+  color: var(--text);
+}
+
+input, select, textarea, fieldset, legend {
+  background-color: var(--input-bg);
+}
+
+fieldset > legend {
+  background-color: var(--button-bg);
+}
+
+button, input[type=submit], input[type=button], input[type=reset] {
+  background-color: var(--button-bg);
+  color: var(--text);
+}
+
+button:hover, input[type=submit]:hover, input[type=button]:hover, input[type=reset]:hover, *[hover]:hover {
+  background-color: var(--button-bg-hover);
+}
+
+button:active, input[type=submit]:active, input[type=button]:active, input[type=reset]:active, *[hover]:active {
+  background-color: var(--button-bg-active);
+}
+
+a {
+  color: var(--link);
+}
+
+* {
+  border-color: var(--border) !important;
+}
+
+progress {
+  background-color: var(--progress-track);
+  color: var(--progress-fill);
+}
+
+progress::-webkit-progress-bar {
+  background-color: var(--progress-track);
+}
+
+progress::-webkit-progress-value {
+  background-color: var(--progress-fill);
+}
+
+progress::-moz-progress-bar {
+  background-color: var(--progress-fill);
+}
+
+table > thead > tr, table > tfoot > tr {
+  background-color: var(--table-header);
+}
+
+table > tbody > tr:nth-child(even) {
+  background-color: var(--table-row-odd);
+}
+
+table > tbody > tr:nth-child(odd) {
+  background-color: var(--table-row-even);
+}
+
+table > tbody > tr:hover {
+  background-color: var(--table-row-hover);
+}
+  
+hr {
+  background-color: var(--hr-bg);
+}
+
+blockquote {
+  background-color: var(--hr-bg);
+  border-color: var(--blockquote-border);
+}
+
+menu > li[selected] {
+  background-color: var(--menu-item-selected);
+}
+menu > li[selected]:hover {
+  background-color: var(--menu-item-selected);
+}
+
+menu > li:hover {
+  background-color: var(--menu-item-hover);
+} 
+
+menu > li {
+  background-color: var(--menu-item-bg);
+}
+
+*:focus, *[hover]:hover {
+  outline-offset: 2px;
+  outline: 2px solid;
+  outline-color: var(--link);
+  border-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-subtle);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--progress-fill);
+  border-color: var(--bg-subtle);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--link);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-subtle-darker);
+}
+
+* {
+  scrollbar-color: var(--progress-fill) var(--bg-subtle);
+}
+
+/*************************************************************************************************************************************************************************/
+
+:root {
+  --bg: #ffffff;
+  --bg-subtle: #ebecee;
+  --bg-subtle-darker: #dddfe0;
+  --text: #24292f;
+  --border: #d0d7de;
+
+  --input-bg: #ffffff;
+  --button-bg: #f6f8fa;
+  --button-bg-active: #dddddf;
+  --button-bg-hover: #eaeef2;
+
+  --link: #0969da;
+
+  --table-row-even: #f6f8fa;
+  --table-row-odd: #eceff1;
+  --table-row-hover: #ffffff;
+  --table-header: #dddddf;
+
+
+  --progress-track: #e6edf3;
+  --progress-fill: #1f6feb;
+
+  --hr-bg: #e1e4e8;
+
+  --section-bg: #eaeef2;
+
+  --blockquote-bg: #eaeef2;
+  --blockquote-border: #c4c4c5;
+
+  --menu-item-bg: #ffffff;
+  --menu-item-selected: #dddfe0;
+  --menu-item-hover: #eaeef2;
+
+  dialog::backdrop {
+  background-color: rgba(0,0,0, 0.5);
+  }
+}
+
+html[dark] {
+  --bg: #1e1e24;
+  --bg-subtle: #2a2a33;
+  --bg-subtle-darker: #373740;
+  --text: #e0e0e0;
+  --border: #44444f;
+
+  --input-bg: #2a2a33;
+  --button-bg: #33333d;
+  --button-bg-hover: #3d3d47;
+  --button-bg-active: #38383f;
+
+  --link: #539bf5;
+
+  --table-row-even: #2a2a33;
+  --table-row-odd: #24242c;
+  --table-row-hover: #35353e;
+  --table-header: #38383f;
+
+  --progress-track: #2a2a33;
+  --progress-fill: #539bf5;
+
+  --hr-bg: #3a3a44;
+
+  --section-bg: #292934;
+
+  --blockquote-bg: #292934;
+  --blockquote-border: #555560;
+
+  --menu-item-bg: #24242c;
+  --menu-item-selected: #35353e;
+  --menu-item-hover: #2e2e38;
+
+  dialog::backdrop {
+  background-color: rgba(255,255,255, 0.4);
+  }
+
+  input[type="checkbox"],input[type="radio"] {
+  opacity: 0.5;
+  }
+  input[type="checkbox"]:checked,input[type="radio"]:checked {
+  opacity: 1;
+  }
+}
+
+/*************************************************************************************************************************************************************************/
+
+@media screen and (min-width: 769px) {
+  *[mobile] {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 260px;
+    max-width: 80vw;
+
+    background-color: var(--bg);
+    border-right: 1px solid var(--border);
+
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+
+    z-index: 1001;
+  }
+
+  body[menu-open] > main > menu {
+    transform: translateX(0);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    
+    background: rgba(0,0,0,0.5);
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease;
+
+    z-index: 1000;
+  }
+
+  body[menu-open]::before {
+    opacity: 1;
+    visibility: visible;
+  }
+
+
+  body[menu-open] > main > article {
+    pointer-events: none;
+  }
+
+  *[desktop] {
+    display: none;
+  }
+}
