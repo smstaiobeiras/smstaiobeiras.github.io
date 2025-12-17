@@ -6,13 +6,14 @@
     <title></title>
     <link rel="stylesheet" href="css/app.css">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/localforage/dist/localforage.js"></script>
     <script>
       if (localStorage.getItem("darkMode")) document.documentElement.setAttribute("dark", "");
     </script>
   </head>
   <body>
 
-    <dialog id="escolherAcesso" style="overflow: hidden;">
+    <dialog id="escolherAcesso">
       <h3>Escolha seu acesso:</h3>
       <menu style="overflow-y: auto; max-height: 480px;">
 
@@ -42,130 +43,313 @@
     const supabaseUrl = 'https://gnbbejevwbixsubblnua.supabase.co';
     const supabaseKey = 'sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA';
     const sb = supabase.createClient(supabaseUrl, supabaseKey);
+    let listaDePacientes = [];
 
-    (async ()=>{
+    (async () => {
+      let loadingDialog = document.body.appendChild(document.createElement('dialog'));
+      loadingDialog.appendChild(document.createElement('h3')).textContent = "Baixando dados da aplicação...";
+      loadingDialog.showModal();
+
       app([
+
         page({
-          title: "Emissor de fichas",
-          icon: "paper",
+          title: "Início",
+          icon: "icons/house.png",
           body: [
-            blockquote(["fd"]),
+            blockquote(["[Descrição 1]"]),
             wrap([
               card({
-                content: img("img/i-seo-report.png"),
-                text: "Relatório de produção"
+                content: img("icons/seo-report.png"),
+                text: "Produção individual"
               }),
               card({
-                content: img("img/i-seo-report.png"),
-                text: "Relatório de produção"
+                content: img("icons/seo-report-rejected.png"),
+                text: "Produção inválida"
               }),
               card({
-                content: img("img/i-seo-report.png"),
-                text: "Relatório de produção"
+                content: img("icons/risk-analysis.png"),
+                text: "Solicitações devolvidas"
               }),
             ])
           ]
         }),
+
         page({
-          title: "Emissor de fichas",
-          icon: "paper",
+          title: "Buscar paciente(s)",
+          icon: "icons/consent.png",
           body: [
-            blockquote(["fd"]),
-            wrap([
-              card({
-                content: img("img/i-seo-report.png"),
-                text: "Relatório de produção"
-              }),
-              card({
-                content: img("img/i-seo-report.png"),
-                text: "Relatório de produção"
-              }),
-              card({
-                content: img("img/i-seo-report.png"),
-                text: "Relatório de produção"
-              }),
+            blockquote([`
+              Essa ferramenta permite localizar e listar
+            `]),
+            form([
+              inline([
+                field("Nome: ",{type: "text",name: "nome"}),
+                field("Data de nascimento: ",{type: "date",name: "",style: {width: "100%"}}),
+              ]),
+              inline([
+                field("Nome do pai: ",{type: "text",name: "mae"}),
+                field("Nome da mãe: ",{type: "text",name: "pai"}),
+              ]),
+              inline([
+                field("CNS: ",{type: "text",name: "cns"}),
+                field("Telefone: ",{type: "text",name: "contato"}),
+                field("Recebe benefícios ",{type: "checkbox",name: "recebe_beneficio"}),
+              ]),
+              hr(),
+              inline([
+                field("Nascidos de: ",{type: "date",name: "data_nascimento$gte",style: {width: "100%"}}),
+                field("até: ",{type: "date",name: "data_nascimento$lte",style: {width: "100%"}}),
+                inline([
+                  field("ou com:",{type: "select",name: "modoIdadePaciente",style: {minWidth: "64px"}},{
+                    "até": "max",
+                    "pelo menos": "min",
+                  }),
+                  field("",{type: "number",name: "idadeDesejadaPaciente",style: {width: "100%"}}),
+                  field("",{type: "select",name: "tipoIdadePaciente"},{
+                    "Anos": "12",
+                    "meses": "1",
+                  }),
+                ])
+              ]),
+              hr(),
+              inline([
+                field("Unidade: ",{type: "select",name: "unidade_saude"},{}),
+                field("Equipe: ",{type: "select",name: "equipe"},{}),
+                inline([
+                  field("Localidade: ",{type: "select",name: "zona"},{
+                    "Todas": "-",
+                    "Urbana": "Urbana",
+                    "Periurbana": "Periurbana",
+                    "Rural": "Rural",
+                  }),
+                ]),
+              ]),
+              inline([
+                field("Micro área: ",{type: "select",name: "micro_area"},{
+                  "Todas": "-",
+                  "01": "01",
+                  "02": "02",
+                  "03": "03",
+                  "04": "04",
+                  "05": "05",
+                  "06": "06",
+                  "07": "07",
+                  "08": "08",
+                  "09": "09",
+                  " 10": "10",
+                }),
+                field("Não incluir fora de área",{type: "checkbox",name: "naoIncluirFA",checked: true}),
+                field("Apenas desatualizados ",{type: "checkbox",name: "apenasDesatualizados"}),
+              ]),
+
+              hr(),
+
+              inline([
+                field("Sexo: ",{type: "select",name: "sexo"}, {
+                  "Ambos":"-",
+                  "Masculino":"Masculino",
+                  "Feminino":"Feminino"
+                }),
+                field("Orientação sexual: ",{type: "select",name: "orientacao_sexual"},{
+                  "Todas": "-",
+                  "Heterossexual": "1",
+                  "Homossexual (gay / lésbica)": "2",
+                  "Bissexual": "3",
+                  "Gay": "6",
+                  "Lésbica": "7",
+                  "Assexual": "8",
+                  "Panssexual": "9",
+                  "Outro": "4",
+                  "Não informado": "5",
+                }),
+                field("Identidade de gênero: ",{type: "select",name: "identidade_genero"},{
+                  "Todas": "-",
+                  "Homem cisgênero": "6",
+                  "Mulher cisgênero": "7",
+                  "Não-Binário": "9",
+                  "Transgênero": "8",
+                  "Homem transgênero": "1",
+                  "Mulher transgênero": "2",
+                  "Travesti": "3",
+                  "Outro": "4",
+                  "Não informado": "5",
+                }),
+              ]),
+              inline([
+                field("Peso: ",{type: "select",name: "condicao_peso"},{
+                  "Todas as categorias": "-",
+                  "Abaixo do peso": "1",
+                  "Peso adequado": "2",
+                  "Acima do peso": "3",
+                  "Não informado": "4",
+                }),
+                field("Raça/cor: ",{type: "select",name: "raca_cor"},{
+                    "Todas": "-",
+                    "Amarela": "4",
+                    "Branca": "1",
+                    "Indígena": "5",
+                    "Parda": "3",
+                    "Preta": "2",
+                  }),
+              ]),
+
+              hr(),
+
+              inline([
+                field("Filtro das condições de saúde: ",{type: "select",name: "operador_logico"},{
+                  "Precisa ter todas as condições": "and",
+                  "Precisa ao menos uma das condições": "or",
+                }),
+                field("Grupo rápido: ",{type: "select",name: "grupo_rapido"},{
+                    "Selecione": "-",
+                    "Crianças menores de 1 ano": "0..1 ano;operadorLogico.value = and",
+                    "Crianças menores de 2 anos": "0..2 ano;operadorLogico.value = and",
+                    "Crianças menores de 5 anos": "0..5 ano;operadorLogico.value = and",
+                    "Crianças de 1 a 4 anos": "1..4 ano;operadorLogico.value = and",
+                    "Crianças de 5 a 9 anos": "5..9 ano;operadorLogico.value = and",
+                    "Crianças": "0..9 ano;operadorLogico.value = and",
+                    "Pacientes de 10 a 19 anos": "10..19 ano;operadorLogico.value = and",
+                    "Pacientes de 20 a 59 anos": "20..59 ano;operadorLogico.value = and",
+                    "Idosos": "60..125 ano;operadorLogico.value = and",
+                    "Gestantes adolescentes": "0..18 ano;gestante.checked = true;operadorLogico.value = and",
+                    "Crianças com deficiencia visual": "0..9 ano;deficiente_visual.checked = true;operadorLogico.value = and",
+                    "Crianças com deficiencia auditiva": "0..9 ano;deficiente_auditivo.checked = true;operadorLogico.value = and",
+                    "Crianças com deficiencia intelectual": "0..9 ano;deficiente_intelectual.checked = true;tea.checked = true;operadorLogico.value = or",
+                    "Crianças com deficiencia física": "0..9 ano;deficiente_fisico.checked = true;operadorLogico.value = and",
+                    "Portadores de necessidades especiais": "deficiente_intelectual.checked = true;deficiente_auditivo.checked = true;deficiente_visual.checked = true;deficiente_fisico.checked = true;operadorLogico.value = or",
+                  }),
+              ]),
+
+              inline([
+                  field("Gestante",{type: "checkbox",name: "gestante"}),
+                  field("Hipertenso",{type: "checkbox",name: "hipertenso"}),
+                  field("Diabético",{type: "checkbox",name: "diabetico"}),
+                  field("Fumante",{type: "checkbox",name: "fumante"}),
+                  field("Etilista",{type: "checkbox",name: "alcolatra"}),
+              ]),
+              
+              inline([
+                  field("Deficiente auditivo",{type: "checkbox",name: "deficiente_auditivo"}),
+                  field("Deficiente intelectual",{type: "checkbox",name: "deficiente_intelectual"}),
+                  field("Deficiente visual",{type: "checkbox",name: "deficiente_visual"}),
+                  field("Deficiente fisico",{type: "checkbox",name: "deficiente_fisico"}),
+                  field("Autismo",{type: "checkbox", name: "tea"}),
+              ]),
+
+              inline([
+                  field("Asma",{type: "checkbox",name: "tem_asma"}),
+                  field("DPOC",{type: "checkbox",name: "tem_dpoc"}),
+                  field("Doença cardíaca",{type: "checkbox",name: "tem_doenca_cadiaca"}),
+                  field("Problema nos rins",{type: "checkbox",name: "tem_problema_rins"}),
+                  field("Câncer (tem/teve)",{type: "checkbox",name: "teve_cancer"}),
+              ]),
+
+              inline([
+                  field("Acamado",{type: "checkbox",name: "acamado"}),
+                  field("Domiciliado",{type: "checkbox",name: "domiciliado"}),
+                  field("Situação de rua",{type: "checkbox",name: "morador_de_rua"}),
+                  div(),
+                  div(),
+              ]),
+
+              hr(),
+
+              input({type: "reset",value: "Limpar",style: {width: "auto"}}),
+              button("Pesquisar")
+
             ])
           ]
         }),
+
         page({
-          title: "Emissor de fichas",
-          icon: "paper",
+          title: "Fichas e formulários",
+          icon: "icons/job.png",
           body: [
-            blockquote(["fd"]),
-            wrap([
-              card({
-                content: img("img/i-seo-report.png"),
-                text: "Relatório de produção"
-              }),
-              card({
-                content: img("img/i-seo-report.png"),
-                text: "Relatório de produção"
-              }),
-              card({
-                content: img("img/i-seo-report.png"),
-                text: "Relatório de produção"
-              }),
-            ])
+            blockquote(["Neste módulo, é possível emitir fichas de notificação e solicitações de exames."]),
+            h2("Fichas de notificação"),
+            menu({id: "listaFichasNotificacao"}),
           ]
         }),
+
         page({
-          title: "Emissor de fichas",
-          icon: "paper",
+          title: "Ajuda",
+          icon: "icons/help.png",
           body: [
-            blockquote(["fd"]),
-            wrap([
-              card({
-                content: img("img/i-seo-report.png"),
-                text: "Relatório de produção"
-              }),
-              card({
-                content: img("img/i-seo-report.png"),
-                text: "Relatório de produção"
-              }),
-              card({
-                content: img("img/i-seo-report.png"),
-                text: "Relatório de produção"
-              }),
-            ])
+            blockquote(["Aqui você pode encontar ajuda para a utilização do sistema"]),
           ]
         }),
+        
       ]);
 
-      escolherAcesso.showModal();
+      const drawAcessBanner = () => {
+        const acesso = JSON.parse(localStorage[localStorage.profissional_cpf]);
+        document.querySelectorAll(".change-access").forEach((el) => el.remove());
+        document.querySelectorAll("article > section").forEach((section) => {
+          section.prepend(menu({
+            className: "change-access",
+            childrenList: [li({
+              onclick: () => escolherAcesso.showModal(),
+              childrenList: [
+                div({
+                  style: {
+                    paddingLeft: "18px",
+                    flex: 1
+                  },
+                  childrenList: [
+                    h3({
+                      innerHTML: `Seu acesso atual:`
+                    }),
+                    p({
+                      innerHTML: `<b>Unidade</b>: ${acesso.no_unidade_saude}`
+                    }),
+                    p({
+                      innerHTML: `<b>Equipe</b>: ${acesso.no_equipe || '-'}`
+                    }),
+                    p({
+                      innerHTML: `<b>CBO</b>: ${acesso.no_cbo}`
+                    }),
+                  ]
+                }),
+                div({
+                  style: {
+                    paddingRight: "18px"
+                  },
+                  childrenList: [
+                    p({
+                      innerHTML: `<br><br>CNS: ${acesso.nu_cns}`
+                    }),
+                    button({
+                      style: {
+                        width: "100%",
+                        pointerEvents: "none"
+                      },
+                      textContent: "Trocar"
+                    })
+                  ]
+                }),
+              ]
+            })]
+          }));
+        });
+      }
+
+      if (localStorage[localStorage.profissional_cpf] === undefined) {
+        escolherAcesso.showModal();
+      } else {
+        drawAcessBanner();
+      }
+
       const menuAcessos = escolherAcesso.querySelector("menu");
-      const acessos = (await sb.from('lotacao').select("*").eq('nu_cpf',localStorage.profissional_cpf).order('no_unidade_saude', { ascending: false })).data;
-      console.log(acessos);
+      const acessos = (await sb.from('lotacao').select("*").eq('nu_cpf', localStorage.profissional_cpf).order('no_unidade_saude', {
+        ascending: false
+      })).data;
+
       for (const acesso of acessos) {
         menuAcessos.appendChild(li({
           onclick: () => {
-            document.querySelectorAll(".change-access").forEach((el) => el.remove());
-            let banner = menu([
-              li({
-                childrenList: [
-                div({
-              style: {
-                paddingLeft: "18px",
-                flex: 1
-              },
-              childrenList: [
-                p({innerHTML: `<b>Unidade</b>: ${acesso.no_unidade_saude}`}),
-                p({innerHTML: `<b>Equipe</b>: ${acesso.no_equipe || '-'}`}),
-                p({innerHTML: `<b>CBO</b>: ${acesso.no_cbo}`}),
-              ]
-            }),
-            div({
-              style: {
-                paddingRight: "18px"
-              },
-              childrenList: [
-                p({innerHTML: `CNS: ${acesso.nu_cns}`}),
-              ]
-            }),
-                ]
-              })
-            ]);
-
-            console.log(banner)
+            escolherAcesso.close();
+            localStorage.setItem(localStorage.profissional_cpf, JSON.stringify(acesso));
+            drawAcessBanner();
           },
           childrenList: [
             div({
@@ -174,9 +358,15 @@
                 flex: 1
               },
               childrenList: [
-                p({innerHTML: `<b>Unidade</b>: ${acesso.no_unidade_saude}`}),
-                p({innerHTML: `<b>Equipe</b>: ${acesso.no_equipe || '-'}`}),
-                p({innerHTML: `<b>CBO</b>: ${acesso.no_cbo}`}),
+                p({
+                  innerHTML: `<b>Unidade</b>: ${acesso.no_unidade_saude}`
+                }),
+                p({
+                  innerHTML: `<b>Equipe</b>: ${acesso.no_equipe || '-'}`
+                }),
+                p({
+                  innerHTML: `<b>CBO</b>: ${acesso.no_cbo}`
+                }),
               ]
             }),
             div({
@@ -184,13 +374,217 @@
                 paddingRight: "18px"
               },
               childrenList: [
-                p({innerHTML: `CNS: ${acesso.nu_cns}`}),
+                p({
+                  innerHTML: `CNS: ${acesso.nu_cns}`
+                }),
               ]
             }),
           ]
         }));
       }
 
+      if (parseInt((localStorage.getItem("ultima_atualizacao") || 0)) < parseInt((new Date).toISOString().split("T")[0].split("-").join(""))) {
+        localStorage.setItem("ultima_atualizacao",(new Date).toISOString().split("T")[0].split("-").join(""));
+        const cadastros = ((await sb.from('listagem_pacientes').select('*')).data[0] || {
+          json_build_object: {
+            headers: [],
+            body: [],
+            groups: {},
+          }
+        }).json_build_object;
+
+        listaDePacientes = cadastros;
+
+        for (const [name, list] of Object.entries(listaDePacientes.groups)) {
+          let options = `<option value="-">Todas</option>`;
+          const selects = document.getElementsByName(name);
+
+          for (const option of list) {
+            if (!option) continue;
+
+            options += `<option value="${option}">${option}</option>`;
+          }
+
+          for (const select of selects) {
+            select.innerHTML = options;
+          }
+        }
+
+        await localforage.setItem('listaPacientes', JSON.stringify(listaDePacientes));
+      }
+
+      const fichas = (await sb.from('fichas_formulario').select('*').order('nome', { ascending: true })).data;
+      listaFichasNotificacao.style.marginTop = "-18px";
+
+      for (let ficha of fichas) {
+        console.log(ficha)
+        const item = listaFichasNotificacao.appendChild(li([
+          img({src: "icons/sign-form.png", style: {width: "72px",height: "72px"}}),
+          span([
+            p([b(ficha.nome)]),
+            p(ficha.descricao),
+          ])
+        ]));
+
+        item.style.padding = "18px";
+        item.style.gap = "18px";
+
+        let dialogo = document.body.appendChild(document.createElement("dialog"));
+        dialogo.style.maxWidth = "1000px";
+        dialogo.appendChild(h2()).innerHTML = ficha.nome;
+        dialogo.appendChild(p()).innerHTML = ficha.instrutivo;
+        dialogo.appendChild(hr());
+
+        let form = dialogo.appendChild(document.createElement("form"));
+
+        for (let [campo,dados] of Object.entries(JSON.parse(ficha.campos))) {
+          if (typeof(dados) == "object" && dados.tag == "select") {
+            let options = {};
+            for (let dado of dados.dados) {
+              let [value,key] = dado.split(":");
+              options[key] = value;
+            }
+            form.appendChild(field(campo,{type: "select",name: campo},options));
+            form.appendChild(hr());
+            continue;
+          }
+
+          if (typeof(dados) == "object" && dados.tag == "checklist") {
+            form.appendChild(span(campo)).style.marginTop = "9px";
+            let tabela = [[]];
+            for (let campos of dados.dados) {
+              let linha = [];
+              for (let campo of campos) {
+                linha.push(field(campo,{type: "checkbox",name: campo,ifTrue: dados["true"],ifFalse: dados["false"],}));
+              }
+              tabela.push(linha);
+            }
+            form.appendChild(table(tabela));
+            form.appendChild(hr());
+            continue;
+          }
+
+          let tipo = dados.split(":")[1];
+
+          if (tipo === "text") {
+            form.appendChild(field(`${campo}:`,{type: "textarea",name: campo}));
+            continue;
+          }
+
+          if (tipo === "data") {
+            form.appendChild(field(`${campo}:`,{type: "date",name: campo,style: {width: "100%"}}));
+            continue;
+          }
+
+          if (tipo === "logradouro") {
+            form.appendChild(inline([
+              div({style: {gridColumn:" span 3"},childrenList: [field("Endereço:",{type: "text",name: "Endereço:"})]}),
+              field("Número:",{type: "text",name: "Número:"})
+            ]));
+            form.appendChild(inline([
+              field("Bairro:",{type: "text",name: "Bairro:"}),
+              field("Zona:",{type: "select",name: "Zona:"},{
+                Ignorado: "Ignorado",
+                Urbana: "Urbana",
+                Periurbana: "Periurbana",
+                Rural: "Rural",
+              }),
+            ]));
+            form.appendChild(hr());
+            continue;
+          }
+
+          if (tipo === "paciente") {
+            form.appendChild(inline([
+              div({style: {gridColumn:" span 3"},childrenList: [field("Nome:",{type: "text",name: "Nome:"})]}),
+              field("Data nasc.:",{type: "date",name: "Data nasc.:"})
+            ]));
+            form.appendChild(inline([
+              field("CNS:",{type: "text",name: "CNS:"}),
+              field("Sexo:",{type: "select",name: "Sexo:"},{
+                Ignorado: "IGNORADO",
+                Masculino: "MASCULINO",
+                Feminino: "FEMININO",
+              }),
+              field("Raça/cor:",{type: "select",name: "Raça/cor:"},{
+                Ignorado: "Ignorado",
+                Branca: "1",
+                Preta: "2",
+                Amarela: "3",
+                Parda: "4",
+                Indigena: "5",
+              }),
+            ]));
+            form.appendChild(field("Nome da mãe:",{type: "text",name: "Nome da mãe:"})),
+            form.appendChild(inline([
+              field("Contato:",{type: "text",name: "Contato:"}),
+              field("Ocupação:",{type: "text",name: "Ocupação:"}),
+            ]));
+            form.appendChild(hr());
+            continue;
+          }
+        }
+
+        form.appendChild(input({type: "reset", value: "Cancelar"})).onclick = () => dialogo.close();
+        form.appendChild(input({type: "reset", value: "Limpar"}));
+        form.appendChild(input({type: "button", value: "Salvar"})).onclick = async () => {
+          let coletor = {};
+          const lotacao = JSON.parse(localStorage.getItem(localStorage.profissional_cpf));
+
+          for (let campo of form.querySelectorAll("input,select,textarea")) {
+            if (campo.type != "checkbox" && campo.value === "") {
+              alert(`Campo "${campo.name.replaceAll(":","")}" não pode ficar em branco!`);
+              campo.focus();
+              return false;
+            }
+
+            if (campo.type == "checkbox") {
+              coletor[campo.name] = campo.getAttribute(campo.checked ? "ifTrue" : "ifFalse");
+              continue;
+            }
+
+            if (campo.type == "date") {
+              coletor[campo.name] = campo.value.split("-").reverse().join("/");
+              continue;
+            }
+            
+            coletor[campo.name] = campo.value;
+          }
+
+          coletor = Object.fromEntries(Object.entries(coletor).sort(([a],[b]) => a.localeCompare(b)));
+          coletor["--"] = "--";
+
+          coletor["Data de registro"] = new Date().toISOString().split("T")[0].split("-").reverse().join("/");
+          coletor["Nome Profissional"] = lotacao.no_civil_profissional;
+          coletor["CBO Profissional"] = lotacao.no_cbo;
+          coletor["Código CBO Profissional"] = lotacao.co_cbo_2002;
+          coletor["Numero do conselho de classe"] = lotacao.nu_conselho_classe;
+          coletor["Unidade de Saúde"] = lotacao.no_unidade_saude;
+          coletor["CNES Unidade de Saúde"] = lotacao.nu_cnes;
+          coletor["Equipe"] = lotacao.nu_ine;
+          coletor["INE EEquipe"] = lotacao.no_equipe;
+          coletor["CPF Profissional"] = lotacao.nu_cpf;
+          coletor["CNS Profissional"] = lotacao.nu_cns
+          
+          const { data:resposta, error } = await sb.from('fichas_formulario_repostas').insert([
+            { 
+              cns: coletor["CNS:"],
+              ficha: ficha.arquivo,
+              versao: ficha.versao,
+              dados: JSON.stringify(coletor)
+            },
+          ]).select();
+
+          console.log(error)
+
+          open(`fichas/${ficha.versao}/${ficha.arquivo}?id=${resposta[0].id}`)
+          dialogo.close();
+        };
+
+        item.onclick = () => dialogo.showModal();
+      }
+
+      loadingDialog.remove();
     })();
   </script>  
 </html>

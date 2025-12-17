@@ -88,7 +88,7 @@
         "i","iframe","img","input","ins",
         "kbd",
         "label","legend","li","link",
-        "main","map","mark","meta","meter",
+        "main","map","mark","menu","meta","meter",
         "nav","noscript",
         "object","ol","optgroup","option","output",
         "p","picture","pre","progress",
@@ -175,6 +175,13 @@ globalThis["field"] = (text, data,options) => {
     childrenList: [
       input(data),
       text
+    ]
+  });
+
+  if (data.type === "textarea") return label({
+    childrenList: [
+      text,
+      textarea(data),
     ]
   });
 
@@ -332,18 +339,34 @@ globalThis["card"] = (properties) => {
   return el;
 }
 
-globalThis["wrap"] = (properties) => {
-
+globalThis["wrap"] = (childrenList) => {
   let container = div({
     style: {
       padding: "0px",
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "18px"
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "18px"
     }
   });
 
-  for (child of (properties)) {
+  for (child of (childrenList)) {
+    container.appendChild(child);
+  }
+
+  return container;
+}
+
+globalThis["inline"] = (childrenList) => {
+  let container = div({
+    style: {
+      padding: "0px",
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(0, 1fr))",
+      gap: "18px"
+    }
+  });
+
+  for (child of (childrenList)) {
     container.appendChild(child);
   }
 
@@ -353,7 +376,7 @@ globalThis["wrap"] = (properties) => {
 globalThis["page"] = (descriptor) => {
   let section = document.createElement("section");
   section.setAttribute("x-title",descriptor.title);
-  section.setAttribute("icon",`icons/${descriptor.icon}.png`);
+  section.setAttribute("icon",descriptor.icon);
   section.style.display = "flex";
   section.style.gap = "18px";
   section.style.flexDirection = "column";
@@ -391,6 +414,9 @@ globalThis["app"] = (pages) => {
 {
   let colorMode = button({
     textContent: document.documentElement.hasAttribute("dark") ? "Modo claro" : "Modo escuro",
+    style: {
+      minWidth: "100px"
+    },
     onclick: () => {
       if (document.documentElement.hasAttribute("dark")) {
         document.documentElement.removeAttribute("dark");

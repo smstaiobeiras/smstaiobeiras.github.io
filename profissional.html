@@ -893,7 +893,6 @@
                 dialogo.appendChild(label);
                 continue;
               }
-
               if (typeof(dados) == "object" && dados.tag == "checklist") {
                 label = dialogo.appendChild(document.createElement('div'));
                 label.style = 'margin-bottom: 9px;display:flex;flex-direction: column;';
@@ -924,7 +923,7 @@
                 dialogo.appendChild(label);
                 continue;
               }
-              
+    
               let [nome,tipo] = dados.split(":");
 
               if (tipo == "logradouro") {
@@ -1146,14 +1145,14 @@
                   let coletor = {};
                   for (let campo of campos) {
                     if (campo.type == "checkbox") {
-                      coletor[campo.name] = campo.getAttribute(campo.checked ? "ifTrue" : "ifFalse");
+                      coletor[campo.name.replaceAll(":","")] = campo.getAttribute(campo.checked ? "ifTrue" : "ifFalse");
                       continue;
                     }
                     if (campo.type == "date") {
-                      coletor[campo.name] = document.getElementsByName("Inicio dos sintomas:")[0].value.split("-").reverse().join("/");
+                      coletor[campo.name.replaceAll(":","")] = campo.value.split("-").reverse().join("/");
                       continue;
                     }
-                    coletor[campo.name] = campo.value;
+                    coletor[campo.name.replaceAll(":","")] = campo.value;
                   }
 
                   coletor = Object.fromEntries(Object.entries(coletor).sort(([a],[b]) => a.localeCompare(b)));

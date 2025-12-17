@@ -186,7 +186,7 @@
         let ficha = JSON.parse(fichas_formulario_repostas[0].dados);
         for (let [key, value] of Object.entries(ficha)) {
           tipo.innerHTML += `<option value="${key}">${key}</option>`;
-          if (key == "Zona:") {
+          if (key == "Zona") {
             value =
               value == "Ignorado"
                 ? "9"
@@ -197,8 +197,10 @@
                 : "3";
           }
           if (key == "Sexo:") value = value.charAt(0);
-          window.ficha[key] = value;
+          window.ficha[key.replace(/ $/,"").replace(/:$/,"")] = value;
         }
+
+        console.log(ficha);
 
         {
           let { data: fichas_formulario, error } = await sb
@@ -214,8 +216,6 @@
             elemento.value = window.ficha[campo.nome] || campo.valor;
             elemento.style = campo.style;
             elemento.className = "drawn-input";
-
-            console.log(campo);
             document.getElementById(campo.pagina).appendChild(elemento);
           }
 

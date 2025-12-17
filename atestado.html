@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Atestado Médico</title>
+
+<style>
+/* ================= VISUALIZAÇÃO NO BROWSER ================= */
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #e5e5e5;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Simula uma folha A4 no navegador */
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    background: #fff;
+    margin: 30px auto;
+    padding: 2.5cm;
+    box-shadow: 0 0 15px rgba(0,0,0,0.25);
+    box-sizing: border-box;
+}
+
+/* ================= CONFIGURAÇÃO DE IMPRESSÃO ================= */
+@page {
+    size: A4;
+    margin: 2.5cm;
+}
+
+@media print {
+    body {
+        background: none;
+    }
+
+    .page {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+        width: auto;
+        min-height: auto;
+    }
+
+    .no-print {
+        display: none;
+    }
+}
+
+/* ================= CABEÇALHO ================= */
+.header {
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+
+.logo {
+    width: 90px;
+}
+
+.logo img {
+    max-width: 100%;
+}
+
+.header-text {
+    flex: 1;
+    text-align: center;
+}
+
+.header-text h1 {
+    margin: 0;
+    font-size: 17px;
+    text-transform: uppercase;
+}
+
+.header-text h2 {
+    margin: 3px 0;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.header-text h3,
+.header-text h4 {
+    margin: 2px 0;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+/* ================= CONTEÚDO ================= */
+.title {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 30px 0;
+    text-transform: uppercase;
+}
+
+.content {
+    font-size: 13.5px;
+    text-align: justify;
+}
+
+.field {
+    margin-bottom: 14px;
+}
+
+/* ================= ASSINATURA ================= */
+.signature {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.line {
+    width: 320px;
+    border-top: 1px solid #000;
+    margin: 0 auto 8px auto;
+}
+
+/* ================= OBS ================= */
+.obs {
+    font-size: 11px;
+    margin-top: 40px;
+}
+
+/* ================= BOTÃO ================= */
+.toolbar {
+    text-align: center;
+    margin-top: 15px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+
+<!-- Página -->
+<div class="page">
+
+    <!-- CABEÇALHO -->
+    <div class="header">
+        <div class="logo">
+            <img src="img/logo-prefeitura.png" alt="Logo da Unidade">
+        </div>
+
+        <div class="header-text">
+            <h1>UNIDADE DE SAÚDE XXXXX</h1>
+            <h2>EQUIPE XXXXX</h2>
+            <h3>Rua XXXXX, nº XXX – Bairro XXXXX</h3>
+            <h3>Cidade / UF – CEP XXXXX-XXX</h3>
+            <h4>Telefone: (XX) XXXXX-XXXX | CNPJ: XX.XXX.XXX/0001-XX</h4>
+        </div>
+    </div>
+
+    <!-- TÍTULO -->
+    <div class="title">Atestado Médico</div>
+
+    <!-- CONTEÚDO -->
+    <div class="content">
+        <div class="field">
+            <strong>Paciente:</strong> ________________________________________________
+            &nbsp;&nbsp;
+            <strong>CPF:</strong> ______________________
+            &nbsp;&nbsp;
+            <strong>RG:</strong> ______________________
+        </div>
+
+        <div class="field">
+            <strong>Data de nascimento:</strong> ____/____/________
+            &nbsp;&nbsp;
+            <strong>Cartão SUS:</strong> ______________________________
+        </div>
+
+        <div class="field">
+            Atesto para os devidos fins que o(a) paciente acima identificado(a)
+            foi atendido(a) nesta unidade de saúde em
+            <strong>____/____/________</strong>, às
+            <strong>____:____</strong> horas, necessitando de
+            <strong>_____ (___)</strong> dia(s) de afastamento de suas atividades habituais,
+            a contar de <strong>____/____/________</strong>.
+        </div>
+
+        <div class="field">
+            ☐ Afastamento em dias &nbsp;&nbsp;&nbsp;
+            ☐ Afastamento em horas: ______ horas
+        </div>
+
+        <div class="field">
+            <strong>CID:</strong> ______________________________
+            <em>(quando autorizado pelo paciente)</em>
+        </div>
+
+        <div class="field">
+            Declaro que o(a) paciente encontra-se sob meus cuidados profissionais.
+        </div>
+
+        <div class="field">
+            <strong>Local e data da emissão:</strong> ________________________________________
+        </div>
+    </div>
+
+    <!-- ASSINATURA -->
+    <div class="signature">
+        <div class="line"></div>
+        <p>
+            Assinatura e carimbo do(a) médico(a)<br>
+            <strong>Nome:</strong> ________________________________________<br>
+            <strong>CRM/UF:</strong> ________________________________
+        </p>
+    </div>
+
+    <!-- OBS -->
+    <div class="obs">
+        • Documento válido para fins trabalhistas, escolares ou administrativos.<br>
+        • CID conforme autorização do paciente (CFM nº 1.658/2002).
+    </div>
+
+</div>
+
+</body>
+</html>
