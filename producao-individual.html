@@ -245,13 +245,15 @@
           .eq('cpf',cpf)
         ;
         
-        let anoBase = new Date().getFullYear()*100;
+        let anoBase = ((new Date().getFullYear()-1)*100);
         let producaoCompleta = {};
 
         for (let producao of data) {
           let turnos = producao.atendimentos.split("$");
           let mes = meses[producao.mes-anoBase];
           let ficha = producao.ficha.replaceAll('  ',' ').toLowerCase();
+
+          console.log([producao.mes])
 
           producaoCompleta[mes] = producaoCompleta[mes] || {};
           let producaoMensal = producaoCompleta[mes];
@@ -271,6 +273,8 @@
             `;
           }
         }
+
+        
 
         for (let [mes,fichas] of Object.entries(producaoCompleta)){
           for (let [ficha,producao] of Object.entries(fichas)) {

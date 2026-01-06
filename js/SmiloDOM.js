@@ -127,13 +127,19 @@ globalThis["hyperlink"] = (text,target) => {
       if (typeof item === "number") {
         childrenList.push(cell({
           style: {
-            textAlign: 'right'
+            textAlign: 'right',
+            textWrap: tag === "th" ? 'nowrap' : 'pretty',
           },
           childrenList: [item]
         }));
         continue;
       }
-      childrenList.push(cell([item]));
+      childrenList.push(cell({
+        style: {
+          textWrap: tag === "th" ? 'nowrap' : 'pretty',
+        },
+        childrenList: [item]
+      }));
     }
     return tr({
       childrenList: childrenList
@@ -149,7 +155,7 @@ globalThis["hyperlink"] = (text,target) => {
     if (!Array.isArray(data)) return createTag("table")(data,alt);
     let childrenList = [];
     let headerList = [];
-    let [header, ...list] = data;;
+    let [header, ...list] = data;
   
     for (let item of list) {
       if (item instanceof Element) {

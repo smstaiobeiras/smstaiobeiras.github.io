@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/app.css">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/localforage/dist/localforage.js"></script>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script>
       if (localStorage.getItem("darkMode")) document.documentElement.setAttribute("dark", "");
     </script>
@@ -50,6 +51,65 @@
       loadingDialog.appendChild(document.createElement('h3')).textContent = "Baixando dados da aplicação...";
       loadingDialog.showModal();
 
+      const atualizaIntervaloDataNascimento = () => {
+        if (document.getElementsByName("modoIdadePaciente")[0].value == "-") return;
+        if (document.getElementsByName("idadeDesejadaPaciente")[0].value == "") return;
+        if (document.getElementsByName("tipoIdadePaciente")[0].value == "-") return;
+
+        const multiplo = parseInt(document.getElementsByName("tipoIdadePaciente")[0].value);
+        const idadeMeses = parseInt(document.getElementsByName("idadeDesejadaPaciente")[0].value)*multiplo;
+        const modoCalculo = document.getElementsByName("modoIdadePaciente")[0].value;
+
+        let dataMinima = new Date;
+        let dataMaxima = new Date;
+
+        switch (modoCalculo) {
+          case "max":
+            dataMinima.setMonth(dataMinima.getMonth() - idadeMeses);
+          break;
+
+          case "min":
+            dataMinima.setMonth(dataMinima.getMonth() - (127)*12);
+            dataMaxima.setMonth(dataMinima.getMonth() - idadeMeses);
+          break;
+        }
+
+        if (idadeMeses == 0) {
+          dataMinima = new Date;
+          dataMaxima = new Date;
+          switch (multiplo) {
+            case 1:
+              switch (modoCalculo) {
+                case "max":
+                  dataMinima.setDate(dataMinima.getDate() - 29);
+                break;
+
+                case "min":
+                  dataMinima.setMonth(dataMinima.getMonth() - (127)*12);
+                  dataMaxima.setDate(dataMaxima.getDate() - 29);
+                break;
+              }
+            break;
+            case 12:
+              switch (modoCalculo) {
+                case "max":
+                  dataMinima.setMonth(dataMinima.getMonth() - 11);
+                break;
+
+                case "min":
+                  dataMinima.setMonth(dataMinima.getMonth() - (127)*12);
+                  dataMaxima.setMonth(dataMaxima.getMonth() - 11);
+                break;
+              }
+            break;
+           }
+        }
+
+        document.getElementsByName("data_nascimento")[0].value = "";
+        document.getElementsByName("data_nascimento$lte")[0].value = dataMaxima.toISOString().split('T')[0];
+        document.getElementsByName("data_nascimento$gte")[0].value = dataMinima.toISOString().split('T')[0];
+      }
+
       app([
 
         page({
@@ -81,10 +141,21 @@
             blockquote([`
               Essa ferramenta permite localizar e listar
             `]),
-            form([
+            form({onsubmit: () => event.preventDefault(), childrenList : [
               inline([
                 field("Nome: ",{type: "text",name: "nome"}),
-                field("Data de nascimento: ",{type: "date",name: "",style: {width: "100%"}}),
+                field("Data de nascimento: ",{
+                  type: "date",
+                  name: "data_nascimento",
+                  style: {width: "100%"},
+                  onchange: () => {
+                    document.getElementsByName("data_nascimento$gte")[0].value = event.target.value;
+                    document.getElementsByName("data_nascimento$lte")[0].value = event.target.value;
+                    document.getElementsByName("modoIdadePaciente")[0].value = "-";
+                    document.getElementsByName("tipoIdadePaciente")[0].value = "-";
+                    document.getElementsByName("idadeDesejadaPaciente")[0].value = "";
+                  }
+                }),
               ]),
               inline([
                 field("Nome do pai: ",{type: "text",name: "mae"}),
@@ -100,12 +171,28 @@
                 field("Nascidos de: ",{type: "date",name: "data_nascimento$gte",style: {width: "100%"}}),
                 field("até: ",{type: "date",name: "data_nascimento$lte",style: {width: "100%"}}),
                 inline([
-                  field("ou com:",{type: "select",name: "modoIdadePaciente",style: {minWidth: "64px"}},{
+                  field("ou com:",{
+                    type: "select",
+                    name: "modoIdadePaciente",
+                    style: {minWidth: "64px"},
+                    onchange: atualizaIntervaloDataNascimento
+                  },{
+                    "Selecione": "-",
                     "até": "max",
                     "pelo menos": "min",
                   }),
-                  field("",{type: "number",name: "idadeDesejadaPaciente",style: {width: "100%"}}),
-                  field("",{type: "select",name: "tipoIdadePaciente"},{
+                  field("",{
+                    type: "number",
+                    name: "idadeDesejadaPaciente",
+                    style: {width: "100%"},
+                    onchange: atualizaIntervaloDataNascimento
+                  }),
+                  field("",{
+                    type: "select",
+                    name: "tipoIdadePaciente",
+                    onchange: atualizaIntervaloDataNascimento,
+                  },{
+                    "Selecione": "-",
                     "Anos": "12",
                     "meses": "1",
                   }),
@@ -221,7 +308,7 @@
               ]),
 
               inline([
-                  field("Gestante",{type: "checkbox",name: "gestante"}),
+                  field("Gestante",{type: "checkbox",name: "gestante", checked: true}),
                   field("Hipertenso",{type: "checkbox",name: "hipertenso"}),
                   field("Diabético",{type: "checkbox",name: "diabetico"}),
                   field("Fumante",{type: "checkbox",name: "fumante"}),
@@ -255,9 +342,76 @@
               hr(),
 
               input({type: "reset",value: "Limpar",style: {width: "auto"}}),
-              button("Pesquisar")
+              button("Pesquisar", () => {
+                
+                const coletor = {};
+                for (let input of event.target.closest('form').querySelectorAll("select,input")) {
+                  if (input.type === "checkbox"){
+                    if (input.checked) {
+                      coletor[input.name] = input.checked;
+                    }
+                    continue;
+                  } 
+                  if (input.tagName == "INPUT" && input.value == "") continue;
+                  if (input.tagName == "SELECT" && input.value == "-") continue;
+                  if (input.type === "reset") continue;
 
-            ])
+                  coletor[input.name] = input.value;
+                }
+
+                let naoIncluirFA = coletor.naoIncluirFA === true ? true : false;
+                let operadorLogico = coletor.operador_logico;
+
+                delete coletor.naoIncluirFA;
+                delete coletor.operador_logico;
+
+                console.log(coletor)
+
+                let tabela = [['CNS','Nome do paciente','Nome da mãe','Data de Nascimento','Contato','Equipe','Micro-área']];
+
+                let filtrados = 0;
+
+                listaDePacientes.body.forEach((linha) => {
+                  let manter = true;
+                  if (operadorLogico === "and") {
+                    for (let [campo, valor] of Object.entries(coletor)) {
+                      if (linha[campo] != valor) {
+                        manter = false;
+                        break;
+                      }
+                    }
+                  } else {
+                    manter = false;
+                    for (let [campo, valor] of Object.entries(coletor)) {
+                      if (linha[campo] == valor) {
+                        manter = true;
+                        break
+                      }
+                    }
+                  }
+
+                  if (naoIncluirFA && linha.micro_area === null) manter = false;
+
+                  if (manter) {
+                    tabela.push([linha.cns,linha.nome,linha.mae,linha.data_nascimento,linha.contato,linha.equipe,linha.micro_area])
+                    filtrados += 1;
+                  }
+                });
+
+                let dialogo = document.body.appendChild(dialog({
+                  onclose: () => event.target.remove(),
+                  style: {
+                    overflowY: "hidden"
+                  }
+                },[
+                  table(tabela)
+                ]));
+                
+                dialogo.showModal();
+                return false;
+              })
+
+            ]})
           ]
         }),
 
@@ -383,6 +537,8 @@
         }));
       }
 
+      listaDePacientes = JSON.parse(await localforage.getItem('listaPacientes')) || {headers: [],body: [],groups: {}};
+
       if (parseInt((localStorage.getItem("ultima_atualizacao") || 0)) < parseInt((new Date).toISOString().split("T")[0].split("-").join(""))) {
         localStorage.setItem("ultima_atualizacao",(new Date).toISOString().split("T")[0].split("-").join(""));
         const cadastros = ((await sb.from('listagem_pacientes').select('*')).data[0] || {
@@ -395,7 +551,20 @@
 
         listaDePacientes = cadastros;
 
-        for (const [name, list] of Object.entries(listaDePacientes.groups)) {
+        await localforage.setItem('listaPacientes', JSON.stringify(listaDePacientes));
+      }
+
+      {
+        const headers = {};
+        listaDePacientes.headers.forEach((h, i) => headers[h] = i);
+        listaDePacientes.body.forEach((linha, i) => listaDePacientes.body[i] = new Proxy(linha,{
+          get: function (target, name) {
+                return name in headers ? target[headers[name]] : undefined;
+          }
+        }));
+      }
+
+      for (const [name, list] of Object.entries(listaDePacientes.groups)) {
           let options = `<option value="-">Todas</option>`;
           const selects = document.getElementsByName(name);
 
@@ -410,14 +579,10 @@
           }
         }
 
-        await localforage.setItem('listaPacientes', JSON.stringify(listaDePacientes));
-      }
-
       const fichas = (await sb.from('fichas_formulario').select('*').order('nome', { ascending: true })).data;
       listaFichasNotificacao.style.marginTop = "-18px";
 
       for (let ficha of fichas) {
-        console.log(ficha)
         const item = listaFichasNotificacao.appendChild(li([
           img({src: "icons/sign-form.png", style: {width: "72px",height: "72px"}}),
           span([
@@ -574,8 +739,6 @@
               dados: JSON.stringify(coletor)
             },
           ]).select();
-
-          console.log(error)
 
           open(`fichas/${ficha.versao}/${ficha.arquivo}?id=${resposta[0].id}`)
           dialogo.close();
