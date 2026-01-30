@@ -279,7 +279,7 @@
         for (let [mes,fichas] of Object.entries(producaoCompleta)){
           for (let [ficha,producao] of Object.entries(fichas)) {
             tabelas.innerHTML += `<tr  name="${ficha}" class="linha-de-producao" style="display:none">
-              <th colspan=34>${mes}</th>
+              <th colspan=34>${mes} - ${((`${producao.mes}`.slice(0,4)))}</th>
             </tr>`;
             let dias = "";
             for (let i = 1; i <= 31; i++) dias += `<th style="text-align: center;">${i}</th>`;
