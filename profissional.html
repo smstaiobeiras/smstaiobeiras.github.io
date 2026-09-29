@@ -458,6 +458,7 @@
               <center-box><b>Produção individual</b></center-box>
             </card-label>
           </card-box>
+          <!--
           <card-box style="max-width: 128px;min-width: 128px;" onclick="indicadores.showModal();">
             <center-box>
               <img src="img/i-improvement.png" width="96px">
@@ -466,6 +467,7 @@
               <center-box><b>Indicadores</b></center-box>
             </card-label>
           </card-box>
+          -->
           <card-box style="max-width: 128px;min-width: 128px;" onclick="window.location.href='solicitacoes-devolvidas.html'">
             <center-box>
               <img src="img/i-risk-analysis.png" width="96px">
@@ -1379,6 +1381,17 @@
           </card-box>
           `;
         }
+
+          listaSistemas.innerHTML += `
+          <card-box style="max-width: 150px;min-width: 150px;" onclick="window.open('https://taiobeiras.indicadores.online/login', '_tab');">
+            <center-box>
+              <img src="img/indicadores.online.jpg" style="max-width: 128px;min-width: 128px;min-height: 128px;min-height: 128px;">
+            </center-box>
+            <card-label>
+              <center-box><b>Indicadores.online</b></center-box>
+            </card-label>
+          </card-box>
+          `;
       };
 
       async function salvarLinkDeAcessoAosSistemas() {
