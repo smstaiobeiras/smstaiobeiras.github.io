@@ -399,14 +399,14 @@
       (async () => {
         let eAdmin = (await sb.from('admins').select('*').eq('cpf', localStorage.profissional_cpf)).data.length > 0;
         let unidadesProfissional = [];
-
-        if (eAdmin) {
+/*
+        if (eAdmin) {*/
           let { data:unidades, error } = await sb.from('unidades').select('*');
           for (let unidade of unidades) {
             unidadesProfissional.push(unidade.unidade_saude);
           }
           unidadesProfissional.sort();
-        } else {
+/*        } else {
           let { data:profissionais, error } = await sb.from('profissionais').select('*').eq('cpf', localStorage.profissional_cpf);
           for (let lotacao of profissionais) {
             unidadesProfissional.push(lotacao.unidade_saude);
@@ -414,7 +414,7 @@
           unidadesProfissional = [...(new Set(unidadesProfissional))];
           unidadesProfissional.sort();
         }
-
+*/
         {
           let { data:profissionais, error } = await sb.from('profissionais').select('*').in('unidade_saude',unidadesProfissional);
           let cbos = [];
