@@ -115,14 +115,35 @@
           Competência:
         </span>
         <select id="competencia" onchange="mostrarProducao(profissional.value,competencia.value);">
-          <option>Selecione o profissional...</option>
+          <option>Selecione...</option>
         </select>
       </label>
+
+      <hr>
+      
       <a name="relatorios"></a>
       <table id="tabelaDiario">
       </table>
       <card-book id="graficosIndicadores" style="max-width: 1200px !important;">
       </card-book>
+
+      <div style="padding: 32px;display: flex;flex-direction: column;gap: 18px;">
+        <strong>Baixar relatório tabular com os dados</strong>
+        <label>
+          <input type="checkbox" id="todosOsCBOs">
+          <span>Incluir todos os CBOs</span>
+        </label>
+        <label>
+          <input type="checkbox" id="todosOsProfissionais">
+          <span>Incluir todos os profissionais</span>
+        </label>
+        <label>
+          <input type="checkbox" id="todasAsCompetencias">
+          <span>Incluir todos as competências</span>
+        </label>
+        <div style="display: flex;flex-direction: column;gap: 18px;" id="checklist"></div>
+        <button style="width: 200px;" onclick="baixarCSV();">Baixar CSV</button>
+      </div>
     </div>
   </main>
   <script>
@@ -185,8 +206,58 @@
 
       const profissionais = {};
       const cbos = new Set();
+      const competencias = new Set();
       const listagemProfissional = new Set;
+      const cnsParaNome = {};
       const producao = {};
+
+      function baixarCSV() {
+        const cabecalho = [
+          'Competência','CNS do Profissional','Nome do Profissional','CBOs','Total de atendimentos',
+          ...[...checklist.querySelectorAll('input:checked')].map((e) => `Atendimentos para ${e.id};Registros de ${e.id};Registros de ${e.id} (%)`)
+        ].join(";");
+        const listagem = [];
+
+        for (const [cns,competencias] of Object.entries(producao)) {
+          for (const [competencia,registros] of Object.entries(competencias)) {
+            const linha = [];
+            if ((!todosOsCBOs.checked)) {
+              if (!profissionais[cns].has(cbo.value) && (cbo.value != "Todas as ocupações")) continue;
+            }
+            if (!todosOsProfissionais.checked) {
+              if (!(cns == profissional.value) && (profissional.value != "Selecionar profissional...")) continue;
+            }
+            if ((!todasAsCompetencias.checked) && (document.getElementById('competencia').value != "Selecione...")) {
+              if (!(competencia == document.getElementById('competencia').value)) continue;
+            }
+
+            linha.push(`${(competencia/100)}`.split(".").reverse().join("/"));
+            linha.push(cns,cnsParaNome[cns],[...profissionais[cns]].join(),registros.total);
+
+            for (const [indicador,dados] of Object.entries(registros.indicadores)) {
+              if (document.getElementById(indicador)?.checked) {
+                linha.push(dados.Oportunidades,dados.Realizado,Math.ceil(dados.Realizado/dados.Oportunidades*100)||0);
+              }
+            }
+
+            listagem.push(linha.join(";"));
+          }
+        }
+
+        const downloadBlob = (blob, name) => 
+          Object.assign(
+            document.createElement('a'),{
+              href: URL.createObjectURL(blob),
+              download: name 
+            }).click() || setTimeout(() => URL.revokeObjectURL(blob), 100)
+        ;
+
+        downloadBlob(new Blob(
+          [new Uint8Array([0xEF, 0xBB, 0xBF]),[cabecalho,listagem.join("\n")].join("\n")],
+          { type: "text/csv;charset=utf-8" }
+        ),'Relatório de produção')
+      }
+
 
       function filtrarProfissionais() {
         profissional.innerHTML = "<option>Selecionar profissional...</option>";
@@ -194,9 +265,13 @@
           if (cbo.value === 'Todas as ocupações') return true;
           return profissionais[e.cns].has(cbo.value);
         })).map((e)=>`<option value="${e.cns}">${e.nome}</option>`);
-        competencia.innerHTML = "<option>Selecione o profissional...</option>";
         graficosIndicadores.innerHTML = "";
         tabelaDiario.innerHTML = "";
+
+        competencia.innerHTML = "<option>Selecione...</option>"
+        competencia.innerHTML += [...competencias].reverse().map((e) => 
+          `<option value="${e}">${`${(Number(e)/100).toFixed(2)}`.split('.').reverse().join('/')}</option>`
+        ).join("");
       }
 
       function listarCompetencias(profissional) {
@@ -253,7 +328,7 @@
         });
 
         chart.render();
-      }    
+      }
 
       function mostrarProducao(profissional,competencia) {
         const diario = producao[profissional][competencia].diario;
@@ -272,8 +347,6 @@
         });
 
         for (const [indicador, dados] of Object.entries(indicadores)) {
-          console.log(dados)
-
           let cardbox = graficosIndicadores.appendChild(document.createElement("card-box"));
           cardbox.style="max-width: 256px;min-width: 580px;pointer-events: none;";
           cardbox.innerHTML = `
@@ -318,6 +391,8 @@
           const competencia = `${atendimento.competencia}`;
           const ano = Number(competencia.substring(0, 4));
           const mes = Number(competencia.substring(4, 6));
+
+          competencias.add(`${atendimento.competencia}`);
           
           const diario = atendimento.atendimentos.split("$").map((e) => e.split(","));
           diario.push(['Total']);
@@ -399,6 +474,17 @@
             },
           }
 
+          if (checklist.innerHTML === '') {
+            for (const indicador in indicadores) {
+              checklist.innerHTML += `
+                <label>
+                  <input type="checkbox" id="${indicador}">
+                  <span>${indicador}</span>
+                </label>
+              `;
+            }
+          }
+
           producao[atendimento.profissional] = producao[atendimento.profissional] || {};
           producao[atendimento.profissional][competencia] = {
             diario: diario,
@@ -414,6 +500,8 @@
             nome: profissional_esus.profissional,
             cns: profissional_esus.cns
           });
+
+          cnsParaNome[profissional_esus.cns] = profissional_esus.profissional;
         }
 
         cbo.innerHTML += '<option>'+[...cbos].join('</option><option>')+'</option>';
