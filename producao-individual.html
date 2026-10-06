@@ -283,7 +283,14 @@
         tabelaDiario.innerHTML = "";
       }
 
-      function criarGrafico(container,cor,percentual) {
+      function criarGrafico(container,percentual) {
+        const cor = ((valor) => {
+          if (valor >= 75) return "#3498db"; // Ótimo
+          if (valor >= 50) return "#2ecc71"; // Bom
+          if (valor >= 25) return "#f1c40f"; // Suficiente
+          return "#e74c3c";                  // Regular
+        })(percentual);
+
         let chart = new ApexCharts(document.getElementById(container),{
             series: [percentual],
             chart: {
@@ -374,7 +381,7 @@
             </center-box>
           `;
 
-          criarGrafico(`grafico ${indicador}`,"#3498db",Math.ceil(dados.Realizado/dados.Oportunidades*100) || 0);
+          criarGrafico(`grafico ${indicador}`,Math.ceil(dados.Realizado/dados.Oportunidades*100) || 0);
         }
       }
 
