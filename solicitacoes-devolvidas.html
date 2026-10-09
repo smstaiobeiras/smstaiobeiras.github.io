@@ -76,19 +76,26 @@
             </select>
           </label>
           <br>
+          <button onclick="carregarTabela({ocultar:true});">Baixar consolidado no intervalo</button>
         </fieldset>
-        <table id="listagem" style="display: none;">
-          <thead>
-            <th>Data de exclusão</th>
-            <th style="text-wrap: nowrap;">Nº Solititação</th>
-            <th>Prontuário</th>
-            <th>Procedimento</th>
-            <th>Motivo/Observação</th>
-            <th>Status</th>
-          </thead>
-          <tbody id="componentesIndicador">
-          </tbody>
-        </table>
+        <div id="listagem" style="display: none;flex-direction: column;">
+          <p>
+            <a href="#">Baixar como Planilha</a>
+          </p>
+          <hr>
+          <table>
+            <thead>
+              <th>Data de exclusão</th>
+              <th style="text-wrap: nowrap;">Nº Solititação</th>
+              <th>Prontuário</th>
+              <th>Procedimento</th>
+              <th>Motivo/Observação</th>
+              <th>Status</th>
+            </thead>
+            <tbody id="componentesIndicador">
+            </tbody>
+          </table>
+        </div>
       </div>
     </main>
     <footer>
@@ -102,6 +109,7 @@
     <script>
       const supabaseUrl = 'https://gnbbejevwbixsubblnua.supabase.co';
       const supabaseKey = 'sb_publishable_qwyezy8HKpxXhQZJdCcfXw_VsmZLmLA';
+      const listagem = document.getElementById('listagem');
       let sb = supabase.createClient(supabaseUrl, supabaseKey);
 
       data_final.value = new Date().toISOString().split('T')[0];
@@ -127,14 +135,29 @@
         desfecho.showModal();
       }
 
-      function carregarTabela() {
+      function carregarTabela(cfg) {
         let resultado = "";
-        listagem.style = "display:none;";
+        listagem.style.display = "none";
+        const estatisticas = {};
         for (let solicitacao of window.solicitacoes) {
-          if (listaProfissional.value == "-") return;
-          if (listaProfissional.value != solicitacao.nome_profissional_solicitante) continue;
           if (parseInt(data_inicial.value.replaceAll("-","")) > solicitacao.data_remocao_fila) continue;
           if (parseInt(data_final.value.replaceAll("-","")) < solicitacao.data_remocao_fila) continue;
+
+          if(!estatisticas[solicitacao.nome_profissional_solicitante.trim()]) {
+            estatisticas[solicitacao.nome_profissional_solicitante.trim()] = {
+              Total: 0,
+              Resolvidas: 0,
+              Pendentes: 0,
+            }
+          }
+
+          estatisticas[solicitacao.nome_profissional_solicitante.trim()].Total += 1;
+          estatisticas[solicitacao.nome_profissional_solicitante.trim()].Resolvidas += solicitacao.status.startsWith("<button") ? 0 : 1;
+          estatisticas[solicitacao.nome_profissional_solicitante.trim()].Pendentes += solicitacao.status.startsWith("<button")  ? 1 : 0;
+
+
+          if (listaProfissional.value == "-" && !(cfg || {}).ocultar) return;
+          if (listaProfissional.value != solicitacao.nome_profissional_solicitante) continue;
           resultado += `
             <tr>
               <td style="text-align: right;">${solicitacao.data_exibicao}</td>
@@ -153,7 +176,33 @@
           `;
         }
         componentesIndicador.innerHTML = resultado;
-        listagem.style = "";
+        if((cfg || {}).ocultar) {
+          const csv = ["Profissional;Total;Resolvidas;Pendentes"];
+          const lista = [];
+          for (const [profissional,estatistica] of Object.entries(estatisticas)) {
+            lista.push([profissional,estatistica.Total,estatistica.Resolvidas,estatistica.Pendentes].join(";"))
+          }
+          lista.sort()
+          csv.push(...lista);
+
+          const downloadBlob = (blob, name) => 
+            Object.assign(
+              document.createElement('a'),{
+                href: URL.createObjectURL(blob),
+                download: name 
+              }).click() || setTimeout(() => URL.revokeObjectURL(blob), 100)
+          ;
+
+          downloadBlob(new Blob(
+            [new Uint8Array([0xEF, 0xBB, 0xBF]),csv.join("\n")],
+            { type: "text/csv;charset=utf-8" }
+          ),`Relatório de devolutivas ${data_inicial.value.split("-").reverse().join("-")} a ${data_final.value.split("-").reverse().join("-")}.csv`)
+
+          console.log(csv.join("\n"));
+          
+          return;
+        }
+        listagem.style.display = "flex";
       }
 
       (async () => {
