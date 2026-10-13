@@ -80,7 +80,10 @@
         </fieldset>
         <div id="listagem" style="display: none;flex-direction: column;">
           <p>
-            <a href="#">Baixar como Planilha</a>
+            <strong>Total de solicitações: </strong>&nbsp;<var id="var_total"></var>&nbsp;
+            &middot;&nbsp;<strong>Socilitações resolvidas: </strong>&nbsp;<var id="var_resolvidas"></var>&nbsp;
+            &middot;&nbsp;<strong>Socilitações pendentes: </strong>&nbsp;<var id="var_pendentes"></var>&nbsp;
+            &middot;&nbsp;<strong>Resolutividade: </strong>&nbsp;<var id="var_resolutividade"></var>
           </p>
           <hr>
           <table>
@@ -139,6 +142,12 @@
         let resultado = "";
         listagem.style.display = "none";
         const estatisticas = {};
+
+        let info_pendentes = 0;
+        let info_resolvidas = 0;
+        let info_total = 0;
+        let info_resolutividade = 0;
+        
         for (let solicitacao of window.solicitacoes) {
           if (parseInt(data_inicial.value.replaceAll("-","")) > solicitacao.data_remocao_fila) continue;
           if (parseInt(data_final.value.replaceAll("-","")) < solicitacao.data_remocao_fila) continue;
@@ -174,7 +183,19 @@
               <td>${solicitacao.status}</td>
             </tr>
           `;
+
+          info_total += 1;
+          info_resolvidas += solicitacao.status.startsWith("<button") ? 0 : 1;
+          info_pendentes += solicitacao.status.startsWith("<button")  ? 1 : 0;
+
+          info_resolutividade = Math.floor(info_resolvidas/info_total*100);
         }
+
+        var_total.innerHTML = info_total;
+        var_resolvidas.innerHTML = info_resolvidas;
+        var_pendentes.innerHTML = info_pendentes;
+        var_resolutividade.innerHTML = `${info_resolutividade || 0}%`;
+
         componentesIndicador.innerHTML = resultado;
         if((cfg || {}).ocultar) {
           const csv = ["Profissional;Total;Resolvidas;Pendentes"];
